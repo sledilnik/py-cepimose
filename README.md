@@ -11,18 +11,22 @@ python3 -mvenv env
 pip install git+https://github.com/sledilnik/py-cepimose.git@master#egg=cepimose
 ```
 
+Examples
 ```
 import pandas as pd
 import cepimose
 
 data = cepimose.vaccinations_by_day()
-df_by_day = pd.DataFrame.from_dict(data)
-
-print(df_by_day)
+df = pd.DataFrame.from_dict(data)
+print(df)
 
 data = cepimose.vaccinations_by_age()
-df_by_age = pd.DataFrame.from_dict(data)
-print(df_by_age)
+df = pd.DataFrame.from_dict(data)
+print(df)
+
+data = cepimose.vaccines_supplied_and_used()
+df = pd.DataFrame.from_dict(data)
+print(df)
 
 ```
 
