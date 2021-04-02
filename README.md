@@ -10,7 +10,7 @@ Small library to parse raw data from NIJZ's PowerBI [dashboard](https://app.powe
 
 Prepare environment
 ```
-python3 -mvenv env
+python -mvenv env
 . ./env/bin/activate
 pip install cepimose
 ```
