@@ -9,9 +9,14 @@ import pandas as pd
 import cepimose
 
 data = cepimose.vaccinations_by_day()
-df = pd.DataFrame.from_dict(data)
+df_by_day = pd.DataFrame.from_dict(data)
 
-print(df)
+print(df_by_day)
+
+data = cepimose.vaccinations_by_age()
+df_by_age = pd.DataFrame.from_dict(data)
+print(df_by_age)
+
 ```
 
 ## Dev
