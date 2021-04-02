@@ -2,12 +2,15 @@ import datetime
 
 from .types import VaccinationByDayRow, VaccinationByAgeRow, VaccineSupplyUsage
 
+def parse_date(raw):
+    return datetime.datetime.utcfromtimestamp(float(raw)/1000.0)
+
 def _parse_vaccinations_by_day(data) -> 'list[VaccinationByDayRow]':
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     for element in resp:
-        date = datetime.datetime.fromtimestamp(float(element["G0"])/1000.0)
+        date = parse_date(element["G0"])
         people_vaccinated = element["X"][0]["M0"]
         people_fully_vaccinated = element["X"][1]["M0"] if len(element["X"]) > 1 else 0
 
@@ -47,7 +50,7 @@ def _parse_vaccines_supplued_and_used(data) -> 'list[VaccineSupplyUsage]':
 
     for element in resp:
         
-        date = datetime.datetime.fromtimestamp(float(element["C"][0])/1000.0)
+        date = parse_date(element["C"][0])
 
         if "Ø" in element:
             supplied = int(element["C"][1]) if len(element["C"]) > 1 else 0

@@ -20,8 +20,8 @@ class MyTestCase1(unittest.TestCase):
             self.assertEqual(row.first_dose, expected_first)
             self.assertEqual(row.second_dose, expected_second)
 
-        assertRow(data[9], datetime.datetime(2021, 1, 5, 1, 0), 15711, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18, 1, 0), 48710, 315)
+        assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
+        assertRow(data[22], datetime.datetime(2021, 1, 18), 48710, 315)
 
     def test_vaccinations_by_age(self):
         # Test feature one.
@@ -47,5 +47,5 @@ class MyTestCase1(unittest.TestCase):
             self.assertEqual(row.supplied, expected_supp)
             self.assertEqual(row.used, expected_used)
 
-        assertRow(data[9], datetime.datetime(2021, 1, 4, 1, 0), 39780, 13248)
-        assertRow(data[22], datetime.datetime(2021, 1, 17, 1, 0), 60870, 48798)
+        assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
+        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48798)
