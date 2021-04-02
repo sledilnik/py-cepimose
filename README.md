@@ -47,6 +47,9 @@ Initial release
 ## Dev
 
 ```
-pipenv install -d
-pipenv run test
+git clone https://github.com/sledilnik/py-cepimose
+cd py-cepimose
+pipenv install -d # install dependencies (including dev)
+pipenv run test # run tests
+pipenv shell # run virtualenv shell
 ```

@@ -10,7 +10,7 @@ test = "nosetests -v"
 requests = ">=2.24.0"
 
 [requires]
-python_version = "3.8"
+python_version = "3"
 
 [dev-packages]
 nose = "*"
