@@ -494,3 +494,261 @@ _vaccines_supplied_and_used_req = {
 	],
 	"version": "1.0.0"
 }
+
+_vaccinations_by_region_req = {
+	"cancelQueries": [],
+	"modelId": 159824,
+	"queries": [
+		{
+			"ApplicationContext": {
+				"DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
+				"Sources": [
+					{
+						"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"
+					}
+				]
+			},
+			"CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"e\",\"Entity\":\"eRCO_podatki\",\"Type\":0},{\"Name\":\"s1\",\"Entity\":\"Sifrant_regija\",\"Type\":0},{\"Name\":\"c\",\"Entity\":\"Calendar\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s1\"}},\"Property\":\"Regija\"},\"Name\":\"Sifrant_regija.Regija\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"Odmerek\"},\"Name\":\"eRCO_podatki.Odmerek\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"Delež_regija\"},\"Name\":\"eRCO_podatki.Delež_regija\"},{\"Aggregation\":{\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"Weight\"}},\"Function\":0},\"Name\":\"Sum(eRCO_podatki.Weight)\"}],\"Where\":[{\"Condition\":{\"Not\":{\"Expression\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"CepivoIme\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"null\"}}]]}}}}},{\"Condition\":{\"Not\":{\"Expression\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"s1\"}},\"Property\":\"Regija\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"null\"}}],[{\"Literal\":{\"Value\":\"'Celotna Slovenija'\"}}],[{\"Literal\":{\"Value\":\"'TUJINA'\"}}]]}}}}},{\"Condition\":{\"Comparison\":{\"ComparisonKind\":1,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Date\"}},\"Right\":{\"DateSpan\":{\"Expression\":{\"Literal\":{\"Value\":\"datetime'2020-12-26T01:00:00'\"}},\"TimeUnit\":5}}}}}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"e\"}},\"Property\":\"Delež_regija\"}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,2,3]}]},\"Secondary\":{\"Groupings\":[{\"Projections\":[1]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"Window\":{\"Count\":200}},\"Secondary\":{\"Top\":{\"Count\":60}}},\"SuppressedJoinPredicates\":[3],\"Version\":1}}}]}",
+			"Query": {
+				"Commands": [
+					{
+						"SemanticQueryDataShapeCommand": {
+							"Binding": {
+								"DataReduction": {
+									"DataVolume": 4,
+									"Primary": {
+										"Window": {
+											"Count": 200
+										}
+									},
+									"Secondary": {
+										"Top": {
+											"Count": 60
+										}
+									}
+								},
+								"Primary": {
+									"Groupings": [
+										{
+											"Projections": [
+												0,
+												2,
+												3
+											]
+										}
+									]
+								},
+								"Secondary": {
+									"Groupings": [
+										{
+											"Projections": [
+												1
+											]
+										}
+									]
+								},
+								"SuppressedJoinPredicates": [
+									3
+								],
+								"Version": 1
+							},
+							"Query": {
+								"From": [
+									{
+										"Entity": "eRCO_podatki",
+										"Name": "e",
+										"Type": 0
+									},
+									{
+										"Entity": "Sifrant_regija",
+										"Name": "s1",
+										"Type": 0
+									},
+									{
+										"Entity": "Calendar",
+										"Name": "c",
+										"Type": 0
+									}
+								],
+								"OrderBy": [
+									{
+										"Direction": 2,
+										"Expression": {
+											"Measure": {
+												"Expression": {
+													"SourceRef": {
+														"Source": "e"
+													}
+												},
+												"Property": "Delež_regija"
+											}
+										}
+									}
+								],
+								"Select": [
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "s1"
+												}
+											},
+											"Property": "Regija"
+										},
+										"Name": "Sifrant_regija.Regija"
+									},
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "e"
+												}
+											},
+											"Property": "Odmerek"
+										},
+										"Name": "eRCO_podatki.Odmerek"
+									},
+									{
+										"Measure": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "e"
+												}
+											},
+											"Property": "Delež_regija"
+										},
+										"Name": "eRCO_podatki.Delež_regija"
+									},
+									{
+										"Aggregation": {
+											"Expression": {
+												"Column": {
+													"Expression": {
+														"SourceRef": {
+															"Source": "e"
+														}
+													},
+													"Property": "Weight"
+												}
+											},
+											"Function": 0
+										},
+										"Name": "Sum(eRCO_podatki.Weight)"
+									}
+								],
+								"Version": 2,
+								"Where": [
+									{
+										"Condition": {
+											"Not": {
+												"Expression": {
+													"In": {
+														"Expressions": [
+															{
+																"Column": {
+																	"Expression": {
+																		"SourceRef": {
+																			"Source": "e"
+																		}
+																	},
+																	"Property": "CepivoIme"
+																}
+															}
+														],
+														"Values": [
+															[
+																{
+																	"Literal": {
+																		"Value": "null"
+																	}
+																}
+															]
+														]
+													}
+												}
+											}
+										}
+									},
+									{
+										"Condition": {
+											"Not": {
+												"Expression": {
+													"In": {
+														"Expressions": [
+															{
+																"Column": {
+																	"Expression": {
+																		"SourceRef": {
+																			"Source": "s1"
+																		}
+																	},
+																	"Property": "Regija"
+																}
+															}
+														],
+														"Values": [
+															[
+																{
+																	"Literal": {
+																		"Value": "null"
+																	}
+																}
+															],
+															[
+																{
+																	"Literal": {
+																		"Value": "'Celotna Slovenija'"
+																	}
+																}
+															],
+															[
+																{
+																	"Literal": {
+																		"Value": "'TUJINA'"
+																	}
+																}
+															]
+														]
+													}
+												}
+											}
+										}
+									},
+									{
+										"Condition": {
+											"Comparison": {
+												"ComparisonKind": 1,
+												"Left": {
+													"Column": {
+														"Expression": {
+															"SourceRef": {
+																"Source": "c"
+															}
+														},
+														"Property": "Date"
+													}
+												},
+												"Right": {
+													"DateSpan": {
+														"Expression": {
+															"Literal": {
+																"Value": "datetime'2020-12-26T01:00:00'"
+															}
+														},
+														"TimeUnit": 5
+													}
+												}
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			},
+			"QueryId": ""
+		}
+	],
+	"version": "1.0.0"
+}

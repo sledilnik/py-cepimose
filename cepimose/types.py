@@ -21,3 +21,12 @@ class VaccineSupplyUsage:
     date: datetime.datetime
     supplied: int
     used: int
+
+@dataclass
+class VaccinationByRegionRow:
+    region: str
+    count_first: int
+    count_second: int
+    share_first: float
+    share_second: float
+    

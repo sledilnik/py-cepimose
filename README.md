@@ -34,6 +34,16 @@ print(df)
 
 ```
 
+## Changelog
+
+## 0.0.3
+
+Added `vaccinations_by_region()`
+
+## 0.0.2
+
+Initial release
+
 ## Dev
 
 ```
