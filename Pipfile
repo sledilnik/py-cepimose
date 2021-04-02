@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-test = "nosetests"
+test = "nosetests -v"
 
 [packages]
 requests = ">=2.24.0"
