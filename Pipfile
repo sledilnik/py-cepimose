@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[scripts]
+test = "nosetests"
+
+[packages]
+requests = ">=2.24.0"
+
+[requires]
+python_version = "3.8"
+
+[dev-packages]
+nose = "*"
