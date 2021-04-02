@@ -1,6 +1,6 @@
 import datetime
 
-from .types import VaccinationByDayRow, VaccinationByAgeRow, VaccineSupplyUsage, VaccinationByRegionRow
+from .types import VaccinationByDayRow, VaccinationByAgeRow, VaccineSupplyUsage, VaccinationByRegionRow, VaccinationByManufacturerRow
 
 def parse_date(raw):
     return datetime.datetime.utcfromtimestamp(float(raw)/1000.0)
@@ -85,6 +85,34 @@ def _parse_vaccinations_by_region(data) -> 'list[VaccinationByRegionRow]':
             count_second=count_second,
             share_first=share_first,
             share_second=share_second
+        ))
+
+    return parsed_data
+
+def _parse_vaccines_supplied_by_manufacturer(data) -> 'list[VaccinationByManufacturerRow]':
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    parsed_data = []
+
+    for element in resp:
+        
+        el = next(filter(lambda x: 'M0' in x, element["X"]))
+
+        date = parse_date(element["G0"])
+        moderna = None
+        pfizer = None
+        az = None
+        if el.get("I", None) == 1:
+            moderna = int(el['M0'])
+        elif el.get("I", None) == 2:
+            pfizer = int(el['M0'])
+        else:
+            az = int(el['M0'])
+
+        parsed_data.append(VaccinationByManufacturerRow(
+            date=date,
+            pfizer=pfizer,
+            moderna=moderna,
+            az=az,
         ))
 
     return parsed_data

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+from typing import Optional
 
 @dataclass
 class VaccinationByDayRow:
@@ -29,4 +30,11 @@ class VaccinationByRegionRow:
     count_second: int
     share_first: float
     share_second: float
+
+@dataclass
+class VaccinationByManufacturerRow:
+    date: datetime.datetime
+    pfizer: Optional[int]
+    moderna: Optional[int]
+    az: Optional[int]
     

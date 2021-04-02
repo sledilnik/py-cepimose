@@ -36,6 +36,10 @@ print(df)
 
 ## Changelog
 
+## 0.0.4
+
+Added `vaccines_supplied_by_manufacturer()`
+
 ## 0.0.3
 
 Added `vaccinations_by_region()`

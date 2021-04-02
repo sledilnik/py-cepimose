@@ -749,3 +749,181 @@ _vaccinations_by_region_req = {
 	],
 	"version": "1.0.0"
 }
+
+_vaccines_supplied_by_manufacturer_req = {
+	"cancelQueries": [],
+	"modelId": 159824,
+	"queries": [
+		{
+			"ApplicationContext": {
+				"DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
+				"Sources": [
+					{
+						"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"
+					}
+				]
+			},
+			"Query": {
+				"Commands": [
+					{
+						"SemanticQueryDataShapeCommand": {
+							"Binding": {
+								"DataReduction": {
+									"DataVolume": 4,
+									"Intersection": {
+										"BinnedLineSample": {}
+									}
+								},
+								"Primary": {
+									"Groupings": [
+										{
+											"Projections": [
+												0,
+												2
+											]
+										}
+									]
+								},
+								"Secondary": {
+									"Groupings": [
+										{
+											"Projections": [
+												1
+											]
+										}
+									]
+								},
+								"Version": 1
+							},
+							"ExecutionMetricsKind": 1,
+							"Query": {
+								"From": [
+									{
+										"Entity": "Calendar",
+										"Name": "c1",
+										"Type": 0
+									},
+									{
+										"Entity": "Vezno_Vrsta_cepiva",
+										"Name": "v",
+										"Type": 0
+									},
+									{
+										"Entity": "NIJZ_Odmerki",
+										"Name": "n",
+										"Type": 0
+									}
+								],
+								"Select": [
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "c1"
+												}
+											},
+											"Property": "Date"
+										},
+										"Name": "Calendar.Date"
+									},
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "v"
+												}
+											},
+											"Property": "Vrsta_cepiva"
+										},
+										"Name": "Vezno_Vrsta_cepiva.Vrsta_cepiva"
+									},
+									{
+										"Measure": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "n"
+												}
+											},
+											"Property": "Tekoča vsota za mero odmerki* v polju Date"
+										},
+										"Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date"
+									}
+								],
+								"Version": 2,
+								"Where": [
+									{
+										"Condition": {
+											"Comparison": {
+												"ComparisonKind": 2,
+												"Left": {
+													"Column": {
+														"Expression": {
+															"SourceRef": {
+																"Source": "c1"
+															}
+														},
+														"Property": "Date"
+													}
+												},
+												"Right": {
+													"DateSpan": {
+														"Expression": {
+															"Literal": {
+																"Value": "datetime'2020-12-20T00:00:00'"
+															}
+														},
+														"TimeUnit": 5
+													}
+												}
+											}
+										}
+									},
+									{
+										"Condition": {
+											"Not": {
+												"Expression": {
+													"In": {
+														"Expressions": [
+															{
+																"Column": {
+																	"Expression": {
+																		"SourceRef": {
+																			"Source": "n"
+																		}
+																	},
+																	"Property": "Vrsta cepiva"
+																}
+															}
+														],
+														"Values": [
+															[
+																{
+																	"Literal": {
+																		"Value": "'Skupaj'"
+																	}
+																}
+															],
+															[
+																{
+																	"Literal": {
+																		"Value": "null"
+																	}
+																}
+															]
+														]
+													}
+												}
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			},
+			"QueryId": ""
+		}
+	],
+	"version": "1.0.0"
+}
