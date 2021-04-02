@@ -769,6 +769,242 @@ _vaccines_supplied_by_manufacturer_req = {
 						"SemanticQueryDataShapeCommand": {
 							"Binding": {
 								"DataReduction": {
+									"DataVolume": 3,
+									"Primary": {
+										"Window": {
+											"Count": 500
+										}
+									}
+								},
+								"Primary": {
+									"Groupings": [
+										{
+											"Projections": [
+												0,
+												1,
+												2
+											],
+											"Subtotal": 1
+										}
+									]
+								},
+								"Version": 1
+							},
+							"ExecutionMetricsKind": 1,
+							"Query": {
+								"From": [
+									{
+										"Entity": "Calendar",
+										"Name": "c",
+										"Type": 0
+									},
+									{
+										"Entity": "NIJZ_Odmerki",
+										"Name": "n",
+										"Type": 0
+									}
+								],
+								"OrderBy": [
+									{
+										"Direction": 1,
+										"Expression": {
+											"Column": {
+												"Expression": {
+													"SourceRef": {
+														"Source": "c"
+													}
+												},
+												"Property": "Date"
+											}
+										}
+									}
+								],
+								"Select": [
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "c"
+												}
+											},
+											"Property": "Date"
+										},
+										"Name": "Calendar.Date"
+									},
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "n"
+												}
+											},
+											"Property": "Vrsta cepiva"
+										},
+										"Name": "NIJZ_Odmerki.Vrsta cepiva"
+									},
+									{
+										"Aggregation": {
+											"Expression": {
+												"Column": {
+													"Expression": {
+														"SourceRef": {
+															"Source": "n"
+														}
+													},
+													"Property": "odmerki*"
+												}
+											},
+											"Function": 0
+										},
+										"Name": "Sum(NIJZ_Odmerki.odmerki*)"
+									}
+								],
+								"Version": 2,
+								"Where": [
+									{
+										"Condition": {
+											"Not": {
+												"Expression": {
+													"In": {
+														"Expressions": [
+															{
+																"Column": {
+																	"Expression": {
+																		"SourceRef": {
+																			"Source": "n"
+																		}
+																	},
+																	"Property": "Vrsta cepiva"
+																}
+															}
+														],
+														"Values": [
+															[
+																{
+																	"Literal": {
+																		"Value": "null"
+																	}
+																}
+															],
+															[
+																{
+																	"Literal": {
+																		"Value": "'Skupaj'"
+																	}
+																}
+															]
+														]
+													}
+												}
+											}
+										}
+									},
+									{
+										"Condition": {
+											"Not": {
+												"Expression": {
+													"Comparison": {
+														"ComparisonKind": 0,
+														"Left": {
+															"Column": {
+																"Expression": {
+																	"SourceRef": {
+																		"Source": "c"
+																	}
+																},
+																"Property": "Date"
+															}
+														},
+														"Right": {
+															"Literal": {
+																"Value": "null"
+															}
+														}
+													}
+												}
+											}
+										}
+									},
+									{
+										"Condition": {
+											"Comparison": {
+												"ComparisonKind": 1,
+												"Left": {
+													"Aggregation": {
+														"Expression": {
+															"Column": {
+																"Expression": {
+																	"SourceRef": {
+																		"Source": "n"
+																	}
+																},
+																"Property": "odmerki*"
+															}
+														},
+														"Function": 0
+													}
+												},
+												"Right": {
+													"Literal": {
+														"Value": "1L"
+													}
+												}
+											}
+										},
+										"Target": [
+											{
+												"Column": {
+													"Expression": {
+														"SourceRef": {
+															"Source": "c"
+														}
+													},
+													"Property": "Date"
+												}
+											},
+											{
+												"Column": {
+													"Expression": {
+														"SourceRef": {
+															"Source": "n"
+														}
+													},
+													"Property": "Vrsta cepiva"
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					}
+				]
+			},
+			"QueryId": ""
+		}
+	],
+	"version": "1.0.0"
+}
+
+_vaccines_supplied_by_manufacturer_cum_req = {
+	"cancelQueries": [],
+	"modelId": 159824,
+	"queries": [
+		{
+			"ApplicationContext": {
+				"DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
+				"Sources": [
+					{
+						"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"
+					}
+				]
+			},
+			"Query": {
+				"Commands": [
+					{
+						"SemanticQueryDataShapeCommand": {
+							"Binding": {
+								"DataReduction": {
 									"DataVolume": 4,
 									"Intersection": {
 										"BinnedLineSample": {}

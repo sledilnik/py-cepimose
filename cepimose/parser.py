@@ -90,6 +90,49 @@ def _parse_vaccinations_by_region(data) -> 'list[VaccinationByRegionRow]':
     return parsed_data
 
 def _parse_vaccines_supplied_by_manufacturer(data) -> 'list[VaccinationByManufacturerRow]':
+    from pprint import pp
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][1]["DM1"]
+    parsed_data = []
+    
+    for element in resp:
+        pp(element)
+        # el = next(filter(lambda x: 'C' in x, element["C"]))
+        el = {}
+        # pp(el['C'])
+
+        date = parse_date(element["C"][0])
+
+        if len(element["C"]) > 2:
+            manufacturer = element["C"][1]
+        elif len(element["C"]) == 2:
+            manufacturer = 0
+        else:
+            continue
+
+        moderna = None
+        pfizer = None
+        az = None
+
+        if manufacturer == 0:
+            pfizer = int(element["C"][-1])
+        elif manufacturer == 1:
+            moderna = int(element["C"][-1])
+        elif manufacturer == 2:
+            az = int(element["C"][-1])
+        else:
+            raise Exception("Unknown manufacturer: {}".format(manufacturer))
+
+        parsed_data.append(VaccinationByManufacturerRow(
+            date=date,
+            pfizer=pfizer,
+            moderna=moderna,
+            az=az,
+        ))
+
+    return parsed_data
+
+def _parse_vaccines_supplied_by_manufacturer_cum(data) -> 'list[VaccinationByManufacturerRow]':
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 

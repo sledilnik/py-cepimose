@@ -1,6 +1,6 @@
 import requests
-from .data import _source, _headers, _vaccinations_by_day_req, _vaccinations_by_age_req, _vaccines_supplied_and_used_req, _vaccinations_by_region_req, _vaccines_supplied_by_manufacturer_req
-from .parser import _parse_vaccinations_by_age, _parse_vaccinations_by_day, _parse_vaccines_supplued_and_used, _parse_vaccinations_by_region, _parse_vaccines_supplied_by_manufacturer
+from .data import _source, _headers, _vaccinations_by_day_req, _vaccinations_by_age_req, _vaccines_supplied_and_used_req, _vaccinations_by_region_req, _vaccines_supplied_by_manufacturer_req, _vaccines_supplied_by_manufacturer_cum_req
+from .parser import _parse_vaccinations_by_age, _parse_vaccinations_by_day, _parse_vaccines_supplued_and_used, _parse_vaccinations_by_region, _parse_vaccines_supplied_by_manufacturer, _parse_vaccines_supplied_by_manufacturer_cum
 
 from .types import VaccinationByAgeRow, VaccinationByDayRow, VaccineSupplyUsage, VaccinationByRegionRow, VaccinationByManufacturerRow
 
@@ -29,3 +29,7 @@ def vaccinations_by_region() -> 'list[VaccinationByRegionRow]':
 
 def vaccines_supplied_by_manufacturer() -> 'list[VaccinationByManufacturerRow]':
     return _get_data(_vaccines_supplied_by_manufacturer_req, _parse_vaccines_supplied_by_manufacturer)
+
+
+def vaccines_supplied_by_manufacturer_cumulative() -> 'list[VaccinationByManufacturerRow]':
+    return _get_data(_vaccines_supplied_by_manufacturer_cum_req, _parse_vaccines_supplied_by_manufacturer_cum)
