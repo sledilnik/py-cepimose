@@ -4,6 +4,13 @@ Small library to parse raw data from NIJZ's PowerBI [dashboard](https://app.powe
 
 ## Examples
 
+Prepare environment
+```
+python3 -mvenv env
+. ./env/bin/activate
+pip install git+https://github.com/sledilnik/py-cepimose.git@master#egg=cepimose
+```
+
 ```
 import pandas as pd
 import cepimose
