@@ -15,3 +15,9 @@ class VaccinationByAgeRow:
     count_second: int
     share_first: float
     share_second: float
+
+@dataclass
+class VaccineSupplyUsage:
+    date: datetime.datetime
+    supplied: int
+    used: int

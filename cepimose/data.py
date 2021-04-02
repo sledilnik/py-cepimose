@@ -362,3 +362,135 @@ _vaccinations_by_age_req = {
 	],
 	"version": "1.0.0"
 }
+
+_vaccines_supplied_and_used_req = {
+	"cancelQueries": [],
+	"modelId": 159824,
+	"queries": [
+		{
+			"ApplicationContext": {
+				"DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
+				"Sources": [
+					{
+						"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"
+					}
+				]
+			},
+			"CacheKey": "{\"Commands\":[{\"SemanticQueryDataShapeCommand\":{\"Query\":{\"Version\":2,\"From\":[{\"Name\":\"c1\",\"Entity\":\"Calendar\",\"Type\":0},{\"Name\":\"c\",\"Entity\":\"eRCO_podatki\",\"Type\":0},{\"Name\":\"n\",\"Entity\":\"NIJZ_Odmerki\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Date\"},\"Name\":\"Calendar.Date\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c\"}},\"Property\":\"Kumulativno skupaj cepljenih\"},\"Name\":\"eRCO_podatki.Kumulativno skupaj cepljenih\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"n\"}},\"Property\":\"Tekoča vsota za mero odmerki* v polju Date\"},\"Name\":\"NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date\"}],\"Where\":[{\"Condition\":{\"Comparison\":{\"ComparisonKind\":2,\"Left\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"c1\"}},\"Property\":\"Date\"}},\"Right\":{\"DateSpan\":{\"Expression\":{\"Literal\":{\"Value\":\"datetime'2020-12-26T00:00:00'\"}},\"TimeUnit\":5}}}}}]},\"Binding\":{\"Primary\":{\"Groupings\":[{\"Projections\":[0,1,2]}]},\"DataReduction\":{\"DataVolume\":4,\"Primary\":{\"BinnedLineSample\":{}}},\"Version\":1}}}]}",
+			"Query": {
+				"Commands": [
+					{
+						"SemanticQueryDataShapeCommand": {
+							"Binding": {
+								"DataReduction": {
+									"DataVolume": 4,
+									"Primary": {
+										"BinnedLineSample": {}
+									}
+								},
+								"Primary": {
+									"Groupings": [
+										{
+											"Projections": [
+												0,
+												1,
+												2
+											]
+										}
+									]
+								},
+								"Version": 1
+							},
+							"Query": {
+								"From": [
+									{
+										"Entity": "Calendar",
+										"Name": "c1",
+										"Type": 0
+									},
+									{
+										"Entity": "eRCO_podatki",
+										"Name": "c",
+										"Type": 0
+									},
+									{
+										"Entity": "NIJZ_Odmerki",
+										"Name": "n",
+										"Type": 0
+									}
+								],
+								"Select": [
+									{
+										"Column": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "c1"
+												}
+											},
+											"Property": "Date"
+										},
+										"Name": "Calendar.Date"
+									},
+									{
+										"Measure": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "c"
+												}
+											},
+											"Property": "Kumulativno skupaj cepljenih"
+										},
+										"Name": "eRCO_podatki.Kumulativno skupaj cepljenih"
+									},
+									{
+										"Measure": {
+											"Expression": {
+												"SourceRef": {
+													"Source": "n"
+												}
+											},
+											"Property": "Tekoča vsota za mero odmerki* v polju Date"
+										},
+										"Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date"
+									}
+								],
+								"Version": 2,
+								"Where": [
+									{
+										"Condition": {
+											"Comparison": {
+												"ComparisonKind": 2,
+												"Left": {
+													"Column": {
+														"Expression": {
+															"SourceRef": {
+																"Source": "c1"
+															}
+														},
+														"Property": "Date"
+													}
+												},
+												"Right": {
+													"DateSpan": {
+														"Expression": {
+															"Literal": {
+																"Value": "datetime'2020-12-26T00:00:00'"
+															}
+														},
+														"TimeUnit": 5
+													}
+												}
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				]
+			},
+			"QueryId": ""
+		}
+	],
+	"version": "1.0.0"
+}
