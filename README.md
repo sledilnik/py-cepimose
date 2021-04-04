@@ -56,4 +56,5 @@ cd py-cepimose
 pipenv install -d # install dependencies (including dev)
 pipenv run test # run tests
 pipenv shell # run virtualenv shell
+pipenv run fmt # format the code (also available as VS Code task)
 ```
