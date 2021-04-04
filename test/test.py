@@ -2,8 +2,8 @@ import unittest
 import cepimose
 import datetime
 
-class CepimoseTestCase(unittest.TestCase):
 
+class CepimoseTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
 
@@ -25,9 +25,26 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_vaccinations_by_age(self):
         # Test feature one.
-        data = {row.age_group: row  for row in cepimose.vaccinations_by_age()}
+        data = {row.age_group: row for row in cepimose.vaccinations_by_age()}
 
-        expected_age_groups = ["0-17", "18-24", "25-29", "30-34", "35-39", "40-44", "45-49", "50-54", "55-59", "60-64", "65-69", "70-74", "75-79", "80-84", "85-89", "90+"]
+        expected_age_groups = [
+            "0-17",
+            "18-24",
+            "25-29",
+            "30-34",
+            "35-39",
+            "40-44",
+            "45-49",
+            "50-54",
+            "55-59",
+            "60-64",
+            "65-69",
+            "70-74",
+            "75-79",
+            "80-84",
+            "85-89",
+            "90+",
+        ]
 
         self.assertTrue(len(data), len(expected_age_groups))
 
@@ -39,7 +56,7 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_vaccinations_by_region(self):
         # Test feature one.
-        data = {row.region: row  for row in cepimose.vaccinations_by_region()}
+        data = {row.region: row for row in cepimose.vaccinations_by_region()}
 
         expected_regions = [
             "Koroška",
@@ -53,7 +70,7 @@ class CepimoseTestCase(unittest.TestCase):
             "Jugovzhodna Slovenija",
             "Primorsko-notranjska",
             "Savinjska",
-            "Obalno-kraška"
+            "Obalno-kraška",
         ]
 
         print(data.keys())

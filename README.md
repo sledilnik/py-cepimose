@@ -36,6 +36,10 @@ print(df)
 
 ## Changelog
 
+## 0.0.4
+
+Added `vaccines_supplied_by_manufacturer()`
+
 ## 0.0.3
 
 Added `vaccinations_by_region()`
@@ -52,4 +56,5 @@ cd py-cepimose
 pipenv install -d # install dependencies (including dev)
 pipenv run test # run tests
 pipenv shell # run virtualenv shell
+pipenv run fmt # format the code (also available as VS Code task)
 ```
