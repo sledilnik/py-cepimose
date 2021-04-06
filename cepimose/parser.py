@@ -145,8 +145,6 @@ def _parse_vaccines_supplied_by_manufacturer(
         else:
             raise Exception("Unknown manufacturer: {}".format(manufacturer))
 
-        print(element, date, pfizer, moderna, az, sep=", ")
-
         parsed_data.append(
             VaccinationByManufacturerRow(
                 date=date,
