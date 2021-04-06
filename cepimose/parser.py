@@ -119,7 +119,11 @@ def _parse_vaccines_supplied_by_manufacturer(
     parsed_data = []
 
     for element in resp:
-        date = parse_date(element["C"][0])
+        date = (
+            parse_date(element["C"][0])
+            if len(element["C"]) == 3
+            else parsed_data[-1].date
+        )
 
         if len(element["C"]) > 2:
             manufacturer = element["C"][1]
@@ -140,6 +144,8 @@ def _parse_vaccines_supplied_by_manufacturer(
             az = int(element["C"][-1])
         else:
             raise Exception("Unknown manufacturer: {}".format(manufacturer))
+
+        print(element, date, pfizer, moderna, az, sep=", ")
 
         parsed_data.append(
             VaccinationByManufacturerRow(
