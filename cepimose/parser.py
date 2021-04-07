@@ -57,7 +57,7 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
     return parsed_data
 
 
-def _parse_vaccines_supplued_and_used(data) -> "list[VaccineSupplyUsage]":
+def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
