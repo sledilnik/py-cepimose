@@ -17,8 +17,8 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
-            self.assertEqual(row.first_dose, expected_first)
-            self.assertEqual(row.second_dose, expected_second)
+            self.assertAlmostEqual(row.first_dose, expected_first, delta=10)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=5)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
@@ -90,8 +90,8 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected_supp, expected_used):
             self.assertEqual(row.date, expected_date)
-            self.assertEqual(row.supplied, expected_supp)
-            self.assertEqual(row.used, expected_used)
+            self.assertAlmostEqual(row.supplied, expected_supp, delta=10)
+            self.assertAlmostEqual(row.used, expected_used, delta=10)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
@@ -113,3 +113,21 @@ class CepimoseTestCase(unittest.TestCase):
             data[16], datetime.datetime(2021, 2, 25), [None, None, 16800]
         )  # R = None
         assertRow(data[17], datetime.datetime(2021, 2, 25), [None, 8400, None])  # R = 1
+
+    def test_supplied_by_manufacturer_cumulative(self):
+        data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
+        self.assertTrue(len(data) > 10)
+
+        def assertRow(row, expected_date, expected):
+            self.assertEqual(row.date, expected_date)
+            self.assertEqual(row.pfizer, expected[0])
+            self.assertEqual(row.moderna, expected[1])
+            self.assertEqual(row.az, expected[2])
+
+        assertRow(data[3], datetime.datetime(2021, 1, 11), [59670, None, None])
+        assertRow(data[7], datetime.datetime(2021, 1, 31), [None, 3600, None])
+        assertRow(data[10], datetime.datetime(2021, 2, 6), [None, None, 9600])
+        assertRow(data[16], datetime.datetime(2021, 2, 25), [None, 16800, 52800])
+        assertRow(
+            data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
+        )  # this test will fail in the future
