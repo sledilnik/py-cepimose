@@ -180,10 +180,6 @@ def _parse_vaccines_supplied_by_manufacturer(
             obj = create_obj(date)
             obj[manufacturer] = value
 
-        print(
-            obj["date"].strftime("%m/%d/%Y"), obj["pfizer"], obj["moderna"], obj["az"]
-        )
-
         parsed_data.append(
             VaccinationByManufacturerRow(
                 date=obj["date"],
