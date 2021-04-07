@@ -96,3 +96,20 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
         assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
+
+    def test_supplied_by_manufacturer(self):
+        data = cepimose.vaccines_supplied_by_manufacturer()
+        self.assertTrue(len(data) > 10)
+
+        def assertRow(row, expected_date, expected):
+            self.assertEqual(row.date, expected_date)
+            self.assertEqual(row.pfizer, expected[0])
+            self.assertEqual(row.moderna, expected[1])
+            self.assertEqual(row.az, expected[2])
+
+        assertRow(data[1], datetime.datetime(2020, 12, 30), [8190, None, None])  # R = 2
+        assertRow(data[3], datetime.datetime(2021, 1, 11), [19890, None, None])  # R = 6
+        assertRow(
+            data[16], datetime.datetime(2021, 2, 25), [None, None, 16800]
+        )  # R = None
+        assertRow(data[17], datetime.datetime(2021, 2, 25), [None, 8400, None])  # R = 1
