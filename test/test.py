@@ -132,7 +132,7 @@ class CepimoseTestCase(unittest.TestCase):
             data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
         )  # this test will fail in the future
 
-    def test_vaccination_by_age_range_90(self):
+    def test_vaccinations_by_age_range_90(self):
         data = cepimose.vaccinations_by_age_range_90()
         data_dose1 = data.dose1
         data_dose2 = data.dose2
