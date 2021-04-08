@@ -122,19 +122,18 @@ def _parse_vaccines_supplied_by_manufacturer(
     parsed_data = []
 
     if len(manufacturers) > 3:
-        print("New manufacturer(s)!")  #! Have no idea about errors in python
+        print(manufacturers)
+        raise Exception("New manufacturer!")
 
     def create_obj(date):
         return {"date": date, "moderna": None, "pfizer": None, "az": None}
 
     def get_manufacturer(num):
-        if num == 0:
-            return "pfizer"
-        if num == 1:
-            return "moderna"
-        if num == 2:
-            return "az"
-        return None  #! should throw error
+        manu_keys = ["pfizer", "moderna", "az"]
+        if num > 2 or num === None:
+            print(num)
+            raise Exception("Missing manufacturer!")
+        return manu_keys[num]
 
     r_list = [None, 1, 2, 6]
 
@@ -147,7 +146,8 @@ def _parse_vaccines_supplied_by_manufacturer(
         C = element["C"]
 
         if R not in r_list:
-            print(R, C, sep="\t")  #! should throw error
+            print(R, C, sep="\t")
+            raise Exception("Unknown R value!")
 
         obj = create_obj(None)
 
@@ -161,7 +161,6 @@ def _parse_vaccines_supplied_by_manufacturer(
 
         if R == 1:
             # same date as previous
-            obj = create_obj(date)
             manufacturer = get_manufacturer((C[0]))
             value = C[1]
             obj = create_obj(date)
