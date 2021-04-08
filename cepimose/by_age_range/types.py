@@ -10,5 +10,5 @@ class VaccinationDose:
 
 @dataclass
 class VaccinationByAgeRange:
-    dose1: list[VaccinationDose]
-    dose2: list[VaccinationDose]
+    dose1: "list[VaccinationDose]"
+    dose2: "list[VaccinationDose]"
