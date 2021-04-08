@@ -211,7 +211,8 @@ def _create_range_commands():
     for el in age_ranges:
         dose1_command = _create_command(el, "1L")
         dose2_command = _create_command(el, "2L")
-        obj[el] = [dose1_command, dose2_command]
+        key = el.replace("'", "")
+        obj[key] = [dose1_command, dose2_command]
 
     return obj
 
