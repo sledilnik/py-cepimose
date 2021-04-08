@@ -130,7 +130,7 @@ def _parse_vaccines_supplied_by_manufacturer(
 
     def get_manufacturer(num):
         manu_keys = ["pfizer", "moderna", "az"]
-        if num > 2 or num === None:
+        if num > 2 or num == None:
             print(num)
             raise Exception("Missing manufacturer!")
         return manu_keys[num]
