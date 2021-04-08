@@ -151,7 +151,6 @@ Thumbs.db #thumbnail cache on Windows
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
-
 # Created by https://www.toptal.com/developers/gitignore/api/vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode
 
@@ -164,3 +163,6 @@ Thumbs.db #thumbnail cache on Windows
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/vscode
+
+/examples
+

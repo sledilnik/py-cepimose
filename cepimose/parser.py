@@ -57,7 +57,7 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
     return parsed_data
 
 
-def _parse_vaccines_supplued_and_used(data) -> "list[VaccineSupplyUsage]":
+def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -116,40 +116,82 @@ def _parse_vaccines_supplied_by_manufacturer(
     data,
 ) -> "list[VaccinationByManufacturerRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][1]["DM1"]
+    manufacturers = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["ValueDicts"][
+        "D0"
+    ]
     parsed_data = []
 
+    if len(manufacturers) > 3:
+        print("New manufacturer(s)!")  #! Have no idea about errors in python
+
+    def create_obj(date):
+        return {"date": date, "moderna": None, "pfizer": None, "az": None}
+
+    def get_manufacturer(num):
+        if num == 0:
+            return "pfizer"
+        if num == 1:
+            return "moderna"
+        if num == 2:
+            return "az"
+        return None  #! should throw error
+
+    r_list = [None, 1, 2, 6]
+
+    date = None
+    manufacturer = None
+    value = None
+
     for element in resp:
-        date = parse_date(element["C"][0])
+        R = element["R"] if "R" in element else None
+        C = element["C"]
 
-        if len(element["C"]) > 2:
-            manufacturer = element["C"][1]
-        elif len(element["C"]) == 2:
-            manufacturer = 0
-        else:
-            continue
+        if R not in r_list:
+            print(R, C, sep="\t")  #! should throw error
 
-        moderna = None
-        pfizer = None
-        az = None
+        obj = create_obj(None)
 
-        if manufacturer == 0:
-            pfizer = int(element["C"][-1])
-        elif manufacturer == 1:
-            moderna = int(element["C"][-1])
-        elif manufacturer == 2:
-            az = int(element["C"][-1])
-        else:
-            raise Exception("Unknown manufacturer: {}".format(manufacturer))
+        if R == None:
+            # all data
+            date = parse_date(C[0])
+            manufacturer = get_manufacturer((C[1]))
+            value = C[2]
+            obj = create_obj(date)
+            obj[manufacturer] = value
+
+        if R == 1:
+            # same date as previous
+            obj = create_obj(date)
+            manufacturer = get_manufacturer((C[0]))
+            value = C[1]
+            obj = create_obj(date)
+            obj[manufacturer] = value
+
+        if R == 2:
+            # same manufacturer as previous
+            date = parse_date(C[0])
+            value = C[1]
+            obj = create_obj(date)
+            obj[manufacturer] = value
+
+        if R == 6:
+            # same manufacturer and value as previous
+            date = parse_date(C[0])
+            obj = create_obj(date)
+            obj[manufacturer] = value
+
+        print(
+            obj["date"].strftime("%m/%d/%Y"), obj["pfizer"], obj["moderna"], obj["az"]
+        )
 
         parsed_data.append(
             VaccinationByManufacturerRow(
-                date=date,
-                pfizer=pfizer,
-                moderna=moderna,
-                az=az,
+                date=obj["date"],
+                pfizer=obj["pfizer"],
+                moderna=obj["moderna"],
+                az=obj["az"],
             )
         )
-
     return parsed_data
 
 

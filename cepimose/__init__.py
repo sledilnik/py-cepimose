@@ -12,7 +12,7 @@ from .data import (
 from .parser import (
     _parse_vaccinations_by_age,
     _parse_vaccinations_by_day,
-    _parse_vaccines_supplued_and_used,
+    _parse_vaccines_supplied_and_used,
     _parse_vaccinations_by_region,
     _parse_vaccines_supplied_by_manufacturer,
     _parse_vaccines_supplied_by_manufacturer_cum,
@@ -42,7 +42,7 @@ def vaccinations_by_age() -> "list[VaccinationByAgeRow]":
 
 
 def vaccines_supplied_and_used() -> "list[VaccineSupplyUsage]":
-    return _get_data(_vaccines_supplied_and_used_req, _parse_vaccines_supplued_and_used)
+    return _get_data(_vaccines_supplied_and_used_req, _parse_vaccines_supplied_and_used)
 
 
 def vaccinations_by_region() -> "list[VaccinationByRegionRow]":

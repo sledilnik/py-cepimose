@@ -20,8 +20,9 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.first_dose, expected_first, delta=10)
             self.assertAlmostEqual(row.second_dose, expected_second, delta=5)
 
+        #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 48710, 315)
+        assertRow(data[22], datetime.datetime(2021, 1, 18), 48711, 315)
 
     def test_vaccinations_by_age(self):
         # Test feature one.
@@ -92,5 +93,6 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.supplied, expected_supp, delta=10)
             self.assertAlmostEqual(row.used, expected_used, delta=10)
 
+        #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
-        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48798)
+        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
