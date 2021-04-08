@@ -128,9 +128,9 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[7], datetime.datetime(2021, 1, 31), [None, 3600, None])
         assertRow(data[10], datetime.datetime(2021, 2, 6), [None, None, 9600])
         assertRow(data[16], datetime.datetime(2021, 2, 25), [None, 16800, 52800])
-        assertRow(
-            data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
-        )  # this test will fail in the future
+        # assertRow(
+        #     data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
+        # )  # this test will fail in the future
 
     def test_vaccinations_by_age_range_90(self):
         data = cepimose.vaccinations_by_age_range_90()
