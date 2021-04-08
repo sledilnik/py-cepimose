@@ -131,3 +131,22 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(
             data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
         )  # this test will fail in the future
+
+    def test_vaccination_by_age_range_90(self):
+        data = cepimose.vaccinations_by_age_range_90()
+        data_dose1 = data.dose1
+        data_dose2 = data.dose2
+
+        self.assertTrue(len(data_dose1) > 10)
+        self.assertTrue(len(data_dose2) > 10)
+        self.assertTrue(len(data_dose1) > len(data_dose2))
+        self.assertTrue(len(data_dose1) - len(data_dose2) == 12)
+
+        def assertRow(row, expected_date, expected_dose):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.dose, expected_dose, delta=5)
+
+        assertRow(data_dose1[21], datetime.datetime(2021, 1, 17), 3580)
+        assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
+        assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
+        assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)

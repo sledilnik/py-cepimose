@@ -26,6 +26,14 @@ from .types import (
     VaccinationByManufacturerRow,
 )
 
+from .by_age_range.data import (
+    _vaccinations_by_age_range_90_dose1_req,
+    _vaccinations_by_age_range_90_dose2_req,
+)
+
+from .by_age_range.parser import _parse_vaccinations_by_age_range
+from .by_age_range.types import VaccinationDose, VaccinationByAgeRange
+
 
 def _get_data(req, parse_response):
     resp = requests.post(_source, headers=_headers, json=req)
@@ -60,3 +68,22 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
         _vaccines_supplied_by_manufacturer_cum_req,
         _parse_vaccines_supplied_by_manufacturer_cum,
     )
+
+
+# by age range
+
+
+def vaccinations_by_age_range_90() -> "VaccinationByAgeRange":
+    def vaccinations_by_age_range_90_dose1() -> "list[VaccinationDose]":
+        return _get_data(
+            _vaccinations_by_age_range_90_dose1_req, _parse_vaccinations_by_age_range
+        )
+
+    def vaccinations_by_age_range_90_dose2() -> "list[VaccinationDose]":
+        return _get_data(
+            _vaccinations_by_age_range_90_dose2_req, _parse_vaccinations_by_age_range
+        )
+
+    dose1 = vaccinations_by_age_range_90_dose1()
+    dose2 = vaccinations_by_age_range_90_dose2()
+    return VaccinationByAgeRange(dose1=dose1, dose2=dose2)
