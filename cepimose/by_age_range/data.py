@@ -38,6 +38,141 @@ def _get_default_query():
     }
 
 
+def _get_default_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
+                    {"Name": "s", "Entity": "SURS_starost", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c1"}},
+                            "Property": "Date",
+                        },
+                        "Name": "Calendar.Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Weight running total in Date",
+                        },
+                        "Name": "eRCO_podatki.Weight running total in Date",
+                    },
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Odmerek",
+                        },
+                        "Name": "eRCO_podatki.Odmerek",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "s"}
+                                            },
+                                            "Property": "Starostni razred",
+                                        }
+                                    },
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Odmerek",
+                                        }
+                                    },
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Not": {
+                                "Expression": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "c"}
+                                                    },
+                                                    "Property": "CepivoIme",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [[{"Literal": {"Value": "null"}}]],
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 1,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c1"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T01:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 1]}]},
+                "Secondary": {"Groupings": [{"Projections": [2]}]},
+                "DataReduction": {
+                    "DataVolume": 4,
+                    "Intersection": {"BinnedLineSample": {}},
+                },
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _get_first_condition_values(range="'90+'", dose="1L"):
+    return [
+        {"Literal": {"Value": range}},
+        {"Literal": {"Value": dose}},
+    ]
+
+
+def _create_command(range="'90+'", dose="1L"):
+    values = _get_first_condition_values(range, dose)
+    command = _get_default_command()
+    command["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["In"][
+        "Values"
+    ].append(values)
+    return command
+
+
 def _create_req(commands, cache_key=False):
     query = _get_default_query()
     for command in commands:
@@ -49,7 +184,9 @@ def _create_req(commands, cache_key=False):
     return req
 
 
-_ages = [
+_doses = ["1L", "2L"]
+
+age_ranges = [
     "'0-17'",
     "'18-24'",
     "'25-29'",
@@ -67,243 +204,37 @@ _ages = [
     "'85-90'",
     "'90+'",
 ]
-_doses = ["1L", "2L"]
 
-_vaccinations_by_age_90_dose1_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
-                {"Name": "s", "Entity": "SURS_starost", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c1"}},
-                        "Property": "Date",
-                    },
-                    "Name": "Calendar.Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
-                    },
-                    "Name": "eRCO_podatki.Weight running total in Date",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Odmerek",
-                    },
-                    "Name": "eRCO_podatki.Odmerek",
-                },
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "s"}},
-                                        "Property": "Starostni razred",
-                                    }
-                                },
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c"}},
-                                        "Property": "Odmerek",
-                                    }
-                                },
-                            ],
-                            "Values": [
-                                [
-                                    {"Literal": {"Value": "'90+'"}},
-                                    {"Literal": {"Value": "1L"}},
-                                ]
-                            ],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "c"}
-                                                },
-                                                "Property": "CepivoIme",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [[{"Literal": {"Value": "null"}}]],
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1]}]},
-            "Secondary": {"Groupings": [{"Projections": [2]}]},
-            "DataReduction": {
-                "DataVolume": 4,
-                "Intersection": {"BinnedLineSample": {}},
-            },
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
-}
 
-_vaccinations_by_age_90_dose2_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
-                {"Name": "s", "Entity": "SURS_starost", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c1"}},
-                        "Property": "Date",
-                    },
-                    "Name": "Calendar.Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
-                    },
-                    "Name": "eRCO_podatki.Weight running total in Date",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Odmerek",
-                    },
-                    "Name": "eRCO_podatki.Odmerek",
-                },
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "s"}},
-                                        "Property": "Starostni razred",
-                                    }
-                                },
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c"}},
-                                        "Property": "Odmerek",
-                                    }
-                                },
-                            ],
-                            "Values": [
-                                [
-                                    {"Literal": {"Value": "'90+'"}},
-                                    {"Literal": {"Value": "2L"}},
-                                ]
-                            ],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "c"}
-                                                },
-                                                "Property": "CepivoIme",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [[{"Literal": {"Value": "null"}}]],
-                                }
-                            }
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1]}]},
-            "Secondary": {"Groupings": [{"Projections": [2]}]},
-            "DataReduction": {
-                "DataVolume": 4,
-                "Intersection": {"BinnedLineSample": {}},
-            },
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
-}
+def _create_range_commands():
+    obj = {}
+    for el in age_ranges:
+        dose1_command = _create_command(el, "1L")
+        dose2_command = _create_command(el, "2L")
+        obj[el] = [dose1_command, dose2_command]
+
+    return obj
+
+
+def _create_range_requests():
+    commands = _create_range_commands()
+    key_value = commands.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        _commands = el[1]
+        range_requests = []
+        dose1_req = _create_req([_commands[0]])
+        dose2_req = _create_req([_commands[1]])
+        obj[key] = [dose1_req, dose2_req]
+
+    return obj
+
+
+_vaccination_range_requests = _create_range_requests()
+
+_vaccinations_by_age_90_dose1_command = _create_command("'90+'", "1L")
+_vaccinations_by_age_90_dose2_command = _create_command("'90+'", "2L")
 
 _vaccinations_by_age_range_90_dose1_req = _create_req(
     [_vaccinations_by_age_90_dose1_command]

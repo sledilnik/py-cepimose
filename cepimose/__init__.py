@@ -29,6 +29,7 @@ from .types import (
 from .by_age_range.data import (
     _vaccinations_by_age_range_90_dose1_req,
     _vaccinations_by_age_range_90_dose2_req,
+    _vaccination_range_requests,
 )
 
 from .by_age_range.parser import _parse_vaccinations_by_age_range
@@ -71,8 +72,6 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
 
 
 # by age range
-
-
 def vaccinations_by_age_range_90() -> "VaccinationByAgeRange":
     def vaccinations_by_age_range_90_dose1() -> "list[VaccinationDose]":
         return _get_data(
@@ -87,3 +86,18 @@ def vaccinations_by_age_range_90() -> "VaccinationByAgeRange":
     dose1 = vaccinations_by_age_range_90_dose1()
     dose2 = vaccinations_by_age_range_90_dose2()
     return VaccinationByAgeRange(dose1=dose1, dose2=dose2)
+
+
+def vaccinations_by_age_range():
+    key_value = _vaccination_range_requests.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        dose1_req = el[1][0]
+        dose2_req = el[1][1]
+
+        dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_range)
+        dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_range)
+        obj[key] = VaccinationByAgeRange(dose1=dose1, dose2=dose2)
+
+    return obj

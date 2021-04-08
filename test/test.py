@@ -150,3 +150,44 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
         assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
         assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)
+
+    def test_vaccinations_by_age_rage(self):
+        data = cepimose.vaccinations_by_age_range()
+        keys = [
+            "'0-17'",
+            "'18-24'",
+            "'25-29'",
+            "'30-34'",
+            "'35-39'",
+            "'40-44'",
+            "'45-49'",
+            "'50-54'",
+            "'55-59'",
+            "'60-64'",
+            "'65-69'",
+            "'70-74'",
+            "'75-79'",
+            "'80-84'",
+            "'85-90'",
+            "'90+'",
+        ]
+
+        self.assertEquals(keys, list(data.keys()), "Object keys")
+
+        range_90_data = data["'90+'"]
+        data_dose1 = range_90_data.dose1
+        data_dose2 = range_90_data.dose2
+
+        self.assertTrue(len(data_dose1) > 10)
+        self.assertTrue(len(data_dose2) > 10)
+        self.assertTrue(len(data_dose1) > len(data_dose2))
+        self.assertTrue(len(data_dose1) - len(data_dose2) == 12)
+
+        def assertRow(row, expected_date, expected_dose):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.dose, expected_dose, delta=5)
+
+        assertRow(data_dose1[21], datetime.datetime(2021, 1, 17), 3580)
+        assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
+        assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
+        assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)
