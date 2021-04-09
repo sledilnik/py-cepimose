@@ -13,7 +13,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
-        self.assertTrue(len(data) > 30)
+        self.assertGreater(len(data), 100)
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
@@ -92,7 +92,7 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_vaccine_supply_and_usage(self):
         data = cepimose.vaccines_supplied_and_used()
-        self.assertTrue(len(data) > 30)
+        self.assertGreater(len(data), 100)
 
         def assertRow(row, expected_date, expected_supp, expected_used):
             self.assertEqual(row.date, expected_date)
