@@ -8,6 +8,9 @@ from .data import (
     _vaccinations_by_region_req,
     _vaccines_supplied_by_manufacturer_req,
     _vaccines_supplied_by_manufacturer_cum_req,
+    _vaccinations_by_age_range_90_dose1_req,
+    _vaccinations_by_age_range_90_dose2_req,
+    _vaccination_by_age_range_requests,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -16,6 +19,7 @@ from .parser import (
     _parse_vaccinations_by_region,
     _parse_vaccines_supplied_by_manufacturer,
     _parse_vaccines_supplied_by_manufacturer_cum,
+    _parse_vaccinations_by_age_range,
 )
 
 from .types import (
@@ -24,16 +28,9 @@ from .types import (
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
+    VaccinationDose,
+    VaccinationByAgeRange,
 )
-
-from .by_age_range.data import (
-    _vaccinations_by_age_range_90_dose1_req,
-    _vaccinations_by_age_range_90_dose2_req,
-    _vaccination_range_requests,
-)
-
-from .by_age_range.parser import _parse_vaccinations_by_age_range
-from .by_age_range.types import VaccinationDose, VaccinationByAgeRange
 
 
 def _get_data(req, parse_response):
@@ -89,7 +86,7 @@ def vaccinations_by_age_range_90() -> "VaccinationByAgeRange":
 
 
 def vaccinations_by_age_range():
-    key_value = _vaccination_range_requests.items()
+    key_value = _vaccination_by_age_range_requests.items()
     obj = {}
     for el in key_value:
         key = el[0]
