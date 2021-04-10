@@ -2,12 +2,47 @@ import json
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
+_models = {
+    "ver1": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "e868280f-1322-4be2-a19a-e9fc2112609f",
+        },
+        "modelId": 159824,
+        "ApplicationContext": {
+            "DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
+            "Sources": [{"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"}],
+        },
+    },
+    "ver2": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
+        },
+        "modelId": 175575,
+        "ApplicationContext": {
+            "DatasetId": "51c64860-e9ec-49d8-8a36-743bced78e1a",
+            "Sources": [{"ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee"}],
+        },
+    },
+}
+
+
+def _get_model_version(ver):
+    x_power_bi_resource_key = _models[ver]["headers"]["X-PowerBI-ResourceKey"]
+    model_id = _models[ver]["modelId"]
+    application_context = _models[ver]["ApplicationContext"]
+    return {
+        "X-PowerBI-ResourceKey": x_power_bi_resource_key,
+        "modelId": model_id,
+        "ApplicationContext": application_context,
+    }
+
+
+_model_ver = _get_model_version("ver2")
+
 _headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
     "Accept": "application/json, text/plain, */*",
-    "ActivityId": "a73e2035-2f0e-290b-319a-c10ebb699c77",
-    "RequestId": "25da6f2b-7604-a99a-beef-8c3de4f59f67",
-    "X-PowerBI-ResourceKey": "e868280f-1322-4be2-a19a-e9fc2112609f",
+    "X-PowerBI-ResourceKey": _model_ver["X-PowerBI-ResourceKey"],
     "Content-Type": "application/json;charset=UTF-8",
     "Origin": "https://app.powerbi.com",
     "Connection": "keep-alive",
@@ -20,7 +55,7 @@ _headers = {
 def _get_default_req():
     return {
         "cancelQueries": [],
-        "modelId": 159824,
+        "modelId": _model_ver["modelId"],
         "version": "1.0.0",
         "queries": [],
     }
@@ -28,10 +63,7 @@ def _get_default_req():
 
 def _get_default_query():
     return {
-        "ApplicationContext": {
-            "DatasetId": "7b40529e-a50e-4dd3-8fe8-997894b4cdaa",
-            "Sources": [{"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"}],
-        },
+        "ApplicationContext": _model_ver["ApplicationContext"],
         "CacheKey": "",
         "Query": {"Commands": []},
         "QueryId": "",
