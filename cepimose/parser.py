@@ -167,6 +167,9 @@ def _parse_vaccines_supplied_by_manufacturer(
             value = C[1]
             obj = create_obj(date)
             obj[manufacturer] = value
+            print(parsed_data[-1], manufacturer, value, sep="\t")
+            setattr(parsed_data[-1], manufacturer, value)
+            print(parsed_data[-1], manufacturer, value, sep="\t")
 
         if R == 2:
             # same manufacturer as previous
@@ -181,14 +184,15 @@ def _parse_vaccines_supplied_by_manufacturer(
             obj = create_obj(date)
             obj[manufacturer] = value
 
-        parsed_data.append(
-            VaccinationByManufacturerRow(
-                date=obj["date"],
-                pfizer=obj["pfizer"],
-                moderna=obj["moderna"],
-                az=obj["az"],
+        if R != 1:
+            parsed_data.append(
+                VaccinationByManufacturerRow(
+                    date=obj["date"],
+                    pfizer=obj["pfizer"],
+                    moderna=obj["moderna"],
+                    az=obj["az"],
+                )
             )
-        )
     return parsed_data
 
 
