@@ -10,6 +10,12 @@ class CepimoseTestCase(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
 
+    def assertDatesIncreaseSince(self, data, startDate):
+        previousDate = startDate - datetime.timedelta(days=1)
+        for row in data:
+            self.assertGreater(row.date, previousDate, row)
+            previousDate = row.date
+
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
@@ -24,11 +30,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
         assertRow(data[22], datetime.datetime(2021, 1, 18), 48711, 315)
 
-        # check dates
-        previousDate = datetime.datetime(2020, 12, 26)
-        for row in data:
-            self.assertGreater(row.date, previousDate)
-            previousDate = row.date
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
     def test_vaccinations_by_age(self):
         # Test feature one.
@@ -103,11 +105,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
         assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
 
-        # check dates
-        previousDate = datetime.datetime(2020, 12, 25)
-        for row in data:
-            self.assertGreater(row.date, previousDate)
-            previousDate = row.date
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
@@ -125,6 +123,8 @@ class CepimoseTestCase(unittest.TestCase):
             data[16], datetime.datetime(2021, 2, 25), [None, None, 16800]
         )  # R = None
         assertRow(data[17], datetime.datetime(2021, 2, 25), [None, 8400, None])  # R = 1
+
+        # self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
     def test_supplied_by_manufacturer_cumulative(self):
         data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
@@ -144,6 +144,8 @@ class CepimoseTestCase(unittest.TestCase):
         #     data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
         # )  # this test will fail in the future
 
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
     def test_vaccinations_by_age_range_90(self):
         data = cepimose.vaccinations_by_age_range_90()
         data_dose1 = data.dose1
@@ -162,6 +164,9 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
         assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
         assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)
+
+        self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 26))
+        self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 26))
 
     def test_vaccinations_by_age_rage(self):
         data = cepimose.vaccinations_by_age_range()
@@ -203,3 +208,6 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
         assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
         assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)
+
+        self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 26))
+        self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 26))
