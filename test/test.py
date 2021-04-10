@@ -13,7 +13,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
-        self.assertTrue(len(data) > 30)
+        self.assertGreater(len(data), 100)
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
@@ -23,6 +23,12 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
         assertRow(data[22], datetime.datetime(2021, 1, 18), 48711, 315)
+
+        # check dates
+        previousDate = datetime.datetime(2020, 12, 26)
+        for row in data:
+            self.assertGreater(row.date, previousDate)
+            previousDate = row.date
 
     def test_vaccinations_by_age(self):
         # Test feature one.
@@ -86,7 +92,7 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_vaccine_supply_and_usage(self):
         data = cepimose.vaccines_supplied_and_used()
-        self.assertTrue(len(data) > 30)
+        self.assertGreater(len(data), 100)
 
         def assertRow(row, expected_date, expected_supp, expected_used):
             self.assertEqual(row.date, expected_date)
@@ -96,6 +102,13 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
         assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
+        
+        # check dates
+        previousDate = datetime.datetime(2020, 12, 25)
+        for row in data:
+            self.assertGreater(row.date, previousDate)
+            previousDate = row.date
+
 
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
