@@ -43,3 +43,15 @@ class VaccinationByManufacturerRow:
     pfizer: Optional[int]
     moderna: Optional[int]
     az: Optional[int]
+
+
+@dataclass
+class VaccinationDose:
+    date: datetime.datetime
+    dose: int
+
+
+@dataclass
+class VaccinationByAgeRange:
+    dose1: "list[VaccinationDose]"
+    dose2: "list[VaccinationDose]"
