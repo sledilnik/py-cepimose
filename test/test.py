@@ -120,11 +120,10 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[1], datetime.datetime(2020, 12, 30), [8190, None, None])  # R = 2
         assertRow(data[3], datetime.datetime(2021, 1, 11), [19890, None, None])  # R = 6
         assertRow(
-            data[16], datetime.datetime(2021, 2, 25), [None, None, 16800]
-        )  # R = None
-        assertRow(data[17], datetime.datetime(2021, 2, 25), [None, 8400, None])  # R = 1
+            data[16], datetime.datetime(2021, 2, 25), [None, 8400, 16800]
+        )  # combined: two response data items with same date; second has R = 1
 
-        # self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
     def test_supplied_by_manufacturer_cumulative(self):
         data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
