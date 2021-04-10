@@ -167,9 +167,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             value = C[1]
             obj = create_obj(date)
             obj[manufacturer] = value
-            print(parsed_data[-1], manufacturer, value, sep="\t")
             setattr(parsed_data[-1], manufacturer, value)
-            print(parsed_data[-1], manufacturer, value, sep="\t")
 
         if R == 2:
             # same manufacturer as previous
