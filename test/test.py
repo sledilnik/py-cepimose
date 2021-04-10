@@ -102,13 +102,12 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
         assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
-        
+
         # check dates
         previousDate = datetime.datetime(2020, 12, 25)
         for row in data:
             self.assertGreater(row.date, previousDate)
             previousDate = row.date
-
 
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
