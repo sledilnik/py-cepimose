@@ -156,20 +156,20 @@ def _parse_vaccines_supplied_by_manufacturer(
             # all data
             date = parse_date(C[0])
             manufacturer = get_manufacturer((C[1]))
-            value = C[2]
+            value = int(C[2])
             setattr(manu_row, "date", date)
             setattr(manu_row, manufacturer, value)
 
         if R == 1:
             # same date as previous
             manufacturer = get_manufacturer((C[0]))
-            value = C[1]
+            value = int(C[1])
             setattr(parsed_data[-1], manufacturer, value)
 
         if R == 2:
             # same manufacturer as previous
             date = parse_date(C[0])
-            value = C[1]
+            value = int(C[1])
             setattr(manu_row, "date", date)
             setattr(manu_row, manufacturer, value)
 
