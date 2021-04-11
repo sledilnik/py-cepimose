@@ -404,6 +404,13 @@ def _create_by_region_by_day_requests():
         obj[key] = [doses_req]
 
     return obj
+
+
+_vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
+_vaccinations_pomurska_by_day_req = _create_req([_vaccinations_pomurska_by_day_command])
+
+_vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
+
 # COMMANDS
 _vaccinations_by_day_command = {
     "SemanticQueryDataShapeCommand": {
