@@ -226,3 +226,36 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
+    def test_vaccinations_by_region_by_day(self):
+        data = cepimose.vaccinations_by_region_by_day()
+        expected_keys = [
+            "Goriška",
+            "Zasavska",
+            "Koroška",
+            "Gorenjska",
+            "Osrednjeslovenska",
+            "Posavska",
+            "Podravska",
+            "Pomurska",
+            "Savinjska",
+            "Jugovzhodna Slovenija",
+            "Primorsko-notranjska",
+            "Obalno-kraška",
+        ]
+
+        self.assertEquals(expected_keys, list(data.keys()), "Object keys")
+
+        for element in data.items():
+            print(element[0])
+            self.assertTrue(len(element[1]) != 0)
+            self.assertDatesIncreaseSince(element[1], datetime.datetime(2020, 12, 27))
+
+        pomurska_region = data["Pomurska"]
+
+        def assertRow(row, expected_date, expected_first, expected_second):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
+
+        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
+        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
