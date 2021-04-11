@@ -127,9 +127,6 @@ def _parse_vaccines_supplied_by_manufacturer(
         print(manufacturers)
         raise Exception("New manufacturer!")
 
-    def create_obj(date):
-        return {"date": date, "moderna": None, "pfizer": None, "az": None}
-
     def get_manufacturer(num):
         manu_keys = ["pfizer", "moderna", "az"]
         if num > 2 or num == None:
@@ -151,46 +148,39 @@ def _parse_vaccines_supplied_by_manufacturer(
             print(R, C, sep="\t")
             raise Exception("Unknown R value!")
 
-        obj = create_obj(None)
+        manu_row = VaccinationByManufacturerRow(
+            date=None, pfizer=None, moderna=None, az=None
+        )
 
         if R == None:
             # all data
             date = parse_date(C[0])
             manufacturer = get_manufacturer((C[1]))
-            value = C[2]
-            obj = create_obj(date)
-            obj[manufacturer] = value
+            value = int(C[2])
+            setattr(manu_row, "date", date)
+            setattr(manu_row, manufacturer, value)
 
         if R == 1:
             # same date as previous
             manufacturer = get_manufacturer((C[0]))
-            value = C[1]
-            obj = create_obj(date)
-            obj[manufacturer] = value
+            value = int(C[1])
             setattr(parsed_data[-1], manufacturer, value)
 
         if R == 2:
             # same manufacturer as previous
             date = parse_date(C[0])
-            value = C[1]
-            obj = create_obj(date)
-            obj[manufacturer] = value
+            value = int(C[1])
+            setattr(manu_row, "date", date)
+            setattr(manu_row, manufacturer, value)
 
         if R == 6:
             # same manufacturer and value as previous
             date = parse_date(C[0])
-            obj = create_obj(date)
-            obj[manufacturer] = value
+            setattr(manu_row, "date", date)
+            setattr(manu_row, manufacturer, value)
 
         if R != 1:
-            parsed_data.append(
-                VaccinationByManufacturerRow(
-                    date=obj["date"],
-                    pfizer=obj["pfizer"],
-                    moderna=obj["moderna"],
-                    az=obj["az"],
-                )
-            )
+            parsed_data.append(manu_row)
     return parsed_data
 
 
