@@ -351,6 +351,19 @@ def _get_default_by_region_by_day_command():
         }
     }
 
+
+def _get_default_by_region_by_day_condition_values(region):
+    return [{"Literal": {"Value": region}}]
+
+
+def _create_by_region_by_day_command(region):
+    values = _get_default_by_region_by_day_condition_values(region)
+    command = _get_default_by_region_by_day_command()
+    command["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["In"][
+        "Values"
+    ].append(values)
+    return command
+
 # COMMANDS
 _vaccinations_by_day_command = {
     "SemanticQueryDataShapeCommand": {
