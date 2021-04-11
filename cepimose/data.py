@@ -262,6 +262,23 @@ def _create_by_age_range_requests():
     return obj
 
 
+# BY REGION BY DAY
+regions = [
+    "'Goriška'",
+    "'Zasavska'",
+    "'Koroška'",
+    "'Gorenjska'",
+    "'Osrednjeslovenska'",
+    "'Posavska'",
+    "'Podravska'",
+    "'Pomurska'",
+    "'Savinjska'",
+    "'Jugovzhodna Slovenija'",
+    "'Primorsko-notranjska'",
+    "'Obalno-kraška'",
+]
+
+
 def _get_default_by_region_by_day_command():
     return {
         "SemanticQueryDataShapeCommand": {
@@ -364,6 +381,29 @@ def _create_by_region_by_day_command(region):
     ].append(values)
     return command
 
+
+def _create_by_region_by_day_commands():
+    obj = {}
+    for el in regions:
+        doses_command = _create_by_region_by_day_command(el)
+        key = el.replace("'", "")
+        obj[key] = [doses_command]
+
+    return obj
+
+
+def _create_by_region_by_day_requests():
+    commands = _create_by_region_by_day_commands()
+    key_value = commands.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        _commands = el[1]
+        range_requests = []
+        doses_req = _create_req([_commands[0]])
+        obj[key] = [doses_req]
+
+    return obj
 # COMMANDS
 _vaccinations_by_day_command = {
     "SemanticQueryDataShapeCommand": {
