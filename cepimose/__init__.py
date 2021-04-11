@@ -98,3 +98,11 @@ def vaccinations_by_age_range():
         obj[key] = VaccinationByAgeRange(dose1=dose1, dose2=dose2)
 
     return obj
+
+
+# by individual region
+def vaccinations_pomurska_by_day() -> "list[VaccinationByDayRow]":
+    return _get_data(
+        _vaccinations_pomurska_by_day_req, _parse_vaccinations_by_region_by_day
+    )
+
