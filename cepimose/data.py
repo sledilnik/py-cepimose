@@ -262,6 +262,95 @@ def _create_by_age_range_requests():
     return obj
 
 
+def _get_default_by_region_by_day_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
+                    {"Name": "s", "Entity": "Sifrant_regija", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c1"}},
+                            "Property": "Date",
+                        },
+                        "Name": "Calendar.Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Weight running total in Date",
+                        },
+                        "Name": "eRCO_podatki.Weight running total in Date",
+                    },
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Odmerek",
+                        },
+                        "Name": "eRCO_podatki.Odmerek",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "s"}
+                                            },
+                                            "Property": "Regija",
+                                        }
+                                    }
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 1,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c1"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T01:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 1]}]},
+                "Secondary": {"Groupings": [{"Projections": [2]}]},
+                "DataReduction": {
+                    "DataVolume": 4,
+                    "Intersection": {"BinnedLineSample": {}},
+                },
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
 # COMMANDS
 _vaccinations_by_day_command = {
     "SemanticQueryDataShapeCommand": {
