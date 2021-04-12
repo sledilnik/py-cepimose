@@ -55,3 +55,13 @@ class VaccinationDose:
 class VaccinationByAgeRange:
     dose1: "list[VaccinationDose]"
     dose2: "list[VaccinationDose]"
+
+
+@dataclass
+class VaccinationMunShare:
+    name: str
+    dose1: int
+    share1: float
+    dose2: int
+    share2: float
+    population: int
