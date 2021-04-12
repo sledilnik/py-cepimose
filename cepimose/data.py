@@ -1052,6 +1052,154 @@ _vaccinations_by_age_90_dose2_command = _create_by_age_range_command("'90+'", "2
 
 _vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
 
+_vaccinations_by_municipalities_share_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {
+                    "Name": "e",
+                    "Entity": "eRCO_podatki_obcine",
+                    "Type": 0,
+                },
+                {"Name": "s", "Entity": "SURS_obcine", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_2_Odmerek",
+                    },
+                    "Name": "eRCO_podatki_obcine.Odst_DrugiOdmerek",
+                },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Obcina",
+                    },
+                    "Name": "SURS_obcine.Obcina",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_1_Odmerek",
+                    },
+                    "Name": "eRCO_podatki_obcine.Odst_PrviOdmerek",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "s"}},
+                                "Property": "PopulacijaObcina",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "CountNonNull(SURS_obcine.PopulacijaObcina)",
+                },
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "s"}
+                                                },
+                                                "Property": "Obcina",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [[{"Literal": {"Value": "null"}}]],
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-12-26T01:00:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "e"}},
+                                    "Property": "CepljenjeDatum",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-12-26T01:00:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+            "OrderBy": [
+                {
+                    "Direction": 2,
+                    "Expression": {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Odst_2_Odmerek",
+                        }
+                    },
+                }
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
+            "DataReduction": {
+                "DataVolume": 4,
+                "Primary": {"Top": {}},
+            },
+            "Aggregates": [
+                {
+                    "Select": 0,
+                    "Aggregations": [{"Min": {}}, {"Max": {}}],
+                }
+            ],
+            "SuppressedJoinPredicates": [2, 3],
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
 # REQ
 _vaccinations_by_day_req = _create_req([_vaccinations_by_day_command])
 
@@ -1081,3 +1229,7 @@ _vaccination_by_age_range_requests = _create_by_age_range_requests()
 _vaccinations_pomurska_by_day_req = _create_req([_vaccinations_pomurska_by_day_command])
 
 _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
+
+_vaccinations_municipalities_share_req = _create_req(
+    [_vaccinations_by_municipalities_share_command], True
+)
