@@ -13,6 +13,7 @@ from .data import (
     _vaccination_by_age_range_requests,
     _vaccinations_pomurska_by_day_req,
     _vaccinations_by_region_by_day_requests,
+    _vaccinations_municipalities_share_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -23,6 +24,7 @@ from .parser import (
     _parse_vaccines_supplied_by_manufacturer_cum,
     _parse_vaccinations_by_age_range,
     _parse_vaccinations_by_region_by_day,
+    _parse_vaccinations_by_municipalities_share,
 )
 
 from .types import (
@@ -121,3 +123,12 @@ def vaccinations_by_region_by_day():
         obj[key] = doses
 
     return obj
+
+
+# PAGE 2
+# municipalities
+def vaccinations_by_municipalities_share():
+    return _get_data(
+        _vaccinations_municipalities_share_req,
+        _parse_vaccinations_by_municipalities_share,
+    )
