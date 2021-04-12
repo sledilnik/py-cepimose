@@ -259,3 +259,10 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
         assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
+
+    def test_vaccinations_by_municipalities_share(self):
+        data = cepimose.vaccinations_by_municipalities_share()
+
+        mun_number = 212
+
+        self.assertTrue(len(data), mun_number)
