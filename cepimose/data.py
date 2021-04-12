@@ -70,6 +70,18 @@ def _get_default_query():
     }
 
 
+def _create_req(commands, cache_key=False):
+    query = _get_default_query()
+    for command in commands:
+        query["Query"]["Commands"].append(command)
+    if cache_key:
+        query["CacheKey"] = json.dumps(query["Query"]["Commands"])
+    req = _get_default_req()
+    req["queries"].append(query)
+    return req
+
+
+# AGE RANGE (AGE GROUP)
 def _get_default_by_age_range_command():
     return {
         "SemanticQueryDataShapeCommand": {
@@ -205,17 +217,6 @@ def _create_by_age_range_command(range="'90+'", dose="1L"):
     return command
 
 
-def _create_req(commands, cache_key=False):
-    query = _get_default_query()
-    for command in commands:
-        query["Query"]["Commands"].append(command)
-    if cache_key:
-        query["CacheKey"] = json.dumps(query["Query"]["Commands"])
-    req = _get_default_req()
-    req["queries"].append(query)
-    return req
-
-
 age_ranges = [
     "'0-17'",
     "'18-24'",
@@ -263,22 +264,6 @@ def _create_by_age_range_requests():
 
 
 # BY REGION BY DAY
-regions = [
-    "'Goriška'",
-    "'Zasavska'",
-    "'Koroška'",
-    "'Gorenjska'",
-    "'Osrednjeslovenska'",
-    "'Posavska'",
-    "'Podravska'",
-    "'Pomurska'",
-    "'Savinjska'",
-    "'Jugovzhodna Slovenija'",
-    "'Primorsko-notranjska'",
-    "'Obalno-kraška'",
-]
-
-
 def _get_default_by_region_by_day_command():
     return {
         "SemanticQueryDataShapeCommand": {
@@ -382,6 +367,22 @@ def _create_by_region_by_day_command(region):
     return command
 
 
+regions = [
+    "'Goriška'",
+    "'Zasavska'",
+    "'Koroška'",
+    "'Gorenjska'",
+    "'Osrednjeslovenska'",
+    "'Posavska'",
+    "'Podravska'",
+    "'Pomurska'",
+    "'Savinjska'",
+    "'Jugovzhodna Slovenija'",
+    "'Primorsko-notranjska'",
+    "'Obalno-kraška'",
+]
+
+
 def _create_by_region_by_day_commands():
     obj = {}
     for el in regions:
@@ -405,11 +406,6 @@ def _create_by_region_by_day_requests():
 
     return obj
 
-
-_vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
-_vaccinations_pomurska_by_day_req = _create_req([_vaccinations_pomurska_by_day_command])
-
-_vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 
 # COMMANDS
 _vaccinations_by_day_command = {
@@ -1054,7 +1050,9 @@ _vaccination_supplied_by_manufacturer_cum_command = {
 _vaccinations_by_age_90_dose1_command = _create_by_age_range_command("'90+'", "1L")
 _vaccinations_by_age_90_dose2_command = _create_by_age_range_command("'90+'", "2L")
 
-# not sure what data from this query represents
+_vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
+
+# maybee we can get history for each region with modifying this command
 _vaccinations_by_region_by_age_90_dose1_command = [
     {
         "SemanticQueryDataShapeCommand": {
@@ -1296,3 +1294,7 @@ _vaccinations_by_age_range_90_dose2_req = _create_req(
 )
 
 _vaccination_by_age_range_requests = _create_by_age_range_requests()
+
+_vaccinations_pomurska_by_day_req = _create_req([_vaccinations_pomurska_by_day_command])
+
+_vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
