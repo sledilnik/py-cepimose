@@ -8,6 +8,7 @@ from .types import (
     VaccinationByManufacturerRow,
     VaccinationDose,
     VaccinationByAgeRange,
+    VaccinationMunShare,
 )
 
 
@@ -320,6 +321,28 @@ def _parse_vaccinations_by_region_by_day(data):
                 date=date,
                 first_dose=people_vaccinated,
                 second_dose=people_fully_vaccinated,
+            )
+        )
+
+    return parsed_data
+
+
+def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunShare]":
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    parsed_data = []
+
+    for el in resp:
+        name, share2, share1, population = el["C"]
+        dose1 = round(int(population) * float(share1))
+        dose2 = round(int(population) * float(share2))
+        parsed_data.append(
+            VaccinationMunShare(
+                name=name,
+                dose1=dose1,
+                share1=float(share1),
+                dose2=dose2,
+                share2=float(share2),
+                population=population,
             )
         )
 
