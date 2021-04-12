@@ -304,15 +304,15 @@ def _parse_vaccinations_by_region_by_day(data):
         R = element["X"][0]["R"] if "R" in element["X"][0] else None
 
         if R == None:
-            people_vaccinated = element["X"][0]["M0"]
+            people_vaccinated = int(element["X"][0]["M0"])
             people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+                int(element["X"][1]["M0"]) if len(element["X"]) > 1 else 0
             )
 
         if R == 1:
             # as far as we know people_vaccinated same as previous
             people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+                int(element["X"][1]["M0"]) if len(element["X"]) > 1 else 0
             )
 
         parsed_data.append(
