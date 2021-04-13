@@ -8,11 +8,23 @@ from .types import (
     VaccinationByManufacturerRow,
     VaccinationDose,
     VaccinationByAgeRange,
+    VaccinationMunShare,
 )
 
 
 def parse_date(raw):
     return datetime.datetime.utcfromtimestamp(float(raw) / 1000.0)
+
+
+def _parse_vaccinations_timestamp(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        # ? raise exception or return error obj
+        return error
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    return resp[0]["M0"]
 
 
 def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
@@ -248,5 +260,101 @@ def _parse_vaccinations_by_age_range(data) -> "list[VaccinationDose]":
             dose = element["X"][0]["M0"]
 
         parsed_data.append(VaccinationDose(date=date, dose=dose))
+
+    return parsed_data
+
+
+# resp error example
+_resp_error = {
+    "DataShapes": [
+        {
+            "odata.error": {
+                "code": "InvalidOrMalformedSemanticQueryDefinition",
+                "source": "PowerBI",
+                "message": {
+                    "lang": "en-US",
+                    "value": "Encountered invalid QueryYearConstantExpression. Failed to parse type encoded string",
+                },
+                "azure:values": [
+                    {"timestamp": "2021-04-11T12:13:03.0228291Z"},
+                    {
+                        "additionalMessages": [
+                            {
+                                "Code": "InvalidOrMalformedSemanticQueryDefinition",
+                                "Severity": "Error",
+                                "Message": "Encountered invalid QueryYearConstantExpression. Failed to parse type encoded string",
+                            }
+                        ]
+                    },
+                ],
+            }
+        }
+    ]
+}
+
+# ? most likely we can refactor _parse_vaccinations_by_day
+def _parse_vaccinations_by_region_by_day(data):
+
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        # it happens when region name passed to _get_default_by_region_by_day_condition_values func is misspelled or not wrapped in single quotes
+        # ? raise exception or return error obj
+        return error
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    parsed_data = []
+
+    r_list = [None, 1]
+
+    people_vaccinated = None
+    people_fully_vaccinated = None
+    for element in resp:
+        date = parse_date(element["G0"])
+
+        R = element["X"][0]["R"] if "R" in element["X"][0] else None
+
+        if R == None:
+            people_vaccinated = element["X"][0]["M0"]
+            people_fully_vaccinated = (
+                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+            )
+
+        if R == 1:
+            # as far as we know people_vaccinated same as previous
+            people_fully_vaccinated = (
+                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+            )
+
+        parsed_data.append(
+            VaccinationByDayRow(
+                date=date,
+                first_dose=people_vaccinated,
+                second_dose=people_fully_vaccinated,
+            )
+        )
+
+    return parsed_data
+
+
+def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunShare]":
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    parsed_data = []
+
+    for el in resp:
+        name, share2, share1, population = el["C"]
+        dose1 = round(int(population) * float(share1))
+        dose2 = round(int(population) * float(share2))
+        parsed_data.append(
+            VaccinationMunShare(
+                name=name,
+                dose1=dose1,
+                share1=float(share1),
+                dose2=dose2,
+                share2=float(share2),
+                population=population,
+            )
+        )
 
     return parsed_data
