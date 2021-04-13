@@ -408,6 +408,63 @@ def _create_by_region_by_day_requests():
 
 
 # COMMANDS
+_vaccinations_timestamp_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "e", "Entity": "eRCO_podatki", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "DatumOsvezevanja",
+                            }
+                        },
+                        "Function": 3,
+                    },
+                    "Name": "Min(eRCO_podatki.DatumOsvezevanja)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-12-26T01:00:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                }
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
 _vaccinations_by_day_command = {
     "SemanticQueryDataShapeCommand": {
         "Binding": {
@@ -1201,6 +1258,8 @@ _vaccinations_by_municipalities_share_command = {
 }
 
 # REQ
+_vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
+
 _vaccinations_by_day_req = _create_req([_vaccinations_by_day_command])
 
 _vaccinations_by_age_req = _create_req([_vaccinations_by_age_command])

@@ -16,6 +16,17 @@ def parse_date(raw):
     return datetime.datetime.utcfromtimestamp(float(raw) / 1000.0)
 
 
+def _parse_vaccinations_timestamp(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        # ? raise exception or return error obj
+        return error
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    return resp[0]["M0"]
+
+
 def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []

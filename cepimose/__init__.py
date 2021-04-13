@@ -14,6 +14,7 @@ from .data import (
     _vaccinations_pomurska_by_day_req,
     _vaccinations_by_region_by_day_requests,
     _vaccinations_municipalities_share_req,
+    _vaccinations_timestamp_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -25,6 +26,7 @@ from .parser import (
     _parse_vaccinations_by_age_range,
     _parse_vaccinations_by_region_by_day,
     _parse_vaccinations_by_municipalities_share,
+    _parse_vaccinations_timestamp,
 )
 
 from .types import (
@@ -42,6 +44,10 @@ def _get_data(req, parse_response):
     resp = requests.post(_source, headers=_headers, json=req)
     resp.raise_for_status()
     return parse_response(resp.json())
+
+
+def vaccinations_timestamp():
+    return _get_data(_vaccinations_timestamp_req, _parse_vaccinations_timestamp)
 
 
 def vaccinations_by_day() -> "list[VaccinationByDayRow]":
