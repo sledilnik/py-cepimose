@@ -89,8 +89,8 @@ def _get_default_by_age_range_command():
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
-                    {"Name": "s", "Entity": "SURS_starost", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "s", "Entity": "xls_SURS_starost", "Type": 0},
                 ],
                 "Select": [
                     {
@@ -271,7 +271,7 @@ def _get_default_by_region_by_day_command():
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
                     {"Name": "s", "Entity": "Sifrant_regija", "Type": 0},
                 ],
                 "Select": [
@@ -413,7 +413,7 @@ _vaccinations_timestamp_command = {
         "Query": {
             "Version": 2,
             "From": [
-                {"Name": "e", "Entity": "eRCO_podatki", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
@@ -479,7 +479,7 @@ _vaccinations_by_day_command = {
         "Query": {
             "From": [
                 {"Entity": "Calendar", "Name": "c1", "Type": 0},
-                {"Entity": "eRCO_podatki", "Name": "c", "Type": 0},
+                {"Entity": "eRCO_podatki_ed", "Name": "c", "Type": 0},
             ],
             "Select": [
                 {
@@ -549,8 +549,8 @@ _vaccinations_by_age_command = {
         },
         "Query": {
             "From": [
-                {"Entity": "eRCO_podatki", "Name": "e", "Type": 0},
-                {"Entity": "SURS_starost", "Name": "s", "Type": 0},
+                {"Entity": "eRCO_podatki_ed", "Name": "e", "Type": 0},
+                {"Entity": "xls_SURS_starost", "Name": "s", "Type": 0},
                 {"Entity": "Calendar", "Name": "c", "Type": 0},
             ],
             "OrderBy": [
@@ -570,7 +570,7 @@ _vaccinations_by_age_command = {
                         "Expression": {"SourceRef": {"Source": "s"}},
                         "Property": "Starostni razred",
                     },
-                    "Name": "SURS_starost.Starostni razred",
+                    "Name": "xls_SURS_starost.Starostni razred",
                 },
                 {
                     "Measure": {
@@ -663,8 +663,8 @@ _vaccinations_supplied_and_used_command = {
         "Query": {
             "From": [
                 {"Entity": "Calendar", "Name": "c1", "Type": 0},
-                {"Entity": "eRCO_podatki", "Name": "c", "Type": 0},
-                {"Entity": "NIJZ_Odmerki", "Name": "n", "Type": 0},
+                {"Entity": "eRCO_podatki_ed", "Name": "c", "Type": 0},
+                {"Entity": "xls_NIJZ_Odmerki", "Name": "n", "Type": 0},
             ],
             "Select": [
                 {
@@ -734,7 +734,7 @@ _vaccination_by_region_command = {
         },
         "Query": {
             "From": [
-                {"Entity": "eRCO_podatki", "Name": "e", "Type": 0},
+                {"Entity": "eRCO_podatki_ed", "Name": "e", "Type": 0},
                 {
                     "Entity": "Sifrant_regija",
                     "Name": "s1",
@@ -866,30 +866,11 @@ _vaccination_by_region_command = {
 
 _vaccination_supplied_by_manufacturer_command = {
     "SemanticQueryDataShapeCommand": {
-        "Binding": {
-            "DataReduction": {
-                "DataVolume": 3,
-                "Primary": {"Window": {"Count": 500}},
-            },
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2], "Subtotal": 1}]},
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
         "Query": {
+            "Version": 2,
             "From": [
-                {"Entity": "Calendar", "Name": "c", "Type": 0},
-                {"Entity": "NIJZ_Odmerki", "Name": "n", "Type": 0},
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 1,
-                    "Expression": {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Date",
-                        }
-                    },
-                }
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+                {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
             ],
             "Select": [
                 {
@@ -919,7 +900,6 @@ _vaccination_supplied_by_manufacturer_command = {
                     "Name": "Sum(NIJZ_Odmerki.odmerki*)",
                 },
             ],
-            "Version": 2,
             "Where": [
                 {
                     "Condition": {
@@ -1001,31 +981,35 @@ _vaccination_supplied_by_manufacturer_command = {
                     ],
                 },
             ],
+            "OrderBy": [
+                {
+                    "Direction": 1,
+                    "Expression": {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Date",
+                        }
+                    },
+                }
+            ],
         },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2], "Subtotal": 1}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Window": {"Count": 500}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
     }
 }
 
 _vaccination_supplied_by_manufacturer_cum_command = {
     "SemanticQueryDataShapeCommand": {
-        "Binding": {
-            "DataReduction": {
-                "DataVolume": 4,
-                "Intersection": {"BinnedLineSample": {}},
-            },
-            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
-            "Secondary": {"Groupings": [{"Projections": [1]}]},
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
         "Query": {
+            "Version": 2,
             "From": [
-                {"Entity": "Calendar", "Name": "c1", "Type": 0},
-                {
-                    "Entity": "Vezno_Vrsta_cepiva",
-                    "Name": "v",
-                    "Type": 0,
-                },
-                {"Entity": "NIJZ_Odmerki", "Name": "n", "Type": 0},
+                {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                {"Name": "v", "Entity": "Vezno_Vrsta_cepiva", "Type": 0},
+                {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
             ],
             "Select": [
                 {
@@ -1050,7 +1034,6 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                 },
             ],
-            "Version": 2,
             "Where": [
                 {
                     "Condition": {
@@ -1101,6 +1084,16 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                 },
             ],
         },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
+            "Secondary": {"Groupings": [{"Projections": [1]}]},
+            "DataReduction": {
+                "DataVolume": 4,
+                "Intersection": {"BinnedLineSample": {}},
+            },
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
     }
 }
 
@@ -1114,12 +1107,8 @@ _vaccinations_by_municipalities_share_command = {
         "Query": {
             "Version": 2,
             "From": [
-                {
-                    "Name": "e",
-                    "Entity": "eRCO_podatki_obcine",
-                    "Type": 0,
-                },
-                {"Name": "s", "Entity": "SURS_obcine", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_podatki_obcine_pop", "Type": 0},
+                {"Name": "s", "Entity": "xls_SURS_obcine", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
@@ -1202,29 +1191,6 @@ _vaccinations_by_municipalities_share_command = {
                         }
                     }
                 },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "e"}},
-                                    "Property": "CepljenjeDatum",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
             ],
             "OrderBy": [
                 {
@@ -1240,16 +1206,8 @@ _vaccinations_by_municipalities_share_command = {
         },
         "Binding": {
             "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
-            "DataReduction": {
-                "DataVolume": 4,
-                "Primary": {"Top": {}},
-            },
-            "Aggregates": [
-                {
-                    "Select": 0,
-                    "Aggregations": [{"Min": {}}, {"Max": {}}],
-                }
-            ],
+            "DataReduction": {"DataVolume": 4, "Primary": {"Top": {}}},
+            "Aggregates": [{"Select": 0, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
             "SuppressedJoinPredicates": [2, 3],
             "Version": 1,
         },
