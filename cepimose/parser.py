@@ -264,34 +264,6 @@ def _parse_vaccinations_by_age_range(data) -> "list[VaccinationDose]":
     return parsed_data
 
 
-# resp error example
-_resp_error = {
-    "DataShapes": [
-        {
-            "odata.error": {
-                "code": "InvalidOrMalformedSemanticQueryDefinition",
-                "source": "PowerBI",
-                "message": {
-                    "lang": "en-US",
-                    "value": "Encountered invalid QueryYearConstantExpression. Failed to parse type encoded string",
-                },
-                "azure:values": [
-                    {"timestamp": "2021-04-11T12:13:03.0228291Z"},
-                    {
-                        "additionalMessages": [
-                            {
-                                "Code": "InvalidOrMalformedSemanticQueryDefinition",
-                                "Severity": "Error",
-                                "Message": "Encountered invalid QueryYearConstantExpression. Failed to parse type encoded string",
-                            }
-                        ]
-                    },
-                ],
-            }
-        }
-    ]
-}
-
 # ? most likely we can refactor _parse_vaccinations_by_day
 def _parse_vaccinations_by_region_by_day(data):
 
@@ -299,7 +271,6 @@ def _parse_vaccinations_by_region_by_day(data):
         error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
             "odata.error"
         ]
-        # it happens when region name passed to _get_default_by_region_by_day_condition_values func is misspelled or not wrapped in single quotes
         # ? raise exception or return error obj
         return error
 

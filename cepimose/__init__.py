@@ -11,7 +11,6 @@ from .data import (
     _vaccinations_by_age_range_90_dose1_req,
     _vaccinations_by_age_range_90_dose2_req,
     _vaccination_by_age_range_requests,
-    _vaccinations_pomurska_by_day_req,
     _vaccinations_by_region_by_day_requests,
     _vaccinations_municipalities_share_req,
     _vaccinations_timestamp_req,
@@ -38,6 +37,8 @@ from .types import (
     VaccinationDose,
     VaccinationByAgeRange,
 )
+
+from .enums import Region
 
 
 def _get_data(req, parse_response):
@@ -111,22 +112,19 @@ def vaccinations_by_age_range():
     return obj
 
 
-# by individual region
-def vaccinations_pomurska_by_day() -> "list[VaccinationByDayRow]":
-    return _get_data(
-        _vaccinations_pomurska_by_day_req, _parse_vaccinations_by_region_by_day
-    )
-
-
-def vaccinations_by_region_by_day():
-    key_value = _vaccinations_by_region_by_day_requests.items()
+def vaccinations_by_region_by_day(region: Region = None):
     obj = {}
-    for el in key_value:
-        key = el[0]
-        doses_req = el[1][0]
+    if region == None:
+        key_value = _vaccinations_by_region_by_day_requests.items()
+        for key, req_list in key_value:
+            req = req_list[0]
+            doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+            obj[key] = doses
+        return obj
 
-        doses = _get_data(doses_req, _parse_vaccinations_by_region_by_day)
-        obj[key] = doses
+    req = _vaccinations_by_region_by_day_requests[region][0]
+    doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+    obj[region] = doses
 
     return obj
 

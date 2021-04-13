@@ -1,4 +1,5 @@
 import json
+from .enums import Region
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -367,28 +368,12 @@ def _create_by_region_by_day_command(region):
     return command
 
 
-regions = [
-    "'Goriška'",
-    "'Zasavska'",
-    "'Koroška'",
-    "'Gorenjska'",
-    "'Osrednjeslovenska'",
-    "'Posavska'",
-    "'Podravska'",
-    "'Pomurska'",
-    "'Savinjska'",
-    "'Jugovzhodna Slovenija'",
-    "'Primorsko-notranjska'",
-    "'Obalno-kraška'",
-]
-
-
 def _create_by_region_by_day_commands():
     obj = {}
-    for el in regions:
-        doses_command = _create_by_region_by_day_command(el)
-        key = el.replace("'", "")
-        obj[key] = [doses_command]
+    for el in Region:
+        doses_command = _create_by_region_by_day_command(el.value)
+        # key = el.replace("'", "")
+        obj[el] = [doses_command]
 
     return obj
 
@@ -1242,8 +1227,6 @@ _vaccinations_by_age_range_90_dose2_req = _create_req(
 )
 
 _vaccination_by_age_range_requests = _create_by_age_range_requests()
-
-_vaccinations_pomurska_by_day_req = _create_req([_vaccinations_pomurska_by_day_command])
 
 _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 

@@ -211,37 +211,9 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 26))
         self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 26))
 
-    def test_vaccinations_pomurska_by_day(self):
-        data = cepimose.vaccinations_pomurska_by_day()
-
-        self.assertGreater(len(data), 100)
-
-        def assertRow(row, expected_date, expected_first, expected_second):
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
-            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
-
-        assertRow(data[9], datetime.datetime(2021, 1, 5), 988, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 2847, 5)
-
-        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
-
     def test_vaccinations_by_region_by_day(self):
         data = cepimose.vaccinations_by_region_by_day()
-        expected_keys = [
-            "Goriška",
-            "Zasavska",
-            "Koroška",
-            "Gorenjska",
-            "Osrednjeslovenska",
-            "Posavska",
-            "Podravska",
-            "Pomurska",
-            "Savinjska",
-            "Jugovzhodna Slovenija",
-            "Primorsko-notranjska",
-            "Obalno-kraška",
-        ]
+        expected_keys = [key for key in cepimose.enums.Region]
 
         self.assertEquals(expected_keys, list(data.keys()), "Object keys")
 
@@ -250,7 +222,24 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertTrue(len(element[1]) != 0)
             self.assertDatesIncreaseSince(element[1], datetime.datetime(2020, 12, 27))
 
-        pomurska_region = data["Pomurska"]
+        pomurska_region = data[cepimose.data.Region.POMURSKA]
+
+        def assertRow(row, expected_date, expected_first, expected_second):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
+
+        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
+        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
+
+    def test_vaccinations_by_region_by_day_with_arg(self):
+        data = cepimose.vaccinations_by_region_by_day(cepimose.data.Region.POMURSKA)
+
+        expected_keys = [cepimose.data.Region.POMURSKA]
+
+        self.assertEquals(expected_keys, list(data.keys()), "Object keys")
+
+        pomurska_region = data[cepimose.data.Region.POMURSKA]
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
