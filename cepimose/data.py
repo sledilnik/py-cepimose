@@ -372,7 +372,6 @@ def _create_by_region_by_day_commands():
     obj = {}
     for el in Region:
         doses_command = _create_by_region_by_day_command(el.value)
-        # key = el.replace("'", "")
         obj[el] = [doses_command]
 
     return obj
