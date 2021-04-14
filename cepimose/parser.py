@@ -7,7 +7,7 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationDose,
-    VaccinationByAgeRange,
+    VaccinationByAgeGroup,
     VaccinationMunShare,
 )
 

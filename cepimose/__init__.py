@@ -35,7 +35,7 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationDose,
-    VaccinationByAgeRange,
+    VaccinationByAgeGroup,
 )
 
 from .enums import Region
