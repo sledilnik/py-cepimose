@@ -1,5 +1,5 @@
 import json
-from .enums import Region
+from .enums import Region, AgeGroup
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -218,33 +218,12 @@ def _create_by_age_group_command(group="'90+'", dose="1L"):
     return command
 
 
-age_groups = [
-    "'0-17'",
-    "'18-24'",
-    "'25-29'",
-    "'30-34'",
-    "'35-39'",
-    "'40-44'",
-    "'45-49'",
-    "'50-54'",
-    "'55-59'",
-    "'60-64'",
-    "'65-69'",
-    "'70-74'",
-    "'75-79'",
-    "'80-84'",
-    "'85-90'",
-    "'90+'",
-]
-
-
 def _create_by_age_group_commands():
     obj = {}
-    for el in age_groups:
-        dose1_command = _create_by_age_group_command(el, "1L")
-        dose2_command = _create_by_age_group_command(el, "2L")
-        key = el.replace("'", "")
-        obj[key] = [dose1_command, dose2_command]
+    for el in AgeGroup:
+        dose1_command = _create_by_age_group_command(el.value, "1L")
+        dose2_command = _create_by_age_group_command(el.value, "2L")
+        obj[el] = [dose1_command, dose2_command]
 
     return obj
 
@@ -1081,11 +1060,6 @@ _vaccination_supplied_by_manufacturer_cum_command = {
     }
 }
 
-_vaccinations_by_age_90_dose1_command = _create_by_age_group_command("'90+'", "1L")
-_vaccinations_by_age_90_dose2_command = _create_by_age_group_command("'90+'", "2L")
-
-_vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
-
 _vaccinations_by_municipalities_share_command = {
     "SemanticQueryDataShapeCommand": {
         "Query": {
@@ -1216,13 +1190,6 @@ _vaccines_supplied_by_manufacturer_req = _create_req(
 
 _vaccines_supplied_by_manufacturer_cum_req = _create_req(
     [_vaccination_supplied_by_manufacturer_cum_command]
-)
-
-_vaccinations_by_age_group_90_dose1_req = _create_req(
-    [_vaccinations_by_age_90_dose1_command]
-)
-_vaccinations_by_age_group_90_dose2_req = _create_req(
-    [_vaccinations_by_age_90_dose2_command]
 )
 
 _vaccination_by_age_group_requests = _create_by_age_group_requests()
