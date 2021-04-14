@@ -8,9 +8,9 @@ from .data import (
     _vaccinations_by_region_req,
     _vaccines_supplied_by_manufacturer_req,
     _vaccines_supplied_by_manufacturer_cum_req,
-    _vaccinations_by_age_range_90_dose1_req,
-    _vaccinations_by_age_range_90_dose2_req,
-    _vaccination_by_age_range_requests,
+    _vaccinations_by_age_group_90_dose1_req,
+    _vaccinations_by_age_group_90_dose2_req,
+    _vaccination_by_age_group_requests,
     _vaccinations_by_region_by_day_requests,
     _vaccinations_municipalities_share_req,
     _vaccinations_timestamp_req,
@@ -22,7 +22,7 @@ from .parser import (
     _parse_vaccinations_by_region,
     _parse_vaccines_supplied_by_manufacturer,
     _parse_vaccines_supplied_by_manufacturer_cum,
-    _parse_vaccinations_by_age_range,
+    _parse_vaccinations_by_age_group,
     _parse_vaccinations_by_region_by_day,
     _parse_vaccinations_by_municipalities_share,
     _parse_vaccinations_timestamp,
@@ -80,33 +80,33 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
     )
 
 
-# by age range
-def vaccinations_by_age_range_90() -> "VaccinationByAgeRange":
-    def vaccinations_by_age_range_90_dose1() -> "list[VaccinationDose]":
+# by age group
+def vaccinations_by_age_group_90() -> "VaccinationByAgeRange":
+    def vaccinations_by_age_group_90_dose1() -> "list[VaccinationDose]":
         return _get_data(
-            _vaccinations_by_age_range_90_dose1_req, _parse_vaccinations_by_age_range
+            _vaccinations_by_age_group_90_dose1_req, _parse_vaccinations_by_age_group
         )
 
-    def vaccinations_by_age_range_90_dose2() -> "list[VaccinationDose]":
+    def vaccinations_by_age_group_90_dose2() -> "list[VaccinationDose]":
         return _get_data(
-            _vaccinations_by_age_range_90_dose2_req, _parse_vaccinations_by_age_range
+            _vaccinations_by_age_group_90_dose2_req, _parse_vaccinations_by_age_group
         )
 
-    dose1 = vaccinations_by_age_range_90_dose1()
-    dose2 = vaccinations_by_age_range_90_dose2()
+    dose1 = vaccinations_by_age_group_90_dose1()
+    dose2 = vaccinations_by_age_group_90_dose2()
     return VaccinationByAgeRange(dose1=dose1, dose2=dose2)
 
 
-def vaccinations_by_age_range():
-    key_value = _vaccination_by_age_range_requests.items()
+def vaccinations_by_age_group():
+    key_value = _vaccination_by_age_group_requests.items()
     obj = {}
     for el in key_value:
         key = el[0]
         dose1_req = el[1][0]
         dose2_req = el[1][1]
 
-        dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_range)
-        dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_range)
+        dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_group)
+        dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_group)
         obj[key] = VaccinationByAgeRange(dose1=dose1, dose2=dose2)
 
     return obj

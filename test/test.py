@@ -145,8 +145,8 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    def test_vaccinations_by_age_range_90(self):
-        data = cepimose.vaccinations_by_age_range_90()
+    def test_vaccinations_by_age_group_90(self):
+        data = cepimose.vaccinations_by_age_group_90()
         data_dose1 = data.dose1
         data_dose2 = data.dose2
 
@@ -167,8 +167,8 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 26))
         self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 26))
 
-    def test_vaccinations_by_age_rage(self):
-        data = cepimose.vaccinations_by_age_range()
+    def test_vaccinations_by_age_group(self):
+        data = cepimose.vaccinations_by_age_group()
         expected_keys = [
             "0-17",
             "18-24",
@@ -190,9 +190,9 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertEquals(expected_keys, list(data.keys()), "Object keys")
 
-        range_90_data = data["90+"]
-        data_dose1 = range_90_data.dose1
-        data_dose2 = range_90_data.dose2
+        group_90_data = data["90+"]
+        data_dose1 = group_90_data.dose1
+        data_dose2 = group_90_data.dose2
 
         self.assertTrue(len(data_dose1) > 10)
         self.assertTrue(len(data_dose2) > 10)

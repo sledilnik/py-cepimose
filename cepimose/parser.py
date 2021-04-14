@@ -241,7 +241,7 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
     return parsed_data
 
 
-def _parse_vaccinations_by_age_range(data) -> "list[VaccinationDose]":
+def _parse_vaccinations_by_age_group(data) -> "list[VaccinationDose]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 

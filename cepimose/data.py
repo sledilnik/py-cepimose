@@ -83,7 +83,7 @@ def _create_req(commands, cache_key=False):
 
 
 # AGE RANGE (AGE GROUP)
-def _get_default_by_age_range_command():
+def _get_default_by_age_group_command():
     return {
         "SemanticQueryDataShapeCommand": {
             "Query": {
@@ -202,23 +202,23 @@ def _get_default_by_age_range_command():
     }
 
 
-def _get_by_age_range_first_condition_values(range="'90+'", dose="1L"):
+def _get_by_age_group_first_condition_values(group="'90+'", dose="1L"):
     return [
-        {"Literal": {"Value": range}},
+        {"Literal": {"Value": group}},
         {"Literal": {"Value": dose}},
     ]
 
 
-def _create_by_age_range_command(range="'90+'", dose="1L"):
-    values = _get_by_age_range_first_condition_values(range, dose)
-    command = _get_default_by_age_range_command()
+def _create_by_age_group_command(group="'90+'", dose="1L"):
+    values = _get_by_age_group_first_condition_values(group, dose)
+    command = _get_default_by_age_group_command()
     command["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["In"][
         "Values"
     ].append(values)
     return command
 
 
-age_ranges = [
+age_groups = [
     "'0-17'",
     "'18-24'",
     "'25-29'",
@@ -238,25 +238,25 @@ age_ranges = [
 ]
 
 
-def _create_by_age_range_commands():
+def _create_by_age_group_commands():
     obj = {}
-    for el in age_ranges:
-        dose1_command = _create_by_age_range_command(el, "1L")
-        dose2_command = _create_by_age_range_command(el, "2L")
+    for el in age_groups:
+        dose1_command = _create_by_age_group_command(el, "1L")
+        dose2_command = _create_by_age_group_command(el, "2L")
         key = el.replace("'", "")
         obj[key] = [dose1_command, dose2_command]
 
     return obj
 
 
-def _create_by_age_range_requests():
-    commands = _create_by_age_range_commands()
+def _create_by_age_group_requests():
+    commands = _create_by_age_group_commands()
     key_value = commands.items()
     obj = {}
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        range_requests = []
+        group_requests = []
         dose1_req = _create_req([_commands[0]])
         dose2_req = _create_req([_commands[1]])
         obj[key] = [dose1_req, dose2_req]
@@ -384,7 +384,7 @@ def _create_by_region_by_day_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        range_requests = []
+        group_requests = []
         doses_req = _create_req([_commands[0]])
         obj[key] = [doses_req]
 
@@ -1081,8 +1081,8 @@ _vaccination_supplied_by_manufacturer_cum_command = {
     }
 }
 
-_vaccinations_by_age_90_dose1_command = _create_by_age_range_command("'90+'", "1L")
-_vaccinations_by_age_90_dose2_command = _create_by_age_range_command("'90+'", "2L")
+_vaccinations_by_age_90_dose1_command = _create_by_age_group_command("'90+'", "1L")
+_vaccinations_by_age_90_dose2_command = _create_by_age_group_command("'90+'", "2L")
 
 _vaccinations_pomurska_by_day_command = _create_by_region_by_day_command("'Pomurska'")
 
@@ -1218,14 +1218,14 @@ _vaccines_supplied_by_manufacturer_cum_req = _create_req(
     [_vaccination_supplied_by_manufacturer_cum_command]
 )
 
-_vaccinations_by_age_range_90_dose1_req = _create_req(
+_vaccinations_by_age_group_90_dose1_req = _create_req(
     [_vaccinations_by_age_90_dose1_command]
 )
-_vaccinations_by_age_range_90_dose2_req = _create_req(
+_vaccinations_by_age_group_90_dose2_req = _create_req(
     [_vaccinations_by_age_90_dose2_command]
 )
 
-_vaccination_by_age_range_requests = _create_by_age_range_requests()
+_vaccination_by_age_group_requests = _create_by_age_group_requests()
 
 _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 
