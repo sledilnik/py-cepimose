@@ -43,6 +43,7 @@ class VaccinationByManufacturerRow:
     pfizer: Optional[int]
     moderna: Optional[int]
     az: Optional[int]
+    janssen: Optional[int]
 
 
 @dataclass

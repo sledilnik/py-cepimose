@@ -971,8 +971,8 @@ _vaccination_supplied_by_manufacturer_cum_command = {
             "Version": 2,
             "From": [
                 {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "v", "Entity": "Vezno_Vrsta_cepiva", "Type": 0},
                 {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
             ],
             "Select": [
                 {
@@ -983,18 +983,18 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                     "Name": "Calendar.Date",
                 },
                 {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "v"}},
-                        "Property": "Vrsta_cepiva",
-                    },
-                    "Name": "Vezno_Vrsta_cepiva.Vrsta_cepiva",
-                },
-                {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "n"}},
                         "Property": "Tekoča vsota za mero odmerki* v polju Date",
                     },
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
                 },
             ],
             "Where": [
@@ -1048,8 +1048,8 @@ _vaccination_supplied_by_manufacturer_cum_command = {
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
-            "Secondary": {"Groupings": [{"Projections": [1]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1]}]},
+            "Secondary": {"Groupings": [{"Projections": [2]}]},
             "DataReduction": {
                 "DataVolume": 4,
                 "Intersection": {"BinnedLineSample": {}},
@@ -1071,13 +1071,6 @@ _vaccinations_by_municipalities_share_command = {
             ],
             "Select": [
                 {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_2_Odmerek",
-                    },
-                    "Name": "eRCO_podatki_obcine.Odst_DrugiOdmerek",
-                },
-                {
                     "Column": {
                         "Expression": {"SourceRef": {"Source": "s"}},
                         "Property": "Obcina",
@@ -1087,7 +1080,7 @@ _vaccinations_by_municipalities_share_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_1_Odmerek",
+                        "Property": "Odst_Obcina_1_1",
                     },
                     "Name": "eRCO_podatki_obcine.Odst_PrviOdmerek",
                 },
@@ -1102,6 +1095,13 @@ _vaccinations_by_municipalities_share_command = {
                         "Function": 0,
                     },
                     "Name": "CountNonNull(SURS_obcine.PopulacijaObcina)",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_Obcina_2",
+                    },
+                    "Name": "eRCO_podatki_obcine_pop.Odst_Obcina_2",
                 },
             ],
             "Where": [
@@ -1156,7 +1156,7 @@ _vaccinations_by_municipalities_share_command = {
                     "Expression": {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odst_2_Odmerek",
+                            "Property": "Odst_Obcina_2",
                         }
                     },
                 }
@@ -1165,8 +1165,8 @@ _vaccinations_by_municipalities_share_command = {
         "Binding": {
             "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"Top": {}}},
-            "Aggregates": [{"Select": 0, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
-            "SuppressedJoinPredicates": [2, 3],
+            "Aggregates": [{"Select": 3, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
+            "SuppressedJoinPredicates": [1, 2],
             "Version": 1,
         },
         "ExecutionMetricsKind": 1,
