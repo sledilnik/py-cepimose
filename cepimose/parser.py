@@ -199,6 +199,12 @@ def _parse_vaccines_supplied_by_manufacturer(
 def _parse_vaccines_supplied_by_manufacturer_cum(
     data,
 ) -> "list[VaccinationByManufacturerRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -209,32 +215,21 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
         moderna = None
         pfizer = None
         az = None
+        janssen = None
 
-        if len(elements) == 1:
-            el = elements[0]
+        for el in elements:
             if el.get("I", None) == 1:
-                moderna = int(el["M0"])
+                janssen = int(el["M0"])
             elif el.get("I", None) == 2:
+                moderna = int(el["M0"])
+            elif el.get("I", None) == 3:
                 pfizer = int(el["M0"])
             else:
                 az = int(el["M0"])
 
-        # ? what if some other combination
-        if len(elements) == 2:
-            az = elements[0]["M0"]
-            moderna = elements[1]["M0"]
-
-        if len(elements) == 3:
-            az = round(elements[0]["M0"])
-            moderna = round(elements[1]["M0"])
-            pfizer = round(elements[2]["M0"])
-
         parsed_data.append(
             VaccinationByManufacturerRow(
-                date=date,
-                pfizer=pfizer,
-                moderna=moderna,
-                az=az,
+                date=date, pfizer=pfizer, moderna=moderna, az=az, janssen=janssen
             )
         )
 
