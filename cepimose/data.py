@@ -1008,8 +1008,8 @@ _vaccination_supplied_by_manufacturer_cum_command = {
             "Version": 2,
             "From": [
                 {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "v", "Entity": "Vezno_Vrsta_cepiva", "Type": 0},
                 {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
             ],
             "Select": [
                 {
@@ -1020,18 +1020,18 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                     "Name": "Calendar.Date",
                 },
                 {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "v"}},
-                        "Property": "Vrsta_cepiva",
-                    },
-                    "Name": "Vezno_Vrsta_cepiva.Vrsta_cepiva",
-                },
-                {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "n"}},
                         "Property": "Tekoča vsota za mero odmerki* v polju Date",
                     },
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
                 },
             ],
             "Where": [
@@ -1085,8 +1085,8 @@ _vaccination_supplied_by_manufacturer_cum_command = {
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
-            "Secondary": {"Groupings": [{"Projections": [1]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1]}]},
+            "Secondary": {"Groupings": [{"Projections": [2]}]},
             "DataReduction": {
                 "DataVolume": 4,
                 "Intersection": {"BinnedLineSample": {}},
@@ -1096,6 +1096,7 @@ _vaccination_supplied_by_manufacturer_cum_command = {
         "ExecutionMetricsKind": 1,
     }
 }
+
 
 _vaccinations_by_age_90_dose1_command = _create_by_age_range_command("'90+'", "1L")
 _vaccinations_by_age_90_dose2_command = _create_by_age_range_command("'90+'", "2L")
