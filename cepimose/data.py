@@ -1114,13 +1114,6 @@ _vaccinations_by_municipalities_share_command = {
             ],
             "Select": [
                 {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_2_Odmerek",
-                    },
-                    "Name": "eRCO_podatki_obcine.Odst_DrugiOdmerek",
-                },
-                {
                     "Column": {
                         "Expression": {"SourceRef": {"Source": "s"}},
                         "Property": "Obcina",
@@ -1130,7 +1123,7 @@ _vaccinations_by_municipalities_share_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_1_Odmerek",
+                        "Property": "Odst_Obcina_1_1",
                     },
                     "Name": "eRCO_podatki_obcine.Odst_PrviOdmerek",
                 },
@@ -1145,6 +1138,13 @@ _vaccinations_by_municipalities_share_command = {
                         "Function": 0,
                     },
                     "Name": "CountNonNull(SURS_obcine.PopulacijaObcina)",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_Obcina_2",
+                    },
+                    "Name": "eRCO_podatki_obcine_pop.Odst_Obcina_2",
                 },
             ],
             "Where": [
@@ -1199,7 +1199,7 @@ _vaccinations_by_municipalities_share_command = {
                     "Expression": {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odst_2_Odmerek",
+                            "Property": "Odst_Obcina_2",
                         }
                     },
                 }
@@ -1208,8 +1208,8 @@ _vaccinations_by_municipalities_share_command = {
         "Binding": {
             "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"Top": {}}},
-            "Aggregates": [{"Select": 0, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
-            "SuppressedJoinPredicates": [2, 3],
+            "Aggregates": [{"Select": 3, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
+            "SuppressedJoinPredicates": [1, 2],
             "Version": 1,
         },
         "ExecutionMetricsKind": 1,
