@@ -334,6 +334,12 @@ def _parse_vaccinations_by_region_by_day(data):
 
 
 def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunShare]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
