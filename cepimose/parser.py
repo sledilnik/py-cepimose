@@ -135,13 +135,13 @@ def _parse_vaccines_supplied_by_manufacturer(
     ]
     parsed_data = []
 
-    if len(manufacturers) > 3:
+    if len(manufacturers) > 4:
         print(manufacturers)
         raise Exception("New manufacturer!")
 
     def get_manufacturer(num):
-        manu_keys = ["pfizer", "moderna", "az"]
-        if num > 2 or num == None:
+        manu_keys = ["pfizer", "moderna", "az", "janssen"]
+        if num > 3 or num == None:
             print(num)
             raise Exception("Missing manufacturer!")
         return manu_keys[num]
@@ -161,7 +161,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             raise Exception("Unknown R value!")
 
         manu_row = VaccinationByManufacturerRow(
-            date=None, pfizer=None, moderna=None, az=None
+            date=None, pfizer=None, moderna=None, az=None, janssen=None
         )
 
         if R == None:
