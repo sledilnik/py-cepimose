@@ -53,7 +53,7 @@ class VaccinationDose:
 
 
 @dataclass
-class VaccinationByAgeRange:
+class VaccinationByAgeGroup:
     dose1: "list[VaccinationDose]"
     dose2: "list[VaccinationDose]"
 
