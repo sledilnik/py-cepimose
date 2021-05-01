@@ -137,7 +137,7 @@ def _parse_vaccines_supplied_by_manufacturer(
 
     if len(manufacturers) > 4:
         print(manufacturers)
-        raise Exception("New manufacturer!!!")
+        raise Exception("New manufacturer!")
 
     def get_manufacturer(num):
         manu_keys = ["pfizer", "moderna", "az", "janssen"]
