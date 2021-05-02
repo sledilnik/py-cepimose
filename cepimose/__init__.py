@@ -79,7 +79,9 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
 
 
 # by age group
-def vaccinations_by_age_group(group: AgeGroup = None):
+def vaccinations_by_age_group(
+    group: AgeGroup = None,
+) -> "dict[AgeGroup,list[VaccinationByDayRow]] or list[VaccinationByDayRow]":
     obj = {}
     if group == None:
 
@@ -89,16 +91,16 @@ def vaccinations_by_age_group(group: AgeGroup = None):
             dose2_req = req_list[1]
             dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_group)
             dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_group)
-            obj[key] = VaccinationByAgeGroup(dose1=dose1, dose2=dose2)
-
+            both_doses = VaccinationByAgeGroup(dose1=dose1, dose2=dose2).getBothDoses()
+            obj[key] = both_doses
         return obj
 
     dose1_req = _vaccination_by_age_group_requests[group][0]
     dose2_req = _vaccination_by_age_group_requests[group][1]
     dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_group)
     dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_group)
-    obj[group] = VaccinationByAgeGroup(dose1=dose1, dose2=dose2)
-    return obj
+    both_doses = VaccinationByAgeGroup(dose1=dose1, dose2=dose2).getBothDoses()
+    return both_doses
 
 
 # by region by day
