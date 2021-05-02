@@ -158,16 +158,12 @@ class CepimoseTestCase(unittest.TestCase):
         data = cepimose.vaccinations_by_age_group()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
 
-        self.assertEquals(expected_keys, list(data.keys()), "Object keys")
+        self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
 
-        for key, group in data.items():
-            print(key, len(group.dose1), len(group.dose2))
-            data_dose1 = group.dose1
-            data_dose2 = group.dose2
-            self.assertTrue(len(data_dose1) != 0)
-            self.assertTrue(len(data_dose2) != 0)
-            self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 27))
-            self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 27))
+        for key, group_data in data.items():
+            print(key, len(group_data))
+            self.assertTrue(len(group_data) != 0)
+            self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
 
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
