@@ -101,7 +101,10 @@ def vaccinations_by_age_group(group: AgeGroup = None):
     return obj
 
 
-def vaccinations_by_region_by_day(region: Region = None):
+# by region by day
+def vaccinations_by_region_by_day(
+    region: Region = None,
+) -> "dic[Region, list[VaccinationByDayRow]]":
     obj = {}
     if region == None:
         key_value = _vaccinations_by_region_by_day_requests.items()
