@@ -33,7 +33,6 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationDose,
-    VaccinationByAgeGroup,
 )
 
 from .enums import Region, AgeGroup
@@ -82,6 +81,23 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
 def vaccinations_by_age_group(
     group: AgeGroup = None,
 ) -> "dict[AgeGroup,list[VaccinationByDayRow]] or list[VaccinationByDayRow]":
+    def getBothDoses(dose1, dose2):
+        date = None
+        first_dose = None
+        second_dose = None
+        result = []
+        for dose in dose1:
+            date = dose.date
+            first_dose = dose.dose
+            second_doses = [dose for dose in dose2 if dose.date == date]
+            second_dose = second_doses[0].dose if len(second_doses) > 0 else None
+            result.append(
+                VaccinationByDayRow(
+                    date=date, first_dose=first_dose, second_dose=second_dose
+                )
+            )
+        return result
+
     obj = {}
     if group == None:
 
@@ -91,7 +107,7 @@ def vaccinations_by_age_group(
             dose2_req = req_list[1]
             dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_group)
             dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_group)
-            both_doses = VaccinationByAgeGroup(dose1=dose1, dose2=dose2).getBothDoses()
+            both_doses = getBothDoses(dose1, dose2)
             obj[key] = both_doses
         return obj
 
@@ -99,7 +115,7 @@ def vaccinations_by_age_group(
     dose2_req = _vaccination_by_age_group_requests[group][1]
     dose1 = _get_data(dose1_req, _parse_vaccinations_by_age_group)
     dose2 = _get_data(dose2_req, _parse_vaccinations_by_age_group)
-    both_doses = VaccinationByAgeGroup(dose1=dose1, dose2=dose2).getBothDoses()
+    both_doses = getBothDoses(dose1, dose2)
     return both_doses
 
 
