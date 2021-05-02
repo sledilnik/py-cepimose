@@ -53,29 +53,6 @@ class VaccinationDose:
 
 
 @dataclass
-class VaccinationByAgeGroup:
-    dose1: "list[VaccinationDose]"
-    dose2: "list[VaccinationDose]"
-
-    def getBothDoses(self):
-        date = None
-        first_dose = None
-        second_dose = None
-        result = []
-        for dose in self.dose1:
-            date = dose.date
-            first_dose = dose.dose
-            second_doses = [dose for dose in self.dose2 if dose.date == date]
-            second_dose = second_doses[0].dose if len(second_doses) > 0 else None
-            result.append(
-                VaccinationByDayRow(
-                    date=date, first_dose=first_dose, second_dose=second_dose
-                )
-            )
-        return result
-
-
-@dataclass
 class VaccinationMunShare:
     name: str
     dose1: int
