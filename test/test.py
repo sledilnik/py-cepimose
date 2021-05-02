@@ -167,30 +167,18 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
-        expected_keys = [cepimose.data.AgeGroup.GROUP_90]
 
-        self.assertEquals(expected_keys, list(data.keys()), "Object keys")
-
-        group_90_data = data[cepimose.enums.AgeGroup.GROUP_90]
-        data_dose1 = group_90_data.dose1
-        data_dose2 = group_90_data.dose2
-
-        self.assertTrue(len(data_dose1) > 10)
-        self.assertTrue(len(data_dose2) > 10)
-        self.assertTrue(len(data_dose1) > len(data_dose2))
-        self.assertTrue(len(data_dose1) - len(data_dose2) == 12)
+        self.assertTrue(len(data) > 10)
 
         def assertRow(row, expected_date, expected_dose):
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.dose, expected_dose, delta=30)
+            self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=30)
 
-        assertRow(data_dose1[21], datetime.datetime(2021, 1, 17), 3580)
-        assertRow(data_dose1[70], datetime.datetime(2021, 3, 7), 7866)
-        assertRow(data_dose2[9], datetime.datetime(2021, 1, 17), 1)
-        assertRow(data_dose2[58], datetime.datetime(2021, 3, 7), 4821)
+        assertRow(data[21], datetime.datetime(2021, 1, 17), [3580, 1])
+        assertRow(data[70], datetime.datetime(2021, 3, 7), [7866, 4821])
 
-        self.assertDatesIncreaseSince(data_dose1, datetime.datetime(2020, 12, 26))
-        self.assertDatesIncreaseSince(data_dose2, datetime.datetime(2020, 12, 26))
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
     def test_vaccinations_by_region_by_day(self):
         data = cepimose.vaccinations_by_region_by_day()
