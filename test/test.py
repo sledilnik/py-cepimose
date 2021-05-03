@@ -222,3 +222,17 @@ class CepimoseTestCase(unittest.TestCase):
         mun_number = 212
 
         self.assertTrue(len(data), mun_number)
+
+        for m in data:
+            print(m)
+            self.assertGreater(m.dose1, 0)
+            self.assertGreater(m.dose2, 0)
+            self.assertGreaterEqual(m.dose1, m.dose2)
+            self.assertGreaterEqual(m.population, m.dose1)
+            self.assertGreaterEqual(m.population, m.dose2)
+
+            self.assertGreater(m.share1, 0)
+            self.assertGreater(m.share2, 0)
+            self.assertGreaterEqual(m.share1, m.share2)
+            self.assertGreaterEqual(1, m.share1)
+            self.assertGreaterEqual(1, m.share2)

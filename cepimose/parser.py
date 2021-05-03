@@ -314,8 +314,8 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
     parsed_data = []
 
     for el in resp:
-        name, share2, population, share1 = el["C"]
-        print(name, share2, population, share1, sep="\t")
+        name, share1, population, share2 = el["C"]
+        print(name, share1, population, share2, sep="\t")
         dose1 = round(int(population) * float(share1))
         dose2 = round(int(population) * float(share2))
         parsed_data.append(
