@@ -8,6 +8,8 @@ from .types import (
     VaccinationByManufacturerRow,
     VaccinationDose,
     VaccinationMunShare,
+    VaccinationAgeGroupByRegionOnDayDose,
+    VaccinationAgeGroupByRegionOnDay,
 )
 
 
@@ -326,6 +328,48 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
                 dose2=dose2,
                 share2=float(share2),
                 population=population,
+            )
+        )
+
+    return parsed_data
+
+
+def _parse_vaccinations_age_group_by_region_on_day(
+    data,
+) -> "list[VaccinationAgeGroupByRegionOnDay]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    def parse_resp_data(region, item):
+        if len(item) == 4:
+            return VaccinationAgeGroupByRegionOnDayDose(
+                region=region,
+                total_share=float(item[0]),
+                group_share=float(item[1]),
+                total_count=item[2],
+                group_count=item[3],
+            )
+        if len(item) == 2:
+            return VaccinationAgeGroupByRegionOnDayDose(
+                region=region,
+                total_share=float(item[0]),
+                total_count=item[1],
+            )
+
+    parsed_data = []
+    for el in resp:
+        region = el["G0"]
+        first_dose = parse_resp_data(region, el["X"][0]["C"])
+        second_dose = parse_resp_data(region, el["X"][1]["C"])
+        parsed_data.append(
+            VaccinationAgeGroupByRegionOnDay(
+                region=region, dose1=first_dose, dose2=second_dose
             )
         )
 
