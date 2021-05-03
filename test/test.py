@@ -164,6 +164,7 @@ class CepimoseTestCase(unittest.TestCase):
             print(key, len(group_data))
             self.assertTrue(len(group_data) != 0)
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
+            # ? more assertions
 
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
@@ -236,3 +237,42 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(m.share1, m.share2)
             self.assertGreaterEqual(1, m.share1)
             self.assertGreaterEqual(1, m.share2)
+
+    def test_vaccinations_age_group_by_region_on_day(self):
+        data = cepimose.vaccinations_age_group_by_region_on_day()
+        expected_keys = [key for key in cepimose.enums.AgeGroup]
+
+        self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
+
+        for key, group_data in data.items():
+            print(key, len(group_data))
+            self.assertTrue(len(group_data) == len(list(cepimose.Region)))
+            # ? more assertions
+
+    def test_vaccinations_age_group_by_region_on_day_with_arg(self):
+        chosen_group = cepimose.AgeGroup.GROUP_0_17
+        data = cepimose.vaccinations_age_group_by_region_on_day(chosen_group)
+
+        self.assertTrue(len(data) == len(list(cepimose.Region)))
+
+        region_names = [name.value for name in list(cepimose.Region)]
+
+        for item in data:
+            print(item, region_names)
+            self.assertTrue(f"'{item.region}'" in region_names)
+
+            self.assertTrue(item.region, item.dose1.region)
+            self.assertGreaterEqual(item.dose1.total_count, 0)
+            self.assertGreaterEqual(item.dose1.group_count, 0)
+            self.assertGreaterEqual(item.dose1.total_count, item.dose1.group_count)
+            self.assertGreaterEqual(item.dose1.total_share, 0)
+            self.assertGreaterEqual(item.dose1.group_share, 0)
+            self.assertGreaterEqual(item.dose1.total_share, item.dose1.group_share)
+
+            self.assertTrue(item.region, item.dose2.region)
+            self.assertGreaterEqual(item.dose2.total_count, 0)
+            self.assertGreaterEqual(item.dose2.group_count, 0)
+            self.assertGreaterEqual(item.dose2.total_count, item.dose2.group_count)
+            self.assertGreaterEqual(item.dose2.total_share, 0)
+            self.assertGreaterEqual(item.dose2.group_share, 0)
+            self.assertGreaterEqual(item.dose2.total_share, item.dose2.group_share)
