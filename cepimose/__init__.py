@@ -12,6 +12,7 @@ from .data import (
     _vaccinations_by_region_by_day_requests,
     _vaccinations_municipalities_share_req,
     _vaccinations_timestamp_req,
+    _vaccinations_age_group_by_region_on_day_requests,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -24,6 +25,7 @@ from .parser import (
     _parse_vaccinations_by_region_by_day,
     _parse_vaccinations_by_municipalities_share,
     _parse_vaccinations_timestamp,
+    _parse_vaccinations_age_group_by_region_on_day,
 )
 
 from .types import (
@@ -33,6 +35,8 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationDose,
+    VaccinationAgeGroupByRegionOnDayDose,
+    VaccinationAgeGroupByRegionOnDay,
 )
 
 from .enums import Region, AgeGroup
@@ -137,6 +141,24 @@ def vaccinations_by_region_by_day(
     obj[region] = doses
 
     return obj
+
+
+def vaccinations_age_group_by_region_on_day(
+    group: Region = None,
+) -> "dict[AgeGroup, list[VaccinationAgeGroupByRegionOnDay]] or list[VaccinationAgeGroupByRegionOnDay]":
+    obj = {}
+
+    if group == None:
+        key_value = _vaccinations_age_group_by_region_on_day_requests.items()
+        for key, req_list in key_value:
+            req = req_list[0]
+            doses = _get_data(req, _parse_vaccinations_age_group_by_region_on_day)
+            obj[key] = doses
+        return obj
+
+    req = _vaccinations_age_group_by_region_on_day_requests[group][0]
+    doses = _get_data(req, _parse_vaccinations_age_group_by_region_on_day)
+    return doses
 
 
 # PAGE 2
