@@ -99,11 +99,11 @@ class CepimoseTestCase(unittest.TestCase):
         def assertRow(row, expected_date, expected_supp, expected_used):
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.supplied, expected_supp, delta=30)
-            self.assertAlmostEqual(row.used, expected_used, delta=30)
+            self.assertAlmostEqual(row.used, expected_used, delta=300)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
-        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48799)
+        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48831)
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
