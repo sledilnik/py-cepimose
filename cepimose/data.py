@@ -1,5 +1,5 @@
 import json
-from .enums import Region, AgeGroup
+from .enums import Region, AgeGroup, Manufacturer
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -598,6 +598,131 @@ def _create_age_group_by_region_on_day_commands():
 
 def _create_age_group_by_region_on_day_requests():
     commands = _create_age_group_by_region_on_day_commands()
+    key_value = commands.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        _commands = el[1]
+        req = _create_req([_commands[0]])
+        obj[key] = [req]
+
+    return obj
+
+
+# BY MANU USED
+
+
+def _get_vaccination_by_manufacturer_used_second_condition_value(group):
+    return [{"Literal": {"Value": group}}]
+
+
+def _get_default_vaccination_by_manufacturer_used_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "x", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                    {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c1"}},
+                            "Property": "Date",
+                        },
+                        "Name": "Calendar.Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Kumulativno skupaj cepljenih",
+                        },
+                        "Name": "eRCO_podatki.Kumulativno skupaj cepljenih",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "x"}},
+                            "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                        },
+                        "Name": "xls_NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 2,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c1"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T00:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "s"}
+                                            },
+                                            "Property": "Cepivo_Ime",
+                                        }
+                                    }
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _create_vaccination_by_manufacturer_used_command(group):
+    values = _get_vaccination_by_manufacturer_used_second_condition_value(group)
+    command = _get_default_vaccination_by_manufacturer_used_command()
+    command["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"]["In"][
+        "Values"
+    ].append(values)
+    return command
+
+
+def _create_vaccination_by_manufacturer_used_commands():
+    obj = {}
+    for el in Manufacturer:
+        command = _create_vaccination_by_manufacturer_used_command(el.value)
+        obj[el] = [command]
+
+    return obj
+
+
+def _create_vaccination_by_manufacturer_used_requests():
+    commands = _create_vaccination_by_manufacturer_used_commands()
     key_value = commands.items()
     obj = {}
     for el in key_value:
@@ -1412,6 +1537,7 @@ _vaccinations_by_municipalities_share_command = {
     }
 }
 
+
 # REQ
 _vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
 
@@ -1441,4 +1567,8 @@ _vaccinations_municipalities_share_req = _create_req(
 
 _vaccinations_age_group_by_region_on_day_requests = (
     _create_age_group_by_region_on_day_requests()
+)
+
+_vaccination_by_manufacturer_supplied_used_requests = (
+    _create_vaccination_by_manufacturer_used_requests()
 )
