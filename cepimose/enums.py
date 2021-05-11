@@ -35,3 +35,11 @@ class AgeGroup(Enum):
     GROUP_80_84 = "'80-84'"
     GROUP_85_89 = "'85-89'"
     GROUP_90 = "'90+'"
+
+
+@unique
+class Manufacturer(Enum):
+    AZ = "'Astra Zeneca'"
+    MODERNA = "'Moderna'"
+    PFIZER = "'Pfizer-BioNTech'"
+    JANSSEN = "'Janssen'"
