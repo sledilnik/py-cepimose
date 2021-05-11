@@ -13,6 +13,7 @@ from .data import (
     _vaccinations_municipalities_share_req,
     _vaccinations_timestamp_req,
     _vaccinations_age_group_by_region_on_day_requests,
+    _vaccination_by_manufacturer_supplied_used_requests,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -26,6 +27,7 @@ from .parser import (
     _parse_vaccinations_by_municipalities_share,
     _parse_vaccinations_timestamp,
     _parse_vaccinations_age_group_by_region_on_day,
+    _parse_vaccinations_by_manufacturer_supplied_used,
 )
 
 from .types import (
@@ -39,7 +41,7 @@ from .types import (
     VaccinationAgeGroupByRegionOnDay,
 )
 
-from .enums import Region, AgeGroup
+from .enums import Manufacturer, Region, AgeGroup
 
 
 def _get_data(req, parse_response):
@@ -126,7 +128,7 @@ def vaccinations_by_age_group(
 # by region by day
 def vaccinations_by_region_by_day(
     region: Region = None,
-) -> "dic[Region, list[VaccinationByDayRow]]":
+) -> "dict[Region, list[VaccinationByDayRow]]":
     obj = {}
     if region == None:
         key_value = _vaccinations_by_region_by_day_requests.items()
@@ -168,3 +170,23 @@ def vaccinations_by_municipalities_share():
         _vaccinations_municipalities_share_req,
         _parse_vaccinations_by_municipalities_share,
     )
+
+
+# PAGE 3
+# manufacturers
+def vaccinations_by_manufacturer_supplied_used(
+    group: Manufacturer = None,
+) -> "dict[Manufacturer, list[VaccineSupplyUsage]] or list[VaccineSupplyUsage]":
+    obj = {}
+
+    if group == None:
+        key_value = _vaccination_by_manufacturer_supplied_used_requests.items()
+        for key, req_list in key_value:
+            req = req_list[0]
+            doses = _get_data(req, _parse_vaccinations_by_manufacturer_supplied_used)
+            obj[key] = doses
+        return obj
+
+    req = _vaccination_by_manufacturer_supplied_used_requests[group][0]
+    doses = _get_data(req, _parse_vaccinations_by_manufacturer_supplied_used)
+    return doses
