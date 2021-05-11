@@ -355,12 +355,21 @@ def _parse_vaccinations_age_group_by_region_on_day(
                 total_count=item[2],
                 group_count=item[3],
             )
+        if len(item) == 3:
+            print(3, item)
+            return VaccinationAgeGroupByRegionOnDayDose(
+                region=region,
+                total_share=float(item[0]),
+                group_share=float(item[1]),
+                total_count=item[2],
+            )
         if len(item) == 2:
             return VaccinationAgeGroupByRegionOnDayDose(
                 region=region,
                 total_share=float(item[0]),
                 total_count=item[1],
             )
+        raise Exception('Unknown item length!')
 
     parsed_data = []
     for el in resp:
