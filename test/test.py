@@ -1,3 +1,4 @@
+from cepimose.enums import Manufacturer
 import unittest
 import cepimose
 import datetime
@@ -258,7 +259,7 @@ class CepimoseTestCase(unittest.TestCase):
         region_names = [name.value for name in list(cepimose.Region)]
 
         for item in data:
-            print(item, region_names)
+            print(item)
             self.assertTrue(f"'{item.region}'" in region_names)
 
             self.assertTrue(item.region, item.dose1.region)
@@ -276,3 +277,54 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(item.dose2.total_share, 0)
             self.assertGreaterEqual(item.dose2.group_share, 0)
             self.assertGreaterEqual(item.dose2.total_share, item.dose2.group_share)
+
+    def test_vaccinations_by_manufacturer_supplied_used(self):
+        data = cepimose.vaccinations_by_manufacturer_supplied_used()
+        expected_keys = [key for key in cepimose.enums.Manufacturer]
+
+        self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
+
+        Test_data = {
+            Manufacturer.JANSSEN: {
+                "row": 2,
+                "date": datetime.datetime(2021, 5, 10),
+                "supplied": 13200,
+                "used": 2022,
+            },
+            Manufacturer.MODERNA: {
+                "row": 2,
+                "date": datetime.datetime(2021, 2, 5),
+                "supplied": 8400,
+                "used": 996,
+            },
+            Manufacturer.PFIZER: {
+                "row": 2,
+                "date": datetime.datetime(2021, 1, 4),
+                "supplied": 39780,
+                "used": 13259,
+            },
+            Manufacturer.AZ: {
+                "row": 2,
+                "date": datetime.datetime(2021, 2, 18),
+                "supplied": 36000,
+                "used": 4462,
+            },
+        }
+
+        def assertRow(row, expected_date, expected_first, expected_second):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.supplied, expected_first, delta=30)
+            self.assertAlmostEqual(row.used, expected_second, delta=30)
+
+        for key, group_data in data.items():
+            print(key, len(group_data))
+            self.assertTrue(len(group_data) > 0)
+            self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 26))
+            test_item = Test_data[key]
+            assertRow(
+                group_data[test_item["row"]],
+                test_item["date"],
+                test_item["supplied"],
+                test_item["used"],
+            )
+            # ? more assertions
