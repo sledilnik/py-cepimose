@@ -374,3 +374,32 @@ def _parse_vaccinations_age_group_by_region_on_day(
         )
 
     return parsed_data
+
+
+def _parse_vaccinations_by_manufacturer_supplied_used(
+    data,
+) -> "list[VaccineSupplyUsage]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    parsed_data = []
+    item = None
+    for el in resp:
+        C = el["C"]
+        date = parse_date(C[0])
+        if len(C) == 2:
+            item = VaccineSupplyUsage(date=date, supplied=int(C[1]), used=0)
+            parsed_data.append(item)
+        elif len(C) == 3:
+            item = VaccineSupplyUsage(date=date, supplied=int(C[2]), used=int(C[1]))
+            parsed_data.append(item)
+        else:
+            raise Exception("Unknown [C] length")
+
+    return parsed_data
