@@ -1,5 +1,5 @@
 import json
-from .enums import Region, AgeGroup
+from .enums import Region, AgeGroup, Manufacturer
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -366,6 +366,370 @@ def _create_by_region_by_day_requests():
         group_requests = []
         doses_req = _create_req([_commands[0]])
         obj[key] = [doses_req]
+
+    return obj
+
+
+# AGE GROUP BY REGION ON DAY
+def _get_age_group_by_region_on_day_first_condition_value(group="'90+'"):
+    return [{"Literal": {"Value": group}}]
+
+
+def _get_default_age_group_by_region_on_day_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "s1", "Entity": "Sifrant_regija", "Type": 0},
+                    {"Name": "c", "Entity": "Calendar", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "s1"}},
+                            "Property": "Regija",
+                        },
+                        "Name": "Sifrant_regija.Regija",
+                    },
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Odmerek",
+                        },
+                        "Name": "eRCO_podatki.Odmerek",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Delež_regija",
+                        },
+                        "Name": "eRCO_podatki.Delež_regija",
+                    },
+                    {
+                        "Aggregation": {
+                            "Expression": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "e"}},
+                                    "Property": "Weight",
+                                }
+                            },
+                            "Function": 0,
+                        },
+                        "Name": "Sum(eRCO_podatki.Weight)",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "Not": {
+                                "Expression": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "e"}
+                                                    },
+                                                    "Property": "CepivoIme",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [[{"Literal": {"Value": "null"}}]],
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Not": {
+                                "Expression": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "s1"}
+                                                    },
+                                                    "Property": "Regija",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [{"Literal": {"Value": "null"}}],
+                                            [
+                                                {
+                                                    "Literal": {
+                                                        "Value": "'Celotna Slovenija'"
+                                                    }
+                                                }
+                                            ],
+                                            [{"Literal": {"Value": "'TUJINA'"}}],
+                                        ],
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 1,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T01:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                ],
+                "OrderBy": [
+                    {
+                        "Direction": 2,
+                        "Expression": {
+                            "Measure": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Delež_regija",
+                            }
+                        },
+                    }
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 2, 3]}]},
+                "Secondary": {"Groupings": [{"Projections": [1]}]},
+                "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {"Window": {"Count": 200}},
+                    "Secondary": {"Top": {"Count": 60}},
+                },
+                "SuppressedJoinPredicates": [3],
+                "Version": 1,
+                "Highlights": [
+                    {
+                        "Version": 2,
+                        "From": [
+                            {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
+                            {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                        ],
+                        "Where": [
+                            {
+                                "Condition": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "x"}
+                                                    },
+                                                    "Property": "Starostni razred",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [],
+                                    }
+                                }
+                            },
+                            {
+                                "Condition": {
+                                    "Not": {
+                                        "Expression": {
+                                            "In": {
+                                                "Expressions": [
+                                                    {
+                                                        "Column": {
+                                                            "Expression": {
+                                                                "SourceRef": {
+                                                                    "Source": "e"
+                                                                }
+                                                            },
+                                                            "Property": "CepivoIme",
+                                                        }
+                                                    }
+                                                ],
+                                                "Values": [
+                                                    [{"Literal": {"Value": "null"}}]
+                                                ],
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                        ],
+                    }
+                ],
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _create_age_group_by_region_on_day_command(group="'90+'"):
+    values = _get_age_group_by_region_on_day_first_condition_value(group)
+    command = _get_default_age_group_by_region_on_day_command()
+    command["SemanticQueryDataShapeCommand"]["Binding"]["Highlights"][0]["Where"][0][
+        "Condition"
+    ]["In"]["Values"].append(values)
+    return command
+
+
+def _create_age_group_by_region_on_day_commands():
+    obj = {}
+    for el in AgeGroup:
+        command = _create_age_group_by_region_on_day_command(el.value)
+        obj[el] = [command]
+
+    return obj
+
+
+def _create_age_group_by_region_on_day_requests():
+    commands = _create_age_group_by_region_on_day_commands()
+    key_value = commands.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        _commands = el[1]
+        req = _create_req([_commands[0]])
+        obj[key] = [req]
+
+    return obj
+
+
+# BY MANU USED
+
+
+def _get_vaccination_by_manufacturer_used_second_condition_value(group):
+    return [{"Literal": {"Value": group}}]
+
+
+def _get_default_vaccination_by_manufacturer_used_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "x", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                    {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c1"}},
+                            "Property": "Date",
+                        },
+                        "Name": "Calendar.Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "Kumulativno skupaj cepljenih",
+                        },
+                        "Name": "eRCO_podatki.Kumulativno skupaj cepljenih",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "x"}},
+                            "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                        },
+                        "Name": "xls_NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 2,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c1"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T00:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "s"}
+                                            },
+                                            "Property": "Cepivo_Ime",
+                                        }
+                                    }
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _create_vaccination_by_manufacturer_used_command(group):
+    values = _get_vaccination_by_manufacturer_used_second_condition_value(group)
+    command = _get_default_vaccination_by_manufacturer_used_command()
+    command["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"]["In"][
+        "Values"
+    ].append(values)
+    return command
+
+
+def _create_vaccination_by_manufacturer_used_commands():
+    obj = {}
+    for el in Manufacturer:
+        command = _create_vaccination_by_manufacturer_used_command(el.value)
+        obj[el] = [command]
+
+    return obj
+
+
+def _create_vaccination_by_manufacturer_used_requests():
+    commands = _create_vaccination_by_manufacturer_used_commands()
+    key_value = commands.items()
+    obj = {}
+    for el in key_value:
+        key = el[0]
+        _commands = el[1]
+        req = _create_req([_commands[0]])
+        obj[key] = [req]
 
     return obj
 
@@ -1173,6 +1537,7 @@ _vaccinations_by_municipalities_share_command = {
     }
 }
 
+
 # REQ
 _vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
 
@@ -1198,4 +1563,12 @@ _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 
 _vaccinations_municipalities_share_req = _create_req(
     [_vaccinations_by_municipalities_share_command], True
+)
+
+_vaccinations_age_group_by_region_on_day_requests = (
+    _create_age_group_by_region_on_day_requests()
+)
+
+_vaccination_by_manufacturer_supplied_used_requests = (
+    _create_vaccination_by_manufacturer_used_requests()
 )

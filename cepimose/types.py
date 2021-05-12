@@ -53,12 +53,6 @@ class VaccinationDose:
 
 
 @dataclass
-class VaccinationByAgeGroup:
-    dose1: "list[VaccinationDose]"
-    dose2: "list[VaccinationDose]"
-
-
-@dataclass
 class VaccinationMunShare:
     name: str
     dose1: int
@@ -66,3 +60,19 @@ class VaccinationMunShare:
     dose2: int
     share2: float
     population: int
+
+
+@dataclass
+class VaccinationAgeGroupByRegionOnDayDose:
+    region: str
+    total_count: int = 0
+    group_count: int = 0
+    total_share: float = 0.0
+    group_share: float = 0.0
+
+
+@dataclass
+class VaccinationAgeGroupByRegionOnDay:
+    region: str
+    dose1: VaccinationAgeGroupByRegionOnDayDose
+    dose2: VaccinationAgeGroupByRegionOnDayDose
