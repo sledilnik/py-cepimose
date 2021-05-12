@@ -289,7 +289,7 @@ class CepimoseTestCase(unittest.TestCase):
                 "row": 2,
                 "date": datetime.datetime(2021, 5, 10),
                 "supplied": 13200,
-                "used": 2022,
+                "used": 2260,
             },
             Manufacturer.MODERNA: {
                 "row": 2,
@@ -314,7 +314,7 @@ class CepimoseTestCase(unittest.TestCase):
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.supplied, expected_first, delta=30)
-            self.assertAlmostEqual(row.used, expected_second, delta=30)
+            self.assertAlmostEqual(row.used, expected_second, delta=300)
 
         for key, group_data in data.items():
             print(key, len(group_data))
