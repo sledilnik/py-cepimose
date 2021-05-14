@@ -30,6 +30,8 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
         assertRow(data[22], datetime.datetime(2021, 1, 18), 48745, 315)
+        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 44924)
+        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 44924)
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
@@ -63,6 +65,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(data[grp].share_first, 0)
             self.assertGreater(data[grp].count_second, 0)
             self.assertGreater(data[grp].share_second, 0)
+            self.assertGreaterEqual(data[grp].count_first, data[grp].count_second)
 
     def test_vaccinations_by_region(self):
         # Test feature one.
@@ -328,3 +331,19 @@ class CepimoseTestCase(unittest.TestCase):
                 test_item["used"],
             )
             # ? more assertions
+
+    def test_vaccinations_by_manufacturer_used(self):
+        data = cepimose.vaccinations_by_manufacturer_used()
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+        def assertRow(row, expected_date, expected):
+            print(row)
+            self.assertEqual(row.date, expected_date)
+            self.assertEqual(row.pfizer, expected[0])
+            self.assertEqual(row.moderna, expected[1])
+            self.assertEqual(row.az, expected[2])
+            self.assertEqual(row.janssen, expected[3])
+
+        assertRow(data[10], datetime.datetime(2021, 1, 6), [5285, None, None, None])
+        assertRow(data[126], datetime.datetime(2021, 5, 7), [15972, 934, 3436, 777])

@@ -29,13 +29,31 @@ def _parse_vaccinations_timestamp(data):
 
 
 def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
+    date = None
+    people_vaccinated = None
+    people_fully_vaccinated = None
     for element in resp:
-        date = parse_date(element["G0"])
-        people_vaccinated = element["X"][0]["M0"]
-        people_fully_vaccinated = element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+        C = element["C"]
+        if len(C) == 3:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+        elif len(C) == 2:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+        elif len(C) == 1:
+            date = parse_date(C[0])
+        else:
+            raise Exception("Unknown item length!")
 
         parsed_data.append(
             VaccinationByDayRow(
@@ -49,15 +67,22 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
 
 
 def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     for element in resp:
-        age_group = str(element["G0"])
-        count_first = int(element["X"][0]["C"][1])
-        count_second = int(element["X"][1]["C"][1])
-        share_first = float(element["X"][0]["C"][0]) / 100.0
-        share_second = float(element["X"][1]["C"][0]) / 100.0
+        C = element["C"]
+        age_group = str(C[0])
+        share_second = float(C[1]) / 100.0
+        share_first = float(C[2]) / 100.0
+        count_first = int(C[3])
+        count_second = int(C[4])
 
         parsed_data.append(
             VaccinationByAgeRow(
@@ -73,11 +98,18 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
 
 
 def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     for element in resp:
-
+        print(element)
         date = parse_date(element["C"][0])
 
         if "Ø" in element:
@@ -273,26 +305,13 @@ def _parse_vaccinations_by_region_by_day(data):
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
-    r_list = [None, 1]
-
     people_vaccinated = None
     people_fully_vaccinated = None
     for element in resp:
-        date = parse_date(element["G0"])
-
-        R = element["X"][0]["R"] if "R" in element["X"][0] else None
-
-        if R == None:
-            people_vaccinated = element["X"][0]["M0"]
-            people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
-            )
-
-        if R == 1:
-            # as far as we know people_vaccinated same as previous
-            people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
-            )
+        C = element["C"]
+        date = parse_date(C[0])
+        people_vaccinated = C[1] if len(C) >= 2 else people_vaccinated
+        people_fully_vaccinated = C[2] if len(C) >= 3 else people_fully_vaccinated
 
         parsed_data.append(
             VaccinationByDayRow(
@@ -316,10 +335,7 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
     parsed_data = []
 
     for el in resp:
-        name, share1, population, share2 = el["C"]
-        print(name, share1, population, share2, sep="\t")
-        dose1 = round(int(population) * float(share1))
-        dose2 = round(int(population) * float(share2))
+        name, population, share2, share1, dose1, dose2 = el["C"]
         parsed_data.append(
             VaccinationMunShare(
                 name=name,
@@ -369,7 +385,7 @@ def _parse_vaccinations_age_group_by_region_on_day(
                 total_share=float(item[0]),
                 total_count=item[1],
             )
-        raise Exception('Unknown item length!')
+        raise Exception("Unknown item length!")
 
     parsed_data = []
     for el in resp:
@@ -410,5 +426,52 @@ def _parse_vaccinations_by_manufacturer_supplied_used(
             parsed_data.append(item)
         else:
             raise Exception("Unknown [C] length")
+
+    return parsed_data
+
+
+def _parse_vaccinations_by_manufacturer_used(
+    data,
+) -> "list[VaccinationByManufacturerRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    parsed_data = []
+    for element in resp:
+        elements = list(filter(lambda x: "M0" in x, element["X"]))
+
+        date = parse_date(element["G0"])
+        moderna = None
+        pfizer = None
+        az = None
+        janssen = None
+
+        if len(elements) == 4:
+            moderna = int(elements[0]["M0"])
+            janssen = int(elements[1]["M0"])
+            az = int(elements[2]["M0"])
+            pfizer = int(elements[3]["M0"])
+        else:
+            for el in elements:
+                if el.get("I", None) == 1:
+                    janssen = int(el["M0"])
+                elif el.get("I", None) == 2:
+                    moderna = int(el["M0"])
+                elif el.get("I", None) == 3:
+                    pfizer = int(el["M0"])
+                else:
+                    az = int(el["M0"])
+
+        parsed_data.append(
+            VaccinationByManufacturerRow(
+                date=date, pfizer=pfizer, moderna=moderna, az=az, janssen=janssen
+            )
+        )
 
     return parsed_data
