@@ -33,6 +33,17 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 44924)
         assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 44924)
 
+        # values should be growing
+        firstPrevious = 0
+        secondPrevious = 0
+        for row in data:
+            print(row, firstPrevious, secondPrevious)
+            self.assertGreaterEqual(row.first_dose, firstPrevious)
+            self.assertGreaterEqual(row.second_dose, secondPrevious)
+            firstPrevious = row.first_dose
+            secondPrevious = row.second_dose
+
+
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
     def test_vaccinations_by_age(self):
