@@ -316,10 +316,7 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
     parsed_data = []
 
     for el in resp:
-        name, share1, population, share2 = el["C"]
-        print(name, share1, population, share2, sep="\t")
-        dose1 = round(int(population) * float(share1))
-        dose2 = round(int(population) * float(share2))
+        name, population, share2, share1, dose1, dose2 = el["C"]
         parsed_data.append(
             VaccinationMunShare(
                 name=name,
@@ -369,7 +366,7 @@ def _parse_vaccinations_age_group_by_region_on_day(
                 total_share=float(item[0]),
                 total_count=item[1],
             )
-        raise Exception('Unknown item length!')
+        raise Exception("Unknown item length!")
 
     parsed_data = []
     for el in resp:

@@ -24,6 +24,21 @@ _models = {
             "Sources": [{"ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee"}],
         },
     },
+    "ver3": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
+        },
+        "modelId": 175575,
+        "ApplicationContext": {
+            "DatasetId": "51c64860-e9ec-49d8-8a36-743bced78e1a",
+            "Sources": [
+                {
+                    "ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee",
+                    "VisualId": "022fd838583336ee7f55",
+                }
+            ],
+        },
+    },
 }
 
 
@@ -38,7 +53,7 @@ def _get_model_version(ver):
     }
 
 
-_model_ver = _get_model_version("ver2")
+_model_ver = _get_model_version("ver3")
 
 _headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
@@ -1429,7 +1444,7 @@ _vaccinations_by_municipalities_share_command = {
         "Query": {
             "Version": 2,
             "From": [
-                {"Name": "e", "Entity": "eRCO_podatki_obcine_pop", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_podatki_občine", "Type": 0},
                 {"Name": "s", "Entity": "xls_SURS_obcine", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
@@ -1440,13 +1455,6 @@ _vaccinations_by_municipalities_share_command = {
                         "Property": "Obcina",
                     },
                     "Name": "SURS_obcine.Obcina",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_Obcina_1_1",
-                    },
-                    "Name": "eRCO_podatki_obcine.Odst_PrviOdmerek",
                 },
                 {
                     "Aggregation": {
@@ -1463,9 +1471,40 @@ _vaccinations_by_municipalities_share_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_Obcina_2",
+                        "Property": "Odst_CelotnaSLO_P",
                     },
-                    "Name": "eRCO_podatki_obcine_pop.Odst_Obcina_2",
+                    "Name": "eRCO_podatki_obcine_pop.Odst_CelotnaSLO_P",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_CelotnaSLO_C",
+                    },
+                    "Name": "eRCO_podatki_obcine_pop.Odst_CelotnaSLO_C",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Cepljeni​",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO_podatki_občine.Cepljeni​)",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Polno ﻿Cepljeni",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO_podatki_občine.PolnöCepljeni)",
                 },
             ],
             "Where": [
@@ -1520,17 +1559,17 @@ _vaccinations_by_municipalities_share_command = {
                     "Expression": {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odst_Obcina_2",
+                            "Property": "Odst_CelotnaSLO_P",
                         }
                     },
                 }
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4, 5]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"Top": {}}},
-            "Aggregates": [{"Select": 3, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
-            "SuppressedJoinPredicates": [1, 2],
+            "Aggregates": [{"Select": 2, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
+            "SuppressedJoinPredicates": [1, 3, 4, 5],
             "Version": 1,
         },
         "ExecutionMetricsKind": 1,
