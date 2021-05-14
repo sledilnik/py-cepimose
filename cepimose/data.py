@@ -266,7 +266,7 @@ def _get_default_by_region_by_day_command():
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
                     {"Name": "s", "Entity": "Sifrant_regija", "Type": 0},
                 ],
                 "Select": [
@@ -285,11 +285,11 @@ def _get_default_by_region_by_day_command():
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
-                        "Column": {
+                        "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Odmerek",
+                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
                         },
-                        "Name": "eRCO_podatki.Odmerek",
+                        "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
                     },
                 ],
                 "Where": [
@@ -336,12 +336,8 @@ def _get_default_by_region_by_day_command():
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1]}]},
-                "Secondary": {"Groupings": [{"Projections": [2]}]},
-                "DataReduction": {
-                    "DataVolume": 4,
-                    "Intersection": {"BinnedLineSample": {}},
-                },
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
             "ExecutionMetricsKind": 1,

@@ -305,26 +305,13 @@ def _parse_vaccinations_by_region_by_day(data):
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
-    r_list = [None, 1]
-
     people_vaccinated = None
     people_fully_vaccinated = None
     for element in resp:
-        date = parse_date(element["G0"])
-
-        R = element["X"][0]["R"] if "R" in element["X"][0] else None
-
-        if R == None:
-            people_vaccinated = element["X"][0]["M0"]
-            people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
-            )
-
-        if R == 1:
-            # as far as we know people_vaccinated same as previous
-            people_fully_vaccinated = (
-                element["X"][1]["M0"] if len(element["X"]) > 1 else 0
-            )
+        C = element["C"]
+        date = parse_date(C[0])
+        people_vaccinated = C[1] if len(C) >= 2 else people_vaccinated
+        people_fully_vaccinated = C[2] if len(C) >= 3 else people_fully_vaccinated
 
         parsed_data.append(
             VaccinationByDayRow(
