@@ -67,15 +67,22 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
 
 
 def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     for element in resp:
-        age_group = str(element["G0"])
-        count_first = int(element["X"][0]["C"][1])
-        count_second = int(element["X"][1]["C"][1])
-        share_first = float(element["X"][0]["C"][0]) / 100.0
-        share_second = float(element["X"][1]["C"][0]) / 100.0
+        C = element["C"]
+        age_group = str(C[0])
+        share_second = float(C[1]) / 100.0
+        share_first = float(C[2]) / 100.0
+        count_second = int(C[3])
+        count_first = int(C[4])
 
         parsed_data.append(
             VaccinationByAgeRow(

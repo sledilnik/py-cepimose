@@ -875,70 +875,60 @@ _vaccinations_by_day_command = {
 
 _vaccinations_by_age_command = {
     "SemanticQueryDataShapeCommand": {
-        "Binding": {
-            "DataReduction": {
-                "DataVolume": 4,
-                "Primary": {"Window": {"Count": 200}},
-                "Secondary": {"Top": {"Count": 60}},
-            },
-            "Primary": {"Groupings": [{"Projections": [0, 1, 3]}]},
-            "Secondary": {"Groupings": [{"Projections": [2]}]},
-            "SuppressedJoinPredicates": [3],
-            "Version": 1,
-        },
         "Query": {
+            "Version": 2,
             "From": [
-                {"Entity": "eRCO_podatki_ed", "Name": "e", "Type": 0},
-                {"Entity": "xls_SURS_starost", "Name": "s", "Type": 0},
-                {"Entity": "Calendar", "Name": "c", "Type": 0},
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 1,
-                    "Expression": {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "s"}},
-                            "Property": "Starostni razred",
-                        }
-                    },
-                }
+                {"Name": "s", "Entity": "xls_SURS_starost", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
                     "Column": {
                         "Expression": {"SourceRef": {"Source": "s"}},
-                        "Property": "Starostni razred",
+                        "Property": "Starostni ​razred",
                     },
-                    "Name": "xls_SURS_starost.Starostni razred",
+                    "Name": "SURS_starost.Starostni razred",
                 },
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Delež_starost",
+                        "Property": "Delež_starost_precepljenost",
                     },
-                    "Name": "eRCO_podatki.Delež_starost",
+                    "Name": "eRCO_podatki_ed.Delež_starost_precepljenost",
                 },
                 {
-                    "Column": {
+                    "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odmerek",
+                        "Property": "Delež_starost_1",
                     },
-                    "Name": "eRCO_podatki.Odmerek",
+                    "Name": "eRCO_podatki_ed.Delež_starost",
                 },
                 {
                     "Aggregation": {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Weight",
+                                "Property": "Odmerek – kopija",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(eRCO_podatki.Weight)",
+                    "Name": "Sum(eRCO_​​podatki.Odmerek – kopija)",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Precepljenost",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO_​​podatki.Precepljenost)",
                 },
             ],
-            "Version": 2,
             "Where": [
                 {
                     "Condition": {
@@ -985,7 +975,25 @@ _vaccinations_by_age_command = {
                     }
                 },
             ],
+            "OrderBy": [
+                {
+                    "Direction": 1,
+                    "Expression": {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "s"}},
+                            "Property": "Starostni ​razred",
+                        }
+                    },
+                }
+            ],
         },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
+            "DataReduction": {"DataVolume": 4, "Primary": {"Window": {"Count": 1000}}},
+            "SuppressedJoinPredicates": [3, 4],
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
     }
 }
 
