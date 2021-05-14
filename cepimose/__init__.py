@@ -14,6 +14,7 @@ from .data import (
     _vaccinations_timestamp_req,
     _vaccinations_age_group_by_region_on_day_requests,
     _vaccination_by_manufacturer_supplied_used_requests,
+    _vaccinations_by_manufacturer_used_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -28,6 +29,7 @@ from .parser import (
     _parse_vaccinations_timestamp,
     _parse_vaccinations_age_group_by_region_on_day,
     _parse_vaccinations_by_manufacturer_supplied_used,
+    _parse_vaccinations_by_manufacturer_used,
 )
 
 from .types import (
@@ -190,3 +192,9 @@ def vaccinations_by_manufacturer_supplied_used(
     req = _vaccination_by_manufacturer_supplied_used_requests[group][0]
     doses = _get_data(req, _parse_vaccinations_by_manufacturer_supplied_used)
     return doses
+
+
+def vaccinations_by_manufacturer_used() -> "list[VaccinationByManufacturerRow]":
+    return _get_data(
+        _vaccinations_by_manufacturer_used_req, _parse_vaccinations_by_manufacturer_used
+    )

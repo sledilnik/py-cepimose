@@ -330,3 +330,19 @@ class CepimoseTestCase(unittest.TestCase):
                 test_item["used"],
             )
             # ? more assertions
+
+    def test_vaccinations_by_manufacturer_used(self):
+        data = cepimose.vaccinations_by_manufacturer_used()
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+        def assertRow(row, expected_date, expected):
+            print(row)
+            self.assertEqual(row.date, expected_date)
+            self.assertEqual(row.pfizer, expected[0])
+            self.assertEqual(row.moderna, expected[1])
+            self.assertEqual(row.az, expected[2])
+            self.assertEqual(row.janssen, expected[3])
+
+        assertRow(data[10], datetime.datetime(2021, 1, 6), [5285, None, None, None])
+        assertRow(data[126], datetime.datetime(2021, 5, 7), [15972, 934, 3436, 777])
