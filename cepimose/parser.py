@@ -29,13 +29,31 @@ def _parse_vaccinations_timestamp(data):
 
 
 def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
+    date = None
+    people_vaccinated = None
+    people_fully_vaccinated = None
     for element in resp:
-        date = parse_date(element["G0"])
-        people_vaccinated = element["X"][0]["M0"]
-        people_fully_vaccinated = element["X"][1]["M0"] if len(element["X"]) > 1 else 0
+        C = element["C"]
+        if len(C) == 3:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+        elif len(C) == 2:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+        elif len(C) == 1:
+            date = parse_date(C[0])
+        else:
+            raise Exception("Unknown item length!")
 
         parsed_data.append(
             VaccinationByDayRow(
