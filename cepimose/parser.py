@@ -81,8 +81,8 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
         age_group = str(C[0])
         share_second = float(C[1]) / 100.0
         share_first = float(C[2]) / 100.0
-        count_second = int(C[3])
-        count_first = int(C[4])
+        count_first = int(C[3])
+        count_second = int(C[4])
 
         parsed_data.append(
             VaccinationByAgeRow(

@@ -65,6 +65,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(data[grp].share_first, 0)
             self.assertGreater(data[grp].count_second, 0)
             self.assertGreater(data[grp].share_second, 0)
+            self.assertGreaterEqual(data[grp].count_first, data[grp].count_second)
 
     def test_vaccinations_by_region(self):
         # Test feature one.
