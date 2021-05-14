@@ -999,19 +999,12 @@ _vaccinations_by_age_command = {
 
 _vaccinations_supplied_and_used_command = {
     "SemanticQueryDataShapeCommand": {
-        "Binding": {
-            "DataReduction": {
-                "DataVolume": 4,
-                "Primary": {"BinnedLineSample": {}},
-            },
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
-            "Version": 1,
-        },
         "Query": {
+            "Version": 2,
             "From": [
-                {"Entity": "Calendar", "Name": "c1", "Type": 0},
-                {"Entity": "eRCO_podatki_ed", "Name": "c", "Type": 0},
-                {"Entity": "xls_NIJZ_Odmerki", "Name": "n", "Type": 0},
+                {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
             ],
             "Select": [
                 {
@@ -1031,12 +1024,11 @@ _vaccinations_supplied_and_used_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "n"}},
-                        "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                        "Property": "Tekoča vsota za mero odmerki*​ v polju Date",
                     },
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                 },
             ],
-            "Version": 2,
             "Where": [
                 {
                     "Condition": {
@@ -1063,6 +1055,12 @@ _vaccinations_supplied_and_used_command = {
                 }
             ],
         },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+            "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
     }
 }
 

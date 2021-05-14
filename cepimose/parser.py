@@ -98,11 +98,18 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
 
 
 def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     for element in resp:
-
+        print(element)
         date = parse_date(element["C"][0])
 
         if "Ø" in element:
