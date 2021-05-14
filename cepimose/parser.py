@@ -40,7 +40,6 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
 
     date = None
     people_vaccinated = None
-    people_vaccinated_previous = 0
     people_fully_vaccinated = None
     for element in resp:
         C = element["C"]
@@ -50,17 +49,15 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
             people_fully_vaccinated = C[2]
         elif len(C) == 2:
             date = parse_date(C[0])
-            people_vaccinated = C[1]
-            if people_vaccinated < people_vaccinated_previous:
-                # Seems not like 1st dose, possibly a second one
-                people_vaccinated = people_vaccinated_previous
+            R = element["R"]
+            if R == 2:
                 people_fully_vaccinated = C[1]
+            else:
+                people_vaccinated = C[1]
         elif len(C) == 1:
             date = parse_date(C[0])
         else:
             raise Exception("Unknown item length!")
-
-        people_vaccinated_previous = people_vaccinated
 
         parsed_data.append(
             VaccinationByDayRow(
