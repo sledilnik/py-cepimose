@@ -43,7 +43,6 @@ class CepimoseTestCase(unittest.TestCase):
             firstPrevious = row.first_dose
             secondPrevious = row.second_dose
 
-
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
     def test_vaccinations_by_age(self):
