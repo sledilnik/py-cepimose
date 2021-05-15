@@ -620,22 +620,20 @@ def _create_age_group_by_region_on_day_requests():
     return obj
 
 
-# BY MANU USED
-
-
-def _get_vaccination_by_manufacturer_used_second_condition_value(group):
+# BY MANU SUPPLIED AND USED
+def _get_vaccination_by_manufacturer_supplied_used_second_condition_value(group):
     return [{"Literal": {"Value": group}}]
 
 
-def _get_default_vaccination_by_manufacturer_used_command():
+def _get_default_vaccination_by_manufacturer_supplied_used_command():
     return {
         "SemanticQueryDataShapeCommand": {
             "Query": {
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
-                    {"Name": "x", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
                     {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
                 ],
                 "Select": [
@@ -655,10 +653,10 @@ def _get_default_vaccination_by_manufacturer_used_command():
                     },
                     {
                         "Measure": {
-                            "Expression": {"SourceRef": {"Source": "x"}},
-                            "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                            "Expression": {"SourceRef": {"Source": "n"}},
+                            "Property": "Tekoča vsota za mero odmerki*​ v polju Date",
                         },
-                        "Name": "xls_NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                        "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                     },
                 ],
                 "Where": [
@@ -714,26 +712,28 @@ def _get_default_vaccination_by_manufacturer_used_command():
     }
 
 
-def _create_vaccination_by_manufacturer_used_command(group):
-    values = _get_vaccination_by_manufacturer_used_second_condition_value(group)
-    command = _get_default_vaccination_by_manufacturer_used_command()
+def _create_vaccination_by_manufacturer_supplied_used_command(group):
+    values = _get_vaccination_by_manufacturer_supplied_used_second_condition_value(
+        group
+    )
+    command = _get_default_vaccination_by_manufacturer_supplied_used_command()
     command["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"]["In"][
         "Values"
     ].append(values)
     return command
 
 
-def _create_vaccination_by_manufacturer_used_commands():
+def _create_vaccination_by_manufacturer_supplied_used_commands():
     obj = {}
     for el in Manufacturer:
-        command = _create_vaccination_by_manufacturer_used_command(el.value)
+        command = _create_vaccination_by_manufacturer_supplied_used_command(el.value)
         obj[el] = [command]
 
     return obj
 
 
-def _create_vaccination_by_manufacturer_used_requests():
-    commands = _create_vaccination_by_manufacturer_used_commands()
+def _create_vaccination_by_manufacturer_supplied_used_requests():
+    commands = _create_vaccination_by_manufacturer_supplied_used_commands()
     key_value = commands.items()
     obj = {}
     for el in key_value:
