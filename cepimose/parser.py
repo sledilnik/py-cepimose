@@ -140,11 +140,12 @@ def _parse_vaccinations_by_region(data) -> "list[VaccinationByRegionRow]":
     parsed_data = []
 
     for element in resp:
-        region = str(element["G0"])
-        count_first = int(element["X"][0]["C"][1])
-        count_second = int(element["X"][1]["C"][1])
-        share_first = float(element["X"][0]["C"][0]) / 100.0
-        share_second = float(element["X"][1]["C"][0]) / 100.0
+        C = element["C"]
+        region = str(C[0])
+        count_first = int(C[3])
+        count_second = int(C[4])
+        share_first = float(C[1]) / 100.0
+        share_second = float(C[2]) / 100.0
 
         parsed_data.append(
             VaccinationByRegionRow(
