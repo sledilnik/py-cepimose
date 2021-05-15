@@ -1363,7 +1363,7 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "n"}},
-                        "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                        "Property": "Tekoča vsota za mero odmerki*​ v polju Date",
                     },
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                 },
