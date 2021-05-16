@@ -105,8 +105,8 @@ def _get_default_by_age_group_command():
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
-                    {"Name": "s", "Entity": "xls_SURS_starost", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
                 ],
                 "Select": [
                     {
@@ -124,11 +124,11 @@ def _get_default_by_age_group_command():
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
-                        "Column": {
+                        "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Odmerek",
+                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
                         },
-                        "Name": "eRCO_podatki.Odmerek",
+                        "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
                     },
                 ],
                 "Where": [
@@ -139,19 +139,11 @@ def _get_default_by_age_group_command():
                                     {
                                         "Column": {
                                             "Expression": {
-                                                "SourceRef": {"Source": "s"}
+                                                "SourceRef": {"Source": "x"}
                                             },
-                                            "Property": "Starostni razred",
+                                            "Property": "Starostni ​razred",
                                         }
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Odmerek",
-                                        }
-                                    },
+                                    }
                                 ],
                                 "Values": [],
                             }
@@ -204,12 +196,8 @@ def _get_default_by_age_group_command():
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1]}]},
-                "Secondary": {"Groupings": [{"Projections": [2]}]},
-                "DataReduction": {
-                    "DataVolume": 4,
-                    "Intersection": {"BinnedLineSample": {}},
-                },
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
             "ExecutionMetricsKind": 1,
@@ -217,15 +205,14 @@ def _get_default_by_age_group_command():
     }
 
 
-def _get_by_age_group_first_condition_values(group="'90+'", dose="1L"):
+def _get_by_age_group_first_condition_values(group="'90+'"):
     return [
         {"Literal": {"Value": group}},
-        {"Literal": {"Value": dose}},
     ]
 
 
-def _create_by_age_group_command(group="'90+'", dose="1L"):
-    values = _get_by_age_group_first_condition_values(group, dose)
+def _create_by_age_group_command(group="'90+'"):
+    values = _get_by_age_group_first_condition_values(group)
     command = _get_default_by_age_group_command()
     command["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["In"][
         "Values"
@@ -236,9 +223,8 @@ def _create_by_age_group_command(group="'90+'", dose="1L"):
 def _create_by_age_group_commands():
     obj = {}
     for el in AgeGroup:
-        dose1_command = _create_by_age_group_command(el.value, "1L")
-        dose2_command = _create_by_age_group_command(el.value, "2L")
-        obj[el] = [dose1_command, dose2_command]
+        command = _create_by_age_group_command(el.value)
+        obj[el] = [command]
 
     return obj
 
@@ -251,9 +237,8 @@ def _create_by_age_group_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        dose1_req = _create_req([_commands[0]])
-        dose2_req = _create_req([_commands[1]])
-        obj[key] = [dose1_req, dose2_req]
+        req = _create_req([_commands[0]])
+        obj[key] = [req]
 
     return obj
 

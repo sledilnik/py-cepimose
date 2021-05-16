@@ -274,25 +274,39 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
     return parsed_data
 
 
-def _parse_vaccinations_by_age_group(data) -> "list[VaccinationDose]":
+def _parse_vaccinations_by_age_group(data) -> "list[vaccinations_by_age_group]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
     date = None
-    dose = None
-    r_list = [None, 1]
+    people_vaccinated = None
+    people_fully_vaccinated = None
     for element in resp:
-        date = parse_date(element["G0"])
-        R = R = element["X"][0]["R"] if "R" in element["X"][0] else None
+        C = element["C"]
+        if len(C) == 3:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+        elif len(C) == 2:
+            date = parse_date(C[0])
+            R = element["R"]
+            if R == 2:
+                people_fully_vaccinated = C[1]
+            else:
+                people_vaccinated = C[1]
+        elif len(C) == 1:
+            # R == 6
+            date = parse_date(C[0])
+        else:
+            raise Exception("Unknown item length!")
 
-        if R not in r_list:
-            print(R)
-            raise Exception("Unknown R value!")
-
-        if R == None:
-            dose = element["X"][0]["M0"]
-
-        parsed_data.append(VaccinationDose(date=date, dose=dose))
+        parsed_data.append(
+            VaccinationByDayRow(
+                date=date,
+                first_dose=people_vaccinated,
+                second_dose=people_fully_vaccinated,
+            )
+        )
 
     return parsed_data
 

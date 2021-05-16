@@ -170,7 +170,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    @unittest.skip("TODO")
+    # @unittest.skip("TODO")
     def test_vaccinations_by_age_group(self):
         data = cepimose.vaccinations_by_age_group()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -183,7 +183,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
             # ? more assertions
 
-    @unittest.skip("TODO")
+    # @unittest.skip("TODO")
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
 
