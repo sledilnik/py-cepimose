@@ -266,7 +266,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(1, m.share1)
             self.assertGreaterEqual(1, m.share2)
 
-    @unittest.skip("TODO")
+    # @unittest.skip("TODO")
     def test_vaccinations_age_group_by_region_on_day(self):
         data = cepimose.vaccinations_age_group_by_region_on_day()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -278,7 +278,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertTrue(len(group_data) == len(list(cepimose.Region)))
             # ? more assertions
 
-    @unittest.skip("TODO")
+    # @unittest.skip("TODO")
     def test_vaccinations_age_group_by_region_on_day_with_arg(self):
         chosen_group = cepimose.AgeGroup.GROUP_0_17
         data = cepimose.vaccinations_age_group_by_region_on_day(chosen_group)

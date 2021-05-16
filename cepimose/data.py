@@ -392,7 +392,7 @@ def _get_default_age_group_by_region_on_day_command():
             "Query": {
                 "Version": 2,
                 "From": [
-                    {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                     {"Name": "s1", "Entity": "Sifrant_regija", "Type": 0},
                     {"Name": "c", "Entity": "Calendar", "Type": 0},
                 ],
@@ -405,30 +405,42 @@ def _get_default_age_group_by_region_on_day_command():
                         "Name": "Sifrant_regija.Regija",
                     },
                     {
-                        "Column": {
+                        "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odmerek",
+                            "Property": "Delež_regija_1",
                         },
-                        "Name": "eRCO_podatki.Odmerek",
+                        "Name": "eRCO_podatki.Delež_regija",
                     },
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Delež_regija",
+                            "Property": "Delež_regija_precepljenost",
                         },
-                        "Name": "eRCO_podatki.Delež_regija",
+                        "Name": "eRCO_podatki_ed.Delež_regija_precepljenost",
                     },
                     {
                         "Aggregation": {
                             "Expression": {
                                 "Column": {
                                     "Expression": {"SourceRef": {"Source": "e"}},
-                                    "Property": "Weight",
+                                    "Property": "Odmerek – kopija",
                                 }
                             },
                             "Function": 0,
                         },
-                        "Name": "Sum(eRCO_podatki.Weight)",
+                        "Name": "Sum(eRCO_​​podatki.Odmerek – kopija)",
+                    },
+                    {
+                        "Aggregation": {
+                            "Expression": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "e"}},
+                                    "Property": "Precepljenost",
+                                }
+                            },
+                            "Function": 0,
+                        },
+                        "Name": "Sum(eRCO_​​podatki.Precepljenost)",
                     },
                 ],
                 "Where": [
@@ -514,28 +526,26 @@ def _get_default_age_group_by_region_on_day_command():
                         "Expression": {
                             "Measure": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Delež_regija",
+                                "Property": "Delež_regija_1",
                             }
                         },
                     }
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 2, 3]}]},
-                "Secondary": {"Groupings": [{"Projections": [1]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
                 "DataReduction": {
                     "DataVolume": 4,
-                    "Primary": {"Window": {"Count": 200}},
-                    "Secondary": {"Top": {"Count": 60}},
+                    "Primary": {"Window": {"Count": 1000}},
                 },
-                "SuppressedJoinPredicates": [3],
+                "SuppressedJoinPredicates": [3, 4],
                 "Version": 1,
                 "Highlights": [
                     {
                         "Version": 2,
                         "From": [
                             {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
-                            {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                            {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                         ],
                         "Where": [
                             {
@@ -547,7 +557,7 @@ def _get_default_age_group_by_region_on_day_command():
                                                     "Expression": {
                                                         "SourceRef": {"Source": "x"}
                                                     },
-                                                    "Property": "Starostni razred",
+                                                    "Property": "Starostni ​razred",
                                                 }
                                             }
                                         ],

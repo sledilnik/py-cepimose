@@ -407,9 +407,13 @@ def _parse_vaccinations_age_group_by_region_on_day(
 
     parsed_data = []
     for el in resp:
-        region = el["G0"]
-        first_dose = parse_resp_data(region, el["X"][0]["C"])
-        second_dose = parse_resp_data(region, el["X"][1]["C"])
+        print(el)
+        C = el["C"]
+        region = C[0]
+        first_dose_data = [C[1], C[2], C[5], C[6]]
+        second_dose_data = [C[3], C[4], C[7], C[8]]
+        first_dose = parse_resp_data(region, first_dose_data)
+        second_dose = parse_resp_data(region, second_dose_data)
         parsed_data.append(
             VaccinationAgeGroupByRegionOnDay(
                 region=region, dose1=first_dose, dose2=second_dose
