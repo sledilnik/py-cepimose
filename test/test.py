@@ -210,6 +210,16 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertTrue(len(element[1]) != 0)
             self.assertDatesIncreaseSince(element[1], datetime.datetime(2020, 12, 27))
 
+            # values should be growing
+            firstPrevious = 0
+            secondPrevious = 0
+            for row in data[element[0]]:
+                print(row, firstPrevious, secondPrevious)
+                self.assertGreaterEqual(row.first_dose, firstPrevious)
+                self.assertGreaterEqual(row.second_dose, secondPrevious)
+                firstPrevious = row.first_dose
+                secondPrevious = row.second_dose
+
         pomurska_region = data[cepimose.data.Region.POMURSKA]
 
         def assertRow(row, expected_date, expected_first, expected_second):
