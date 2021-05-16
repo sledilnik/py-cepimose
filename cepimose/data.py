@@ -105,8 +105,8 @@ def _get_default_by_age_group_command():
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
-                    {"Name": "s", "Entity": "xls_SURS_starost", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
                 ],
                 "Select": [
                     {
@@ -124,11 +124,11 @@ def _get_default_by_age_group_command():
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
-                        "Column": {
+                        "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Odmerek",
+                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
                         },
-                        "Name": "eRCO_podatki.Odmerek",
+                        "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
                     },
                 ],
                 "Where": [
@@ -139,19 +139,11 @@ def _get_default_by_age_group_command():
                                     {
                                         "Column": {
                                             "Expression": {
-                                                "SourceRef": {"Source": "s"}
+                                                "SourceRef": {"Source": "x"}
                                             },
-                                            "Property": "Starostni razred",
+                                            "Property": "Starostni ​razred",
                                         }
-                                    },
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Odmerek",
-                                        }
-                                    },
+                                    }
                                 ],
                                 "Values": [],
                             }
@@ -204,12 +196,8 @@ def _get_default_by_age_group_command():
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1]}]},
-                "Secondary": {"Groupings": [{"Projections": [2]}]},
-                "DataReduction": {
-                    "DataVolume": 4,
-                    "Intersection": {"BinnedLineSample": {}},
-                },
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
             "ExecutionMetricsKind": 1,
@@ -217,15 +205,14 @@ def _get_default_by_age_group_command():
     }
 
 
-def _get_by_age_group_first_condition_values(group="'90+'", dose="1L"):
+def _get_by_age_group_first_condition_values(group="'90+'"):
     return [
         {"Literal": {"Value": group}},
-        {"Literal": {"Value": dose}},
     ]
 
 
-def _create_by_age_group_command(group="'90+'", dose="1L"):
-    values = _get_by_age_group_first_condition_values(group, dose)
+def _create_by_age_group_command(group="'90+'"):
+    values = _get_by_age_group_first_condition_values(group)
     command = _get_default_by_age_group_command()
     command["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["In"][
         "Values"
@@ -236,9 +223,8 @@ def _create_by_age_group_command(group="'90+'", dose="1L"):
 def _create_by_age_group_commands():
     obj = {}
     for el in AgeGroup:
-        dose1_command = _create_by_age_group_command(el.value, "1L")
-        dose2_command = _create_by_age_group_command(el.value, "2L")
-        obj[el] = [dose1_command, dose2_command]
+        command = _create_by_age_group_command(el.value)
+        obj[el] = [command]
 
     return obj
 
@@ -251,9 +237,8 @@ def _create_by_age_group_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        dose1_req = _create_req([_commands[0]])
-        dose2_req = _create_req([_commands[1]])
-        obj[key] = [dose1_req, dose2_req]
+        req = _create_req([_commands[0]])
+        obj[key] = [req]
 
     return obj
 
@@ -392,7 +377,7 @@ def _get_default_age_group_by_region_on_day_command():
             "Query": {
                 "Version": 2,
                 "From": [
-                    {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                     {"Name": "s1", "Entity": "Sifrant_regija", "Type": 0},
                     {"Name": "c", "Entity": "Calendar", "Type": 0},
                 ],
@@ -405,30 +390,42 @@ def _get_default_age_group_by_region_on_day_command():
                         "Name": "Sifrant_regija.Regija",
                     },
                     {
-                        "Column": {
+                        "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odmerek",
+                            "Property": "Delež_regija_1",
                         },
-                        "Name": "eRCO_podatki.Odmerek",
+                        "Name": "eRCO_podatki.Delež_regija",
                     },
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Delež_regija",
+                            "Property": "Delež_regija_precepljenost",
                         },
-                        "Name": "eRCO_podatki.Delež_regija",
+                        "Name": "eRCO_podatki_ed.Delež_regija_precepljenost",
                     },
                     {
                         "Aggregation": {
                             "Expression": {
                                 "Column": {
                                     "Expression": {"SourceRef": {"Source": "e"}},
-                                    "Property": "Weight",
+                                    "Property": "Odmerek – kopija",
                                 }
                             },
                             "Function": 0,
                         },
-                        "Name": "Sum(eRCO_podatki.Weight)",
+                        "Name": "Sum(eRCO_​​podatki.Odmerek – kopija)",
+                    },
+                    {
+                        "Aggregation": {
+                            "Expression": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "e"}},
+                                    "Property": "Precepljenost",
+                                }
+                            },
+                            "Function": 0,
+                        },
+                        "Name": "Sum(eRCO_​​podatki.Precepljenost)",
                     },
                 ],
                 "Where": [
@@ -514,28 +511,26 @@ def _get_default_age_group_by_region_on_day_command():
                         "Expression": {
                             "Measure": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Delež_regija",
+                                "Property": "Delež_regija_1",
                             }
                         },
                     }
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 2, 3]}]},
-                "Secondary": {"Groupings": [{"Projections": [1]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
                 "DataReduction": {
                     "DataVolume": 4,
-                    "Primary": {"Window": {"Count": 200}},
-                    "Secondary": {"Top": {"Count": 60}},
+                    "Primary": {"Window": {"Count": 1000}},
                 },
-                "SuppressedJoinPredicates": [3],
+                "SuppressedJoinPredicates": [3, 4],
                 "Version": 1,
                 "Highlights": [
                     {
                         "Version": 2,
                         "From": [
                             {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
-                            {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                            {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                         ],
                         "Where": [
                             {
@@ -547,7 +542,7 @@ def _get_default_age_group_by_region_on_day_command():
                                                     "Expression": {
                                                         "SourceRef": {"Source": "x"}
                                                     },
-                                                    "Property": "Starostni razred",
+                                                    "Property": "Starostni ​razred",
                                                 }
                                             }
                                         ],
@@ -620,22 +615,20 @@ def _create_age_group_by_region_on_day_requests():
     return obj
 
 
-# BY MANU USED
-
-
-def _get_vaccination_by_manufacturer_used_second_condition_value(group):
+# BY MANU SUPPLIED AND USED
+def _get_vaccination_by_manufacturer_supplied_used_second_condition_value(group):
     return [{"Literal": {"Value": group}}]
 
 
-def _get_default_vaccination_by_manufacturer_used_command():
+def _get_default_vaccination_by_manufacturer_supplied_used_command():
     return {
         "SemanticQueryDataShapeCommand": {
             "Query": {
                 "Version": 2,
                 "From": [
                     {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_podatki_ed", "Type": 0},
-                    {"Name": "x", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
                     {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
                 ],
                 "Select": [
@@ -655,10 +648,10 @@ def _get_default_vaccination_by_manufacturer_used_command():
                     },
                     {
                         "Measure": {
-                            "Expression": {"SourceRef": {"Source": "x"}},
-                            "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                            "Expression": {"SourceRef": {"Source": "n"}},
+                            "Property": "Tekoča vsota za mero odmerki*​ v polju Date",
                         },
-                        "Name": "xls_NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
+                        "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                     },
                 ],
                 "Where": [
@@ -714,26 +707,28 @@ def _get_default_vaccination_by_manufacturer_used_command():
     }
 
 
-def _create_vaccination_by_manufacturer_used_command(group):
-    values = _get_vaccination_by_manufacturer_used_second_condition_value(group)
-    command = _get_default_vaccination_by_manufacturer_used_command()
+def _create_vaccination_by_manufacturer_supplied_used_command(group):
+    values = _get_vaccination_by_manufacturer_supplied_used_second_condition_value(
+        group
+    )
+    command = _get_default_vaccination_by_manufacturer_supplied_used_command()
     command["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"]["In"][
         "Values"
     ].append(values)
     return command
 
 
-def _create_vaccination_by_manufacturer_used_commands():
+def _create_vaccination_by_manufacturer_supplied_used_commands():
     obj = {}
     for el in Manufacturer:
-        command = _create_vaccination_by_manufacturer_used_command(el.value)
+        command = _create_vaccination_by_manufacturer_supplied_used_command(el.value)
         obj[el] = [command]
 
     return obj
 
 
-def _create_vaccination_by_manufacturer_used_requests():
-    commands = _create_vaccination_by_manufacturer_used_commands()
+def _create_vaccination_by_manufacturer_supplied_used_requests():
+    commands = _create_vaccination_by_manufacturer_supplied_used_commands()
     key_value = commands.items()
     obj = {}
     for el in key_value:
@@ -1062,37 +1057,12 @@ _vaccinations_supplied_and_used_command = {
 
 _vaccination_by_region_command = {
     "SemanticQueryDataShapeCommand": {
-        "Binding": {
-            "DataReduction": {
-                "DataVolume": 4,
-                "Primary": {"Window": {"Count": 200}},
-                "Secondary": {"Top": {"Count": 60}},
-            },
-            "Primary": {"Groupings": [{"Projections": [0, 2, 3]}]},
-            "Secondary": {"Groupings": [{"Projections": [1]}]},
-            "SuppressedJoinPredicates": [3],
-            "Version": 1,
-        },
         "Query": {
+            "Version": 2,
             "From": [
-                {"Entity": "eRCO_podatki_ed", "Name": "e", "Type": 0},
-                {
-                    "Entity": "Sifrant_regija",
-                    "Name": "s1",
-                    "Type": 0,
-                },
-                {"Entity": "Calendar", "Name": "c", "Type": 0},
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 2,
-                    "Expression": {
-                        "Measure": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Delež_regija",
-                        }
-                    },
-                }
+                {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
+                {"Name": "s1", "Entity": "Sifrant_regija", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
@@ -1103,33 +1073,44 @@ _vaccination_by_region_command = {
                     "Name": "Sifrant_regija.Regija",
                 },
                 {
-                    "Column": {
+                    "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odmerek",
+                        "Property": "Delež_regija_1",
                     },
-                    "Name": "eRCO_podatki.Odmerek",
+                    "Name": "eRCO_podatki.Delež_regija",
                 },
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Delež_regija",
+                        "Property": "Delež_regija_precepljenost",
                     },
-                    "Name": "eRCO_podatki.Delež_regija",
+                    "Name": "eRCO_podatki_ed.Delež_regija_precepljenost",
                 },
                 {
                     "Aggregation": {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Weight",
+                                "Property": "Odmerek – kopija",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(eRCO_podatki.Weight)",
+                    "Name": "Sum(eRCO_​​podatki.Odmerek – kopija)",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Precepljenost",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO_​​podatki.Precepljenost)",
                 },
             ],
-            "Version": 2,
             "Where": [
                 {
                     "Condition": {
@@ -1201,7 +1182,25 @@ _vaccination_by_region_command = {
                     }
                 },
             ],
+            "OrderBy": [
+                {
+                    "Direction": 2,
+                    "Expression": {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Delež_regija_1",
+                        }
+                    },
+                }
+            ],
         },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
+            "DataReduction": {"DataVolume": 4, "Primary": {"Window": {"Count": 1000}}},
+            "SuppressedJoinPredicates": [3, 4],
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
     }
 }
 
@@ -1363,7 +1362,7 @@ _vaccination_supplied_by_manufacturer_cum_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "n"}},
-                        "Property": "Tekoča vsota za mero odmerki* v polju Date",
+                        "Property": "Tekoča vsota za mero odmerki*​ v polju Date",
                     },
                     "Name": "NIJZ_Odmerki.Tekoča vsota za mero odmerki* v polju Date",
                 },
@@ -1575,105 +1574,6 @@ _vaccinations_by_municipalities_share_command = {
     }
 }
 
-_vaccinations_by_manufacturer_used_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
-                {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c1"}},
-                        "Property": "Date",
-                    },
-                    "Name": "Calendar.Date",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "s"}},
-                        "Property": "Cepivo_Ime",
-                    },
-                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
-                },
-                {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "c"}},
-                                "Property": "Weight",
-                            }
-                        },
-                        "Function": 0,
-                    },
-                    "Name": "Sum(eRCO_podatki_ed.Weight)",
-                },
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 2,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T00:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "s"}
-                                                },
-                                                "Property": "Cepivo_Ime",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [[{"Literal": {"Value": "null"}}]],
-                                }
-                            }
-                        }
-                    }
-                },
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
-            "Secondary": {"Groupings": [{"Projections": [1]}]},
-            "DataReduction": {
-                "DataVolume": 4,
-                "Primary": {"Sample": {}},
-                "Secondary": {"Top": {}},
-            },
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
-}
-
-
 # REQ
 _vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
 
@@ -1706,9 +1606,5 @@ _vaccinations_age_group_by_region_on_day_requests = (
 )
 
 _vaccination_by_manufacturer_supplied_used_requests = (
-    _create_vaccination_by_manufacturer_used_requests()
-)
-
-_vaccinations_by_manufacturer_used_req = _create_req(
-    [_vaccinations_by_manufacturer_used_command]
+    _create_vaccination_by_manufacturer_supplied_used_requests()
 )
