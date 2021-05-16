@@ -289,7 +289,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         for item in data:
             print(item)
-            self.assertTrue(f"'{item.region}'" in region_names)
+            self.assertTrue(item.region in region_names)
 
             self.assertTrue(item.region, item.dose1.region)
             self.assertGreaterEqual(item.dose1.total_count, 0)
