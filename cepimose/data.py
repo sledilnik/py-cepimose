@@ -207,7 +207,7 @@ def _get_default_by_age_group_command():
 
 def _get_by_age_group_first_condition_values(group="'90+'"):
     return [
-        {"Literal": {"Value": group}},
+        {"Literal": {"Value": f"'{group}'"}},
     ]
 
 
@@ -331,7 +331,7 @@ def _get_default_by_region_by_day_command():
 
 
 def _get_default_by_region_by_day_condition_values(region):
-    return [{"Literal": {"Value": region}}]
+    return [{"Literal": {"Value": f"'{region}'"}}]
 
 
 def _create_by_region_by_day_command(region):
@@ -368,7 +368,7 @@ def _create_by_region_by_day_requests():
 
 # AGE GROUP BY REGION ON DAY
 def _get_age_group_by_region_on_day_first_condition_value(group="'90+'"):
-    return [{"Literal": {"Value": group}}]
+    return [{"Literal": {"Value": f"'{group}'"}}]
 
 
 def _get_default_age_group_by_region_on_day_command():
@@ -617,7 +617,7 @@ def _create_age_group_by_region_on_day_requests():
 
 # BY MANU SUPPLIED AND USED
 def _get_vaccination_by_manufacturer_supplied_used_second_condition_value(group):
-    return [{"Literal": {"Value": group}}]
+    return [{"Literal": {"Value": f"'{group}'"}}]
 
 
 def _get_default_vaccination_by_manufacturer_supplied_used_command():
