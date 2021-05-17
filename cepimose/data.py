@@ -1031,7 +1031,7 @@ _vaccinations_timestamp_command = {
         "Query": {
             "Version": 2,
             "From": [
-                {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
@@ -1040,7 +1040,7 @@ _vaccinations_timestamp_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "DatumOsvezevanja",
+                                "Property": "DatumOsveževanja",
                             }
                         },
                         "Function": 3,
