@@ -464,3 +464,15 @@ def _parse_vaccinations_by_manufacturer_supplied_used(
             raise Exception("Unknown [C] length")
 
     return parsed_data
+
+
+def _parse_vaccinations_gender_by_date(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    return resp[0].get("M0", None)

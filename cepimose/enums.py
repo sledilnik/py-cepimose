@@ -43,3 +43,9 @@ class Manufacturer(Enum):
     MODERNA = "Moderna"
     PFIZER = "Pfizer-BioNTech"
     JANSSEN = "Janssen"
+
+
+@unique
+class Gender(Enum):
+    FEMALE = "Ženske"
+    MALE = "Moški"
