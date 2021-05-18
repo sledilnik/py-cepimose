@@ -190,7 +190,6 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
             female_second = _get_data(female[1], _parse_vaccinations_gender_by_date)
             male_first = _get_data(male[0], _parse_vaccinations_gender_by_date)
             male_second = _get_data(male[1], _parse_vaccinations_gender_by_date)
-            print(date, female_first, female_second, male_first, male_second)
             result.append(
                 VaccinationsByGender(
                     date=date,
