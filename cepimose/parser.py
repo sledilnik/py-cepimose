@@ -500,3 +500,49 @@ def _parse_vaccinations_gender_by_date(data):
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     return resp[0].get("M0", None)
+
+
+# date range parsers
+def _parse_vaccinations_date_range(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    parsed_data = []
+
+    date = None
+    people_vaccinated = None
+    people_fully_vaccinated = None
+    for element in resp:
+        C = element["C"]
+        if len(C) == 3:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+        elif len(C) == 2:
+            date = parse_date(C[0])
+            R = element["R"]
+            if R == 2:
+                people_fully_vaccinated = C[1]
+            else:
+                people_vaccinated = C[1]
+        elif len(C) == 1:
+            # R == 6
+            date = parse_date(C[0])
+        else:
+            raise Exception("Unknown item length!")
+
+        parsed_data.append(
+            VaccinationByDayRow(
+                date=date,
+                first_dose=people_vaccinated,
+                second_dose=people_fully_vaccinated,
+            )
+        )
+
+    return parsed_data

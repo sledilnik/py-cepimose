@@ -1,3 +1,4 @@
+import pprint
 import datetime
 import requests
 import time
@@ -17,6 +18,7 @@ from .data import (
     _vaccinations_age_group_by_region_on_day_requests,
     _vaccination_by_manufacturer_supplied_used_requests,
     _vaccinations_gender_by_date_requests,
+    _create_vaccinations_data_range_request,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -32,6 +34,7 @@ from .parser import (
     _parse_vaccinations_age_group_by_region_on_day,
     _parse_vaccinations_by_manufacturer_supplied_used,
     _parse_vaccinations_gender_by_date,
+    _parse_vaccinations_date_range,
 )
 
 from .types import (
@@ -56,6 +59,7 @@ def _get_data(req, parse_response):
 
 
 def vaccinations_timestamp():
+    print(_vaccinations_timestamp_req)
     return _get_data(_vaccinations_timestamp_req, _parse_vaccinations_timestamp)
 
 
@@ -228,3 +232,31 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
         male_first=male_first,
         male_second=male_second,
     )
+
+
+# PAGE 1
+# date range
+# regions, age_group
+
+
+def vaccinations_date_range(
+    end_date: datetime.datetime,
+    start_date: datetime.datetime,
+    property: Region or AgeGroup,
+):
+    req = _create_vaccinations_data_range_request(
+        end_date=end_date, start_date=start_date, property=property
+    )
+
+    # print(req["queries"][0]["Query"]["Commands"][0])
+
+    # if needed will make different parsers for each property
+    result = _get_data(req, _parse_vaccinations_date_range)
+    print("RESULT: ", result)
+
+
+end_date = datetime.datetime(2021, 2, 22)
+start_date = datetime.datetime(2020, 12, 26)
+vaccinations_date_range(
+    end_date=end_date, start_date=start_date, property=Region.PODRAVSKA
+)
