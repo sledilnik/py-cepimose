@@ -252,16 +252,18 @@ def vaccinations_date_range(
     return _get_data(req, _parse_vaccinations_date_range)
 
 
-# end_date = datetime.datetime(2021, 2, 22)
-# start_date = datetime.datetime(2020, 12, 26)
+# end_date = datetime.datetime(2021, 3, 10)
+# start_date = datetime.datetime(2021, 1, 26)
 
 # age_group = vaccinations_date_range(
 #     end_date=end_date, start_date=start_date, property=AgeGroup.GROUP_90
 # )
+# print(age_group[0])
+# print(age_group[len(age_group) - 1])
 
 # region = vaccinations_date_range(
 #     end_date=end_date, start_date=start_date, property=Region.POMURSKA
 # )
 
-# print(age_group[0])
 # print(region[0])
+# print(region[len(region) - 1])

@@ -1,97 +1,88 @@
 from cepimose.enums import AgeGroup, Region
 import datetime
 
+_where_third_common = {
+    "Condition": {
+        "Comparison": {
+            "ComparisonKind": 1,
+            "Left": {
+                "Column": {
+                    "Expression": {"SourceRef": {"Source": "c1"}},
+                    "Property": "Date",
+                }
+            },
+            "Right": {
+                "DateSpan": {
+                    "Expression": {
+                        "Literal": {"Value": "datetime'2020-12-26T01:00:00'"}
+                    },
+                    "TimeUnit": 5,
+                }
+            },
+        }
+    }
+}
+
 # region comparison_kind = 2
 # age group comparison_kind = 3
-def _getWhereEndDateCondition(date: datetime.datetime, comparison_kind):
-    return (
-        {
-            "Condition": {
-                "Comparison": {
-                    "ComparisonKind": comparison_kind,
-                    "Left": {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "c1"}},
-                            "Property": "Date",
-                        }
-                    },
-                    "Right": {"Literal": {"Value": f"datetime'{date.isoformat()}'"}},
-                }
-            }
-        },
-    )
-
-
-def _getWhereStartDateCondition(date: datetime.datetime):
-    return (
-        {
-            "Condition": {
-                "Comparison": {
-                    "ComparisonKind": 1,
-                    "Left": {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "c1"}},
-                            "Property": "Date",
-                        }
-                    },
-                    "Right": {
-                        "DateSpan": {
-                            "Expression": {
-                                "Literal": {"Value": f"datetime'{date.isoformat()}'"}
-                            },
-                            "TimeUnit": 5,
-                        }
-                    },
-                }
-            }
-        },
-    )
-
-
-# only age group value="null", property="CepivoIme", source="c"
-def _getWherePropertyNotCondition(value, property, source):
-    return (
-        {
-            "Condition": {
-                "Not": {
-                    "Expression": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": source}},
-                                        "Property": property,
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": value}}]],
-                        }
+def _getWhereRightDateCondition(date: datetime.datetime):
+    return {
+        "Right": {
+            "Comparison": {
+                "ComparisonKind": 3,
+                "Left": {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "c1"}},
+                        "Property": "Date",
                     }
-                }
+                },
+                "Right": {"Literal": {"Value": f"datetime'{date.isoformat()}'"}},
             }
         },
-    )
+    }
+
+
+def _getWhereLeftDateCondition(date: datetime.datetime):
+    return {
+        "Left": {
+            "Comparison": {
+                "ComparisonKind": 2,
+                "Left": {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "c1"}},
+                        "Property": "Date",
+                    }
+                },
+                "Right": {"Literal": {"Value": f"datetime'{date.isoformat()}'"}},
+            }
+        }
+    }
+
+
+def _getWhereFirstCondition(left, right):
+    obj = {}
+    # print(left, right)
+    obj["Condition"] = {"And": {**left, **right}}
+    return obj
 
 
 # for AGE GROUP: property="Starostni ​razred", source="x"
 def _getWherePropertyCondition(value, property="Regija", source="s"):
-    return (
-        {
-            "Condition": {
-                "In": {
-                    "Expressions": [
-                        {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": source}},
-                                "Property": property,
-                            }
+    return {
+        "Condition": {
+            "In": {
+                "Expressions": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": source}},
+                            "Property": property,
                         }
-                    ],
-                    "Values": [[{"Literal": {"Value": f"'{value}'"}}]],
-                }
+                    }
+                ],
+                "Values": [[{"Literal": {"Value": f"'{value}'"}}]],
             }
-        },
-    )
+        }
+    }
 
 
 region_age_group_Version = {"Version": 2}
@@ -145,11 +136,13 @@ region_and_age_group_Select = {
 def _get_region_Query(
     end_date: datetime.datetime, start_date: datetime.datetime, region
 ):
-    where_first = _getWhereEndDateCondition(end_date, 2)
+    where_left = _getWhereLeftDateCondition(start_date)
+    where_right = _getWhereRightDateCondition(end_date)
+    where_first = _getWhereFirstCondition(where_left, where_right)
     where_second = _getWherePropertyCondition(region, "Regija", "s")
-    where_third = _getWhereStartDateCondition(start_date)
+    where_third = _where_third_common
 
-    where = {"Where": [*where_first, *where_second, *where_third]}
+    where = {"Where": [where_first, where_second, where_third]}
 
     obj = {}
     obj["Query"] = {
@@ -165,12 +158,13 @@ def _get_region_Query(
 def _get_age_group_Query(
     end_date: datetime.datetime, start_date: datetime.datetime, group
 ):
-    where_first = _getWhereEndDateCondition(end_date, 3)
+    where_left = _getWhereLeftDateCondition(start_date)
+    where_right = _getWhereRightDateCondition(end_date)
+    where_first = _getWhereFirstCondition(where_left, where_right)
     where_second = _getWherePropertyCondition(group, "Starostni ​razred", "x")
-    where_third = _getWherePropertyNotCondition("null", "CepivoIme", "c")
-    where_fourth = _getWhereStartDateCondition(start_date)
+    where_third = _where_third_common
 
-    where = {"Where": [*where_first, *where_second, *where_third, *where_fourth]}
+    where = {"Where": [where_first, where_second, where_third]}
 
     obj = {
         "Query": {
