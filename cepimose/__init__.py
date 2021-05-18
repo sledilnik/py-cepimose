@@ -203,9 +203,14 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
         print(f"Elapsed time: {finish - start}")
         return result
 
-    day = list(
+    filtered_days = list(
         filter(lambda item: item["date"] == date, _vaccinations_gender_by_date_requests)
-    )[0]
+    )
+
+    if len(filtered_days) == 0:
+        return None
+
+    day = filtered_days[0]
 
     date = day["date"]
     female = day[Gender.FEMALE]

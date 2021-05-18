@@ -381,6 +381,7 @@ class CepimoseTestCase(unittest.TestCase):
         data5 = cepimose.vaccinations_gender_by_date(test_date5)
 
         def assertRow(row, expected_date, expected_data):
+            print(row)
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.female_first, expected_data[0], delta=300)
             self.assertAlmostEqual(row.female_second, expected_data[1], delta=300)
@@ -392,3 +393,13 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
         assertRow(data4, test_date4, [4652, 76, 4400, 53])
         assertRow(data5, test_date5, [1009, 690, 1321, 681])
+
+    def test_vaccinations_gender_by_date_for_today(self):
+        test_date_today = datetime.datetime.today()
+        test_today_year = test_date_today.year
+        test_today_month = test_date_today.month
+        test_today_day = test_date_today.day
+        test_today_without_time = datetime.datetime(test_today_year, test_today_month, test_today_day)
+        data_today = cepimose.vaccinations_gender_by_date(test_today_without_time)
+        print(f"Today: {test_date_today}")
+        self.assertIsNot(data_today, None)
