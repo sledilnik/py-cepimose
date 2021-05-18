@@ -360,12 +360,13 @@ class CepimoseTestCase(unittest.TestCase):
             # ? more assertions
 
     def test_vaccination_timestamp(self):
-        data = cepimose.vaccinations_timestamp()
-        ts = datetime.datetime.utcfromtimestamp(float(data) / 1000.0)
-        day_delta = datetime.timedelta(days=1)
+        ts = cepimose.vaccinations_timestamp()
+        print("Last update:", ts)
+        day_delta = datetime.timedelta(days=3)
         today = datetime.datetime.now()
         diff = today - ts
         self.assertGreaterEqual(day_delta, diff)
+        self.assertGreaterEqual(today, ts)
 
     def test_vaccinations_gender_by_date(self):
         test_date1 = datetime.datetime(2021, 1, 10)
