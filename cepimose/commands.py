@@ -1,13 +1,14 @@
 from cepimose.enums import AgeGroup, Region
 import datetime
 
-
-def _getWhereEndDateCondition(date: datetime.datetime):
+# region comparison_kind = 2
+# age group comparison_kind = 3
+def _getWhereEndDateCondition(date: datetime.datetime, comparison_kind):
     return (
         {
             "Condition": {
                 "Comparison": {
-                    "ComparisonKind": 2,
+                    "ComparisonKind": comparison_kind,
                     "Left": {
                         "Column": {
                             "Expression": {"SourceRef": {"Source": "c1"}},
@@ -144,7 +145,7 @@ region_and_age_group_Select = {
 def _get_region_Query(
     end_date: datetime.datetime, start_date: datetime.datetime, region
 ):
-    where_first = _getWhereEndDateCondition(end_date)
+    where_first = _getWhereEndDateCondition(end_date, 2)
     where_second = _getWherePropertyCondition(region, "Regija", "s")
     where_third = _getWhereStartDateCondition(start_date)
 
@@ -164,8 +165,8 @@ def _get_region_Query(
 def _get_age_group_Query(
     end_date: datetime.datetime, start_date: datetime.datetime, group
 ):
-    where_first = _getWhereEndDateCondition(end_date)
-    where_second = _getWherePropertyCondition(group, "Starostni razred", "x")
+    where_first = _getWhereEndDateCondition(end_date, 3)
+    where_second = _getWherePropertyCondition(group, "Starostni ​razred", "x")
     where_third = _getWherePropertyNotCondition("null", "CepivoIme", "c")
     where_fourth = _getWhereStartDateCondition(start_date)
 
@@ -216,7 +217,7 @@ def get_date_range_command(
 
     if isinstance(property, AgeGroup):
         query = _get_age_group_Query(
-            end_date=end_date, start_date=start_date, group=property
+            end_date=end_date, start_date=start_date, group=property.value
         )
         obj["SemanticQueryDataShapeCommand"] = {
             **query,

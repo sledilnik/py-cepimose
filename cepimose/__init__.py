@@ -248,15 +248,20 @@ def vaccinations_date_range(
         end_date=end_date, start_date=start_date, property=property
     )
 
-    # print(req["queries"][0]["Query"]["Commands"][0])
-
     # if needed will make different parsers for each property
-    result = _get_data(req, _parse_vaccinations_date_range)
-    print("RESULT: ", result)
+    return _get_data(req, _parse_vaccinations_date_range)
 
 
-end_date = datetime.datetime(2021, 2, 22)
-start_date = datetime.datetime(2020, 12, 26)
-vaccinations_date_range(
-    end_date=end_date, start_date=start_date, property=Region.PODRAVSKA
-)
+# end_date = datetime.datetime(2021, 2, 22)
+# start_date = datetime.datetime(2020, 12, 26)
+
+# age_group = vaccinations_date_range(
+#     end_date=end_date, start_date=start_date, property=AgeGroup.GROUP_90
+# )
+
+# region = vaccinations_date_range(
+#     end_date=end_date, start_date=start_date, property=Region.POMURSKA
+# )
+
+# print(age_group[0])
+# print(region[0])
