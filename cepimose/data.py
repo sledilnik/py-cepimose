@@ -997,9 +997,9 @@ def _create_vaccinations_gender_commands(
 
 def _create_vaccination_gender_requests():
     first_date = datetime.datetime(2020, 12, 27)
-    last_date = datetime.datetime.today()
-
     day_delta = datetime.timedelta(days=1)
+    last_date = datetime.datetime.today() + day_delta
+
     request_by_date = []
     for i in range((last_date - first_date).days):
         date = first_date + i * day_delta
