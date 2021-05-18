@@ -367,17 +367,41 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
     parsed_data = []
 
     for el in resp:
-        name, population, share2, share1, dose1, dose2 = el["C"]
-        parsed_data.append(
-            VaccinationMunShare(
-                name=name,
-                dose1=dose1,
-                share1=float(share1),
-                dose2=dose2,
-                share2=float(share2),
-                population=population,
+        C = el["C"]
+        R = el.get("R", None)
+        if len(C) == 6:
+            name, population, share2, share1, dose1, dose2 = el["C"]
+            parsed_data.append(
+                VaccinationMunShare(
+                    name=name,
+                    dose1=dose1,
+                    share1=float(share1),
+                    dose2=dose2,
+                    share2=float(share2),
+                    population=population,
+                )
             )
-        )
+        elif len(C) == 5:
+            if R == 32:
+                name, population, share2, share1, dose1 = el["C"]
+                dose2 = int(population * float(share2))
+                print(dose2)
+                parsed_data.append(
+                    VaccinationMunShare(
+                        name=name,
+                        dose1=dose1,
+                        share1=float(share1),
+                        dose2=dose2,
+                        share2=float(share2),
+                        population=population,
+                    )
+                )
+            else:
+                print(el)
+                raise Exception(f"Unknown R: {R}")
+        else:
+            print(el)
+            raise Exception(f"Unknown C length: {len(C)}")
 
     return parsed_data
 
