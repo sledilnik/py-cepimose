@@ -1,3 +1,4 @@
+from cepimose.enums import Gender
 from dataclasses import dataclass
 import datetime
 from typing import Optional
@@ -76,3 +77,12 @@ class VaccinationAgeGroupByRegionOnDay:
     region: str
     dose1: VaccinationAgeGroupByRegionOnDayDose
     dose2: VaccinationAgeGroupByRegionOnDayDose
+
+
+@dataclass
+class VaccinationsByGender:
+    date: datetime.datetime
+    female_first: int = 0
+    female_second: int = 0
+    male_first: int = 0
+    male_second: int = 0

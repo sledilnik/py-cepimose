@@ -1,4 +1,6 @@
+import datetime
 import requests
+import time
 from .data import (
     _source,
     _headers,
@@ -14,6 +16,7 @@ from .data import (
     _vaccinations_timestamp_req,
     _vaccinations_age_group_by_region_on_day_requests,
     _vaccination_by_manufacturer_supplied_used_requests,
+    _vaccinations_gender_by_date_requests,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -28,11 +31,13 @@ from .parser import (
     _parse_vaccinations_timestamp,
     _parse_vaccinations_age_group_by_region_on_day,
     _parse_vaccinations_by_manufacturer_supplied_used,
+    _parse_vaccinations_gender_by_date,
 )
 
 from .types import (
     VaccinationByAgeRow,
     VaccinationByDayRow,
+    VaccinationsByGender,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -41,7 +46,7 @@ from .types import (
     VaccinationAgeGroupByRegionOnDay,
 )
 
-from .enums import Manufacturer, Region, AgeGroup
+from .enums import Manufacturer, Region, AgeGroup, Gender
 
 
 def _get_data(req, parse_response):
@@ -167,3 +172,59 @@ def vaccinations_by_manufacturer_supplied_used(
     req = _vaccination_by_manufacturer_supplied_used_requests[group][0]
     doses = _get_data(req, _parse_vaccinations_by_manufacturer_supplied_used)
     return doses
+
+
+# PAGE 1
+# gender
+def vaccinations_gender_by_date(date: datetime.datetime = None):
+
+    start = time.perf_counter()
+
+    if date == None:
+        result = []
+        for day in _vaccinations_gender_by_date_requests:
+            date = day["date"]
+            female = day[Gender.FEMALE]
+            male = day[Gender.MALE]
+            female_first = _get_data(female[0], _parse_vaccinations_gender_by_date)
+            female_second = _get_data(female[1], _parse_vaccinations_gender_by_date)
+            male_first = _get_data(male[0], _parse_vaccinations_gender_by_date)
+            male_second = _get_data(male[1], _parse_vaccinations_gender_by_date)
+            result.append(
+                VaccinationsByGender(
+                    date=date,
+                    female_first=female_first,
+                    female_second=female_second,
+                    male_first=male_first,
+                    male_second=male_second,
+                )
+            )
+        finish = time.perf_counter()
+        print(f"Elapsed time: {finish - start}")
+        return result
+
+    filtered_days = list(
+        filter(lambda item: item["date"] == date, _vaccinations_gender_by_date_requests)
+    )
+
+    if len(filtered_days) == 0:
+        return None
+
+    day = filtered_days[0]
+
+    date = day["date"]
+    female = day[Gender.FEMALE]
+    male = day[Gender.MALE]
+    female_first = _get_data(female[0], _parse_vaccinations_gender_by_date)
+    female_second = _get_data(female[1], _parse_vaccinations_gender_by_date)
+    male_first = _get_data(male[0], _parse_vaccinations_gender_by_date)
+    male_second = _get_data(male[1], _parse_vaccinations_gender_by_date)
+    finish = time.perf_counter()
+    print(f"Elapsed time: {finish - start}")
+    return VaccinationsByGender(
+        date=date,
+        female_first=female_first,
+        female_second=female_second,
+        male_first=male_first,
+        male_second=male_second,
+    )

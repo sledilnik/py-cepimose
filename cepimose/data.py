@@ -1,5 +1,6 @@
 import json
-from .enums import Region, AgeGroup, Manufacturer
+import datetime
+from .enums import Region, AgeGroup, Manufacturer, Gender
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -740,13 +741,297 @@ def _create_vaccination_by_manufacturer_supplied_used_requests():
     return obj
 
 
+# BY GENDER WITH DATE RANGE
+
+
+def _get_vaccinations_gender_condition(gender):
+    return [{"Literal": {"Value": f"'{gender}'"}}]
+
+
+def _get_vaccinations_gender_date_condition(date: datetime.datetime):
+    return {"Literal": {"Value": f"datetime'{date.isoformat()}'"}}
+
+
+def _get_default_vaccinations_gender_first_between_dates_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "c", "Entity": "Calendar", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Weight for 1",
+                        },
+                        "Name": "eRCO_podatki.Weight for 1",
+                    }
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "e"}
+                                            },
+                                            "Property": "OsebaSpol",
+                                        }
+                                    }
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 3,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {},
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 1,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {},
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                ],
+                "OrderBy": [
+                    {
+                        "Direction": 2,
+                        "Expression": {
+                            "Measure": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Weight for 1",
+                            }
+                        },
+                    }
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0]}]},
+                "DataReduction": {"DataVolume": 3, "Primary": {"Window": {}}},
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _get_default_vaccinations_gender_second_between_dates_command():
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
+                    {"Name": "c", "Entity": "Calendar", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Aggregation": {
+                            "Expression": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "e"}},
+                                    "Property": "Precepljenost",
+                                }
+                            },
+                            "Function": 0,
+                        },
+                        "Name": "Sum(eRCO_podatki_ed.Precepljenost)",
+                    }
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "e"}
+                                            },
+                                            "Property": "OsebaSpol",
+                                        }
+                                    }
+                                ],
+                                "Values": [],
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 3,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {},
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 1,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {},
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                ],
+                "OrderBy": [
+                    {
+                        "Direction": 2,
+                        "Expression": {
+                            "Aggregation": {
+                                "Expression": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "e"}},
+                                        "Property": "Precepljenost",
+                                    }
+                                },
+                                "Function": 0,
+                            }
+                        },
+                    }
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0]}]},
+                "DataReduction": {"DataVolume": 3, "Primary": {"Window": {}}},
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _create_vaccinations_gender_first_and_second_between_dates_command(
+    gender,
+    start_date: datetime.datetime = datetime.datetime(2020, 12, 26),
+    end_date: datetime.datetime = datetime.datetime(2020, 12, 28),
+):
+    gender_value = _get_vaccinations_gender_condition(gender)
+    date_start_value = _get_vaccinations_gender_date_condition(start_date)
+    date_end_value = _get_vaccinations_gender_date_condition(end_date)
+    command_first = _get_default_vaccinations_gender_first_between_dates_command()
+    command_first["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"][
+        "In"
+    ]["Values"].append(gender_value)
+    command_first["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"][
+        "Comparison"
+    ]["Right"] = {**date_end_value}
+
+    command_first["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"][
+        "Comparison"
+    ]["Right"]["DateSpan"]["Expression"] = {**date_start_value}
+
+    command_second = _get_default_vaccinations_gender_second_between_dates_command()
+    command_second["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"][
+        "In"
+    ]["Values"].append(gender_value)
+    command_second["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"][
+        "Comparison"
+    ]["Right"] = {**date_end_value}
+    command_second["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"][
+        "Comparison"
+    ]["Right"]["DateSpan"]["Expression"] = {**date_start_value}
+    return [command_first, command_second]
+
+
+def _create_vaccinations_gender_commands(
+    start_date: datetime.datetime = datetime.datetime(2020, 12, 26),
+    end_date: datetime.datetime = datetime.datetime(2020, 12, 28),
+):
+    obj = {}
+    for el in Gender:
+        (
+            command_first,
+            command_second,
+        ) = _create_vaccinations_gender_first_and_second_between_dates_command(
+            el.value, start_date, end_date
+        )
+        obj[el] = [command_first, command_second]
+    return obj
+
+
+def _create_vaccination_gender_requests():
+    first_date = datetime.datetime(2020, 12, 27)
+    day_delta = datetime.timedelta(days=1)
+    last_date = datetime.datetime.today() + day_delta
+
+    request_by_date = []
+    for i in range((last_date - first_date).days):
+        date = first_date + i * day_delta
+        start_date = first_date + (i - 1) * day_delta
+        end_date = first_date + (i + 1) * day_delta
+        commands = _create_vaccinations_gender_commands(
+            start_date=start_date, end_date=end_date
+        )
+        female_first_command, female_second_command = commands[Gender.FEMALE]
+        male_first_command, male_second_command = commands[Gender.MALE]
+
+        female_first_req = _create_req([female_first_command])
+        female_second_req = _create_req([female_second_command])
+        male_first_req = _create_req([male_first_command])
+        male_second_req = _create_req([male_second_command])
+
+        obj = {
+            "date": date,
+            Gender.FEMALE: [female_first_req, female_second_req],
+            Gender.MALE: [male_first_req, male_second_req],
+        }
+        request_by_date.append(obj)
+    return request_by_date
+
+
 # COMMANDS
 _vaccinations_timestamp_command = {
     "SemanticQueryDataShapeCommand": {
         "Query": {
             "Version": 2,
             "From": [
-                {"Name": "e", "Entity": "eRCO_podatki_ed", "Type": 0},
+                {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
@@ -755,7 +1040,7 @@ _vaccinations_timestamp_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "DatumOsvezevanja",
+                                "Property": "DatumOsveževanja",
                             }
                         },
                         "Function": 3,
@@ -1608,3 +1893,6 @@ _vaccinations_age_group_by_region_on_day_requests = (
 _vaccination_by_manufacturer_supplied_used_requests = (
     _create_vaccination_by_manufacturer_supplied_used_requests()
 )
+
+
+_vaccinations_gender_by_date_requests = _create_vaccination_gender_requests()
