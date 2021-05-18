@@ -367,3 +367,28 @@ class CepimoseTestCase(unittest.TestCase):
         diff = today - ts
         self.assertGreaterEqual(day_delta, diff)
 
+    def test_vaccinations_gender_by_date(self):
+        test_date1 = datetime.datetime(2021, 1, 10)
+        test_date2 = datetime.datetime(2021, 2, 10)
+        test_date3 = datetime.datetime(2021, 3, 10)
+        test_date4 = datetime.datetime(2021, 4, 10)
+        test_date5 = datetime.datetime(2021, 5, 10)
+
+        data1 = cepimose.vaccinations_gender_by_date(test_date1)
+        data2 = cepimose.vaccinations_gender_by_date(test_date2)
+        data3 = cepimose.vaccinations_gender_by_date(test_date3)
+        data4 = cepimose.vaccinations_gender_by_date(test_date4)
+        data5 = cepimose.vaccinations_gender_by_date(test_date5)
+
+        def assertRow(row, expected_date, expected_data):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.female_first, expected_data[0], delta=300)
+            self.assertAlmostEqual(row.female_second, expected_data[1], delta=300)
+            self.assertAlmostEqual(row.male_first, expected_data[2], delta=300)
+            self.assertAlmostEqual(row.male_second, expected_data[3], delta=300)
+
+        assertRow(data1, test_date1, [None, None, 1, 0])
+        assertRow(data2, test_date2, [1536, 495, 916, 215])
+        assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
+        assertRow(data4, test_date4, [4652, 76, 4400, 53])
+        assertRow(data5, test_date5, [1009, 690, 1321, 681])
