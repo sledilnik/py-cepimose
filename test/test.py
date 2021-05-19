@@ -363,7 +363,7 @@ class CepimoseTestCase(unittest.TestCase):
         ts = cepimose.vaccinations_timestamp()
         print("Last update:", ts)
         day_delta = datetime.timedelta(days=3)
-        today = datetime.datetime.now()
+        today = datetime.datetime.today()
         diff = today - ts
         self.assertGreaterEqual(day_delta, diff)
         self.assertGreaterEqual(today, ts)
