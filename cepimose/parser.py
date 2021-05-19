@@ -385,7 +385,19 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
             if R == 32:
                 name, population, share2, share1, dose1 = el["C"]
                 dose2 = int(population * float(share2))
-                print(dose2)
+                parsed_data.append(
+                    VaccinationMunShare(
+                        name=name,
+                        dose1=dose1,
+                        share1=float(share1),
+                        dose2=dose2,
+                        share2=float(share2),
+                        population=population,
+                    )
+                )
+            elif R == 16:
+                name, population, share2, share1, dose2 = el["C"]
+                dose1 = int(population * float(share1))
                 parsed_data.append(
                     VaccinationMunShare(
                         name=name,
