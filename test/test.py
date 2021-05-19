@@ -25,7 +25,7 @@ class CepimoseTestCase(unittest.TestCase):
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.first_dose, expected_first, delta=300)
-            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=300)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
