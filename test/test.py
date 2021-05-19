@@ -1,4 +1,4 @@
-from cepimose.enums import Manufacturer
+from cepimose.enums import Manufacturer, Region
 import unittest
 import cepimose
 import datetime
@@ -25,7 +25,7 @@ class CepimoseTestCase(unittest.TestCase):
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.first_dose, expected_first, delta=300)
-            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=300)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
@@ -400,7 +400,14 @@ class CepimoseTestCase(unittest.TestCase):
         test_today_year = test_date_today.year
         test_today_month = test_date_today.month
         test_today_day = test_date_today.day
-        test_today_without_time = datetime.datetime(test_today_year, test_today_month, test_today_day)
+        test_today_without_time = datetime.datetime(
+            test_today_year, test_today_month, test_today_day
+        )
         data_today = cepimose.vaccinations_gender_by_date(test_today_without_time)
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
+
+    def test_vaccinations_date_range(self):
+        start_date = datetime.datetime(2021, 3, 1)
+        data = cepimose.vaccinations_date_range(start_date, start_date, Region.POMURSKA)
+        self.assertEqual(len(data), 1)
