@@ -243,6 +243,15 @@ def vaccinations_date_range(
     start_date: datetime.datetime,
     property: Region or AgeGroup,
 ):
+
+    if end_date < start_date:
+        raise Exception(
+            f"Argument [end_date]: {end_date} should be greater or equal than [start_date]: {start_date}"
+        )
+
+    if not isinstance(property, Region) and not isinstance(property, AgeGroup):
+        raise Exception(f"Argument [property] must be instance of Region or AgeGroup")
+
     day_delta = datetime.timedelta(days=1)
     req = _create_vaccinations_data_range_request(
         end_date=end_date + day_delta, start_date=start_date, property=property
@@ -252,8 +261,8 @@ def vaccinations_date_range(
     return _get_data(req, _parse_vaccinations_date_range)
 
 
-# end_date = datetime.datetime(2021, 3, 10)
-# start_date = datetime.datetime(2021, 1, 26)
+# end_date = datetime.datetime(2021, 5, 17)
+# start_date = datetime.datetime(2020, 12, 27)
 
 # age_group = vaccinations_date_range(
 #     end_date=end_date, start_date=start_date, property=AgeGroup.GROUP_90
