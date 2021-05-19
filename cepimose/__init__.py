@@ -59,7 +59,6 @@ def _get_data(req, parse_response):
 
 
 def vaccinations_timestamp():
-    print(_vaccinations_timestamp_req)
     return _get_data(_vaccinations_timestamp_req, _parse_vaccinations_timestamp)
 
 
