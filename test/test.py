@@ -1,4 +1,4 @@
-from cepimose.enums import Manufacturer, Region
+from cepimose.enums import AgeGroup, Manufacturer, Region
 import unittest
 import cepimose
 import datetime
@@ -407,7 +407,53 @@ class CepimoseTestCase(unittest.TestCase):
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
 
-    def test_vaccinations_date_range(self):
+    # vaccinations_date_range
+    def test_vaccinations_date_range_region(self):
+        property = Region.POMURSKA
+
         start_date = datetime.datetime(2021, 3, 1)
-        data = cepimose.vaccinations_date_range(start_date, start_date, Region.POMURSKA)
+        # assert args end_date and start_date are equal
+        data = cepimose.vaccinations_date_range(
+            end_date=start_date, start_date=start_date, property=property
+        )
         self.assertEqual(len(data), 1)
+
+        # assert arg start_date is greater than end_date
+        end_date = datetime.datetime(2021, 2, 28)
+        with self.assertRaises(Exception):
+            cepimose.vaccinations_date_range(
+                end_date=end_date, start_date=start_date, property=property
+            )
+
+        start_date = datetime.datetime(2020, 12, 26)
+        today = datetime.datetime.today()
+        end_date = datetime.datetime(today.year, today.month, today.day)
+        data = cepimose.vaccinations_date_range(
+            end_date=end_date, start_date=start_date, property=property
+        )
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+    def test_vaccinations_date_range_age_group(self):
+        property = AgeGroup.GROUP_90
+
+        start_date = datetime.datetime(2021, 3, 1)
+        # assert args end_date and start_date are equal
+        data = cepimose.vaccinations_date_range(
+            end_date=start_date, start_date=start_date, property=property
+        )
+        self.assertEqual(len(data), 1)
+
+        # assert arg start_date is greater than arg end_date
+        end_date = datetime.datetime(2021, 2, 28)
+        with self.assertRaises(Exception):
+            cepimose.vaccinations_date_range(
+                end_date=end_date, start_date=start_date, property=property
+            )
+
+        start_date = datetime.datetime(2020, 12, 26)
+        today = datetime.datetime.today()
+        end_date = datetime.datetime(today.year, today.month, today.day)
+        data = cepimose.vaccinations_date_range(
+            end_date=end_date, start_date=start_date, property=property
+        )
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
