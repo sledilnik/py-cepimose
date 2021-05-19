@@ -244,7 +244,7 @@ def vaccinations_date_range(
     property: Region or AgeGroup,
 ):
     req = _create_vaccinations_data_range_request(
-        end_date=end_date, start_date=start_date, property=property
+        end_date=end_date + day_delta, start_date=start_date, property=property
     )
 
     # if needed will make different parsers for each property
