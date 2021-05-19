@@ -243,6 +243,7 @@ def vaccinations_date_range(
     start_date: datetime.datetime,
     property: Region or AgeGroup,
 ):
+    day_delta = datetime.timedelta(days=1)
     req = _create_vaccinations_data_range_request(
         end_date=end_date + day_delta, start_date=start_date, property=property
     )
