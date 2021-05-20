@@ -19,6 +19,7 @@ from .data import (
     _vaccination_by_manufacturer_supplied_used_requests,
     _vaccinations_gender_by_date_requests,
     _create_vaccinations_data_range_request,
+    _vaccinations_by_manufacturer_used_request,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -35,6 +36,7 @@ from .parser import (
     _parse_vaccinations_by_manufacturer_supplied_used,
     _parse_vaccinations_gender_by_date,
     _parse_vaccinations_date_range,
+    _parse_vaccinations_by_manufacturer_used,
 )
 
 from .types import (
@@ -175,6 +177,13 @@ def vaccinations_by_manufacturer_supplied_used(
     req = _vaccination_by_manufacturer_supplied_used_requests[group][0]
     doses = _get_data(req, _parse_vaccinations_by_manufacturer_supplied_used)
     return doses
+
+
+def vaccinations_by_manufacturer_used():
+    return _get_data(
+        _vaccinations_by_manufacturer_used_request,
+        _parse_vaccinations_by_manufacturer_used,
+    )
 
 
 # PAGE 1
