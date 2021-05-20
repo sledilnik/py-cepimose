@@ -558,8 +558,21 @@ def _parse_vaccinations_by_manufacturer_used(data):
     manu_dict = {0: "az", 1: "janssen", 2: "moderna", 3: "pfizer"}
 
     parsed_data = []
-    for element in resp:
+    day_delta = datetime.timedelta(days=1)
+    previous_date = datetime.datetime(2020, 12, 26)
+    for index, element in enumerate(resp):
         date = parse_date(element["G0"])
+        possible_missing_date = previous_date + day_delta
+        while possible_missing_date < date:
+            print(f"Add data for missing date: {possible_missing_date}")
+            parsed_data.append(
+                VaccinationByManufacturerRow(
+                    possible_missing_date, None, None, None, None
+                )
+            )
+            possible_missing_date += day_delta
+        previous_date = date
+
         obj = VaccinationByManufacturerRow(date, None, None, None, None)
         X = [el for el in element["X"] if el.get("M0", None) != None]
         if len(X) == 4:
