@@ -543,3 +543,46 @@ def _parse_vaccinations_date_range(data):
         )
 
     return parsed_data
+
+
+def _parse_vaccinations_by_manufacturer_used(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    manu_dict = {0: "az", 1: "janssen", 2: "moderna", 3: "pfizer"}
+
+    parsed_data = []
+    for element in resp:
+        date = parse_date(element["G0"])
+        obj = VaccinationByManufacturerRow(date, None, None, None, None)
+        X = [el for el in element["X"] if el.get("M0", None) != None]
+        if len(X) == 4:
+            obj.az = X[0]["M0"]
+            obj.janssen = X[1]["M0"]
+            obj.moderna = X[2]["M0"]
+            obj.pfizer = X[3]["M0"]
+        else:
+            lastI = None
+            for index, item in enumerate(X):
+                I = item.get("I", None)
+                M0 = item.get("M0", None)
+
+                if I != None:
+                    key = manu_dict[I]
+                    obj.__setattr__(key, M0)
+                elif lastI == None:
+                    key = manu_dict[index]
+                    obj.__setattr__(key, M0)
+                else:
+                    key = manu_dict[lastI + 1]
+                    obj.__setattr__(key, M0)
+                lastI = I
+        parsed_data.append(obj)
+
+    return parsed_data
