@@ -1861,6 +1861,104 @@ _vaccinations_by_municipalities_share_command = {
     }
 }
 
+_vaccinations_by_manufacturer_used_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
+                {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "c1"}},
+                        "Property": "Date",
+                    },
+                    "Name": "Calendar.Date",
+                },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                },
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "c"}},
+                                "Property": "Weight",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO_podatki_ed.Weight)",
+                },
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 2,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c1"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-12-26T00:00:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "s"}
+                                                },
+                                                "Property": "Cepivo_Ime",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [[{"Literal": {"Value": "null"}}]],
+                                }
+                            }
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0, 2]}]},
+            "Secondary": {"Groupings": [{"Projections": [1]}]},
+            "DataReduction": {
+                "DataVolume": 4,
+                "Primary": {"Sample": {}},
+                "Secondary": {"Top": {}},
+            },
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
 # REQ
 _vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
 
@@ -1898,6 +1996,10 @@ _vaccination_by_manufacturer_supplied_used_requests = (
 
 
 _vaccinations_gender_by_date_requests = _create_vaccination_gender_requests()
+
+_vaccinations_by_manufacturer_used_request = _create_req(
+    [_vaccinations_by_manufacturer_used_command]
+)
 
 
 # DATE RANGE AGE GROUP and REGION
