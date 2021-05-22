@@ -395,7 +395,6 @@ def _parse_vaccinations_age_group_by_region_on_day(
                 group_count=item[3],
             )
         if len(item) == 3:
-            print(3, item)
             return VaccinationAgeGroupByRegionOnDayDose(
                 region=region,
                 total_share=float(item[0]),
@@ -412,18 +411,31 @@ def _parse_vaccinations_age_group_by_region_on_day(
 
     parsed_data = []
     for el in resp:
-        print(el)
         C = el["C"]
         region = C[0]
-        first_dose_data = [C[1], C[2], C[5], C[6]]
-        second_dose_data = [C[3], C[4], C[7], C[8]]
-        first_dose = parse_resp_data(region, first_dose_data)
-        second_dose = parse_resp_data(region, second_dose_data)
-        parsed_data.append(
-            VaccinationAgeGroupByRegionOnDay(
-                region=region, dose1=first_dose, dose2=second_dose
+        if len(C) == 9:
+            first_dose_data = [C[1], C[2], C[5], C[6]]
+            second_dose_data = [C[3], C[4], C[7], C[8]]
+            first_dose = parse_resp_data(region, first_dose_data)
+            second_dose = parse_resp_data(region, second_dose_data)
+            parsed_data.append(
+                VaccinationAgeGroupByRegionOnDay(
+                    region=region, dose1=first_dose, dose2=second_dose
+                )
             )
-        )
+        else:
+            R = el.get("R", None)
+            if R == 64:
+                # ! not sure
+                first_dose_data = [C[1], C[2], C[5], C[6]]
+                second_dose_data = [C[3], C[4], C[7]]
+                first_dose = parse_resp_data(region, first_dose_data)
+                second_dose = parse_resp_data(region, second_dose_data)
+                parsed_data.append(
+                    VaccinationAgeGroupByRegionOnDay(
+                        region=region, dose1=first_dose, dose2=second_dose
+                    )
+                )
 
     return parsed_data
 
