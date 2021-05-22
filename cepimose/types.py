@@ -1,7 +1,7 @@
-from cepimose.enums import Gender
+from cepimose.enums import AgeGroup, Gender, Region
 from dataclasses import dataclass
 import datetime
-from typing import Optional
+from typing import List, Optional, Union
 
 
 @dataclass
@@ -86,3 +86,24 @@ class VaccinationsByGender:
     female_second: int = 0
     male_first: int = 0
     male_second: int = 0
+
+
+@dataclass
+class DateRangeCommands_Requests:
+    group: dict
+    male1: dict
+    male2: dict
+    female1: dict
+    female2: dict
+
+
+@dataclass
+class VaccinationsDateRangeByGroup:
+    date_from: datetime.datetime
+    date_to: datetime.datetime
+    property: Union[Region, AgeGroup]
+    by_day: list
+    female_first: Optional[int] = 0
+    female_second: Optional[int] = 0
+    male_first: Optional[int] = 0
+    male_second: Optional[int] = 0
