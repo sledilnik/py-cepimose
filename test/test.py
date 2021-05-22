@@ -499,6 +499,15 @@ class CepimoseTestCaseFuture(unittest.TestCase):
 
         for row in data:
             print(row)
-            self.assertTrue(row.date >= datetime.datetime(2021, 1, 8, 0, 0) or row.moderna == None, f"Too early for Moderna usage: {row}")
-            self.assertTrue(row.date >= datetime.datetime(2021, 2, 6, 0, 0) or row.az == None, f"Too early for Astra Zeneca usage: {row}")
-            self.assertTrue(row.date >= datetime.datetime(2021, 4, 14, 0, 0) or row.janssen == None, f"Too early for Janssen usage: {row}")
+            self.assertTrue(
+                row.date >= datetime.datetime(2021, 1, 8, 0, 0) or row.moderna == None,
+                f"Too early for Moderna usage: {row}",
+            )
+            self.assertTrue(
+                row.date >= datetime.datetime(2021, 2, 2, 0, 0) or row.az == None,
+                f"Too early for Astra Zeneca usage: {row}",
+            )
+            self.assertTrue(
+                row.date >= datetime.datetime(2021, 4, 14, 0, 0) or row.janssen == None,
+                f"Too early for Janssen usage: {row}",
+            )
