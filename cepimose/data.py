@@ -1,3 +1,4 @@
+from cepimose.types import DateRangeCommands_Requests
 import json
 import datetime
 from .enums import Region, AgeGroup, Manufacturer, Gender
@@ -2008,7 +2009,17 @@ def _create_vaccinations_data_range_request(
     start_date: datetime.datetime,
     property: Region or AgeGroup,
 ):
-    command = get_date_range_command(
+    commands = get_date_range_command(
         end_date=end_date, start_date=start_date, property=property
     )
-    return _create_req([command])
+
+    group_req = _create_req([commands.group])
+    male1_req = _create_req([commands.male1])
+    male2_req = _create_req([commands.male2])
+    female1_req = _create_req([commands.female1])
+    female2_req = _create_req([commands.female2])
+
+    requests = DateRangeCommands_Requests(
+        group_req, male1_req, male2_req, female1_req, female2_req
+    )
+    return requests
