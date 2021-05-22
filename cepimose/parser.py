@@ -531,21 +531,40 @@ def _parse_vaccinations_by_manufacturer_used(data):
             obj.moderna = X[2]["M0"]
             obj.pfizer = X[3]["M0"]
         else:
-            lastI = None
-            for index, item in enumerate(X):
-                I = item.get("I", None)
-                M0 = item.get("M0", None)
-
-                if I != None:
-                    key = manu_dict[I]
-                    obj.__setattr__(key, M0)
-                elif lastI == None:
-                    key = manu_dict[index]
-                    obj.__setattr__(key, M0)
+            onlyTwoManufacturersDate = datetime.datetime(2021, 2, 3)
+            if date < onlyTwoManufacturersDate:
+                if len(X) == 1:
+                    I = X[0].get("I", None)
+                    M0 = X[0].get("M0", None)
+                    if I == None:
+                        obj.moderna = M0
+                    else:
+                        key = manu_dict[I]
+                        obj.__setattr__(key, M0)
+                elif len(X) == 2:
+                    obj.moderna = X[0]["M0"]
+                    obj.pfizer = X[1]["M0"]
                 else:
-                    key = manu_dict[lastI + 1]
-                    obj.__setattr__(key, M0)
-                lastI = I
+                    print(X)
+                    raise Exception(
+                        "This is strange! There should be data only for 2 manufacturers!"
+                    )
+            else:
+                lastI = None
+                for index, item in enumerate(X):
+                    I = item.get("I", None)
+                    M0 = item.get("M0", None)
+
+                    if I != None:
+                        key = manu_dict[I]
+                        obj.__setattr__(key, M0)
+                    elif lastI == None:
+                        key = manu_dict[index]
+                        obj.__setattr__(key, M0)
+                    else:
+                        key = manu_dict[lastI + 1]
+                        obj.__setattr__(key, M0)
+                    lastI = I
         parsed_data.append(obj)
 
     return parsed_data
