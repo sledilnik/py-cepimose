@@ -23,8 +23,7 @@ _where_third_common = {
     }
 }
 
-# region comparison_kind = 2
-# age group comparison_kind = 3
+
 def _getWhereRightDateCondition(date: datetime.datetime):
     return {
         "Right": {
@@ -61,7 +60,6 @@ def _getWhereLeftDateCondition(date: datetime.datetime):
 
 def _getWhereFirstCondition(left, right):
     obj = {}
-    # print(left, right)
     obj["Condition"] = {"And": {**left, **right}}
     return obj
 
@@ -257,16 +255,42 @@ _region_date_range_command = {
             "Where": [
                 {
                     "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 2,
+                        "And": {
                             "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
+                                "Comparison": {
+                                    "ComparisonKind": 2,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c1"}
+                                            },
+                                            "Property": "Date",
+                                        }
+                                    },
+                                    "Right": {
+                                        "Literal": {
+                                            "Value": "datetime'2021-02-05T00:00:00'"
+                                        }
+                                    },
                                 }
                             },
                             "Right": {
-                                "Literal": {"Value": "datetime'2021-02-22T00:00:00'"}
+                                "Comparison": {
+                                    "ComparisonKind": 3,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c1"}
+                                            },
+                                            "Property": "Date",
+                                        }
+                                    },
+                                    "Right": {
+                                        "Literal": {
+                                            "Value": "datetime'2021-04-03T00:00:00'"
+                                        }
+                                    },
+                                }
                             },
                         }
                     }
@@ -283,126 +307,6 @@ _region_date_range_command = {
                                 }
                             ],
                             "Values": [[{"Literal": {"Value": "'Pomurska'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
-            "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
-}
-
-# for 90+
-_age_group_date_range_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
-                {"Name": "x", "Entity": "xls_SURS_starost", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c1"}},
-                        "Property": "Date",
-                    },
-                    "Name": "Calendar.Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
-                    },
-                    "Name": "eRCO_podatki.Weight running total in Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Tekoča vsota za mero Precepljenost v polju Date",
-                    },
-                    "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
-                },
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 3,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "Literal": {"Value": "datetime'2021-03-17T00:00:00'"}
-                            },
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "x"}},
-                                        "Property": "Starostni ​razred",
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": "'90+'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "c"}
-                                                },
-                                                "Property": "CepivoIme",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [[{"Literal": {"Value": "null"}}]],
-                                }
-                            }
                         }
                     }
                 },
