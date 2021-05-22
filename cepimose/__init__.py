@@ -43,6 +43,7 @@ from .types import (
     VaccinationByAgeRow,
     VaccinationByDayRow,
     VaccinationsByGender,
+    VaccinationsDateRangeByGroup,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -251,7 +252,8 @@ def vaccinations_date_range(
     end_date: datetime.datetime,
     start_date: datetime.datetime,
     property: Region or AgeGroup,
-):
+    options: dict = {"gender": True},
+) -> VaccinationsDateRangeByGroup:
 
     if end_date < start_date:
         raise Exception(
@@ -266,5 +268,24 @@ def vaccinations_date_range(
         end_date=end_date + day_delta, start_date=start_date, property=property
     )
 
-    # if needed will make different parsers for each property
-    return _get_data(req, _parse_vaccinations_date_range)
+    group_req = req.group
+    group = _get_data(group_req, _parse_vaccinations_date_range)
+
+    result = VaccinationsDateRangeByGroup(start_date, end_date, property, group)
+
+    is_gender = options.get("gender", False)
+
+    if is_gender == True:
+        male1_req = req.male1
+        male2_req = req.male2
+        female1_req = req.female1
+        female2_req = req.female2
+
+        result.male_first = _get_data(male1_req, _parse_vaccinations_gender_by_date)
+        result.male_second = _get_data(male2_req, _parse_vaccinations_gender_by_date)
+        result.female_first = _get_data(female1_req, _parse_vaccinations_gender_by_date)
+        result.female_second = _get_data(
+            female2_req, _parse_vaccinations_gender_by_date
+        )
+
+    return result
