@@ -17,24 +17,23 @@ def parse_date(raw):
     return datetime.datetime.utcfromtimestamp(float(raw) / 1000.0)
 
 
-def _parse_vaccinations_timestamp(data):
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        # ? raise exception or return error obj
-        return error
-    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
-    return parse_date(resp[0]["M0"])
-
-
-def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
+def _validate_response_data(data):
     if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
         error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
             "odata.error"
         ]
         print(error)
         raise Exception("Something went wrong!")
+
+
+def _parse_vaccinations_timestamp(data):
+    _validate_response_data(data)
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    return parse_date(resp[0]["M0"])
+
+
+def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -71,12 +70,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
 
 
 def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -102,12 +96,7 @@ def _parse_vaccinations_by_age(data) -> "list[VaccinationByAgeRow]":
 
 
 def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
@@ -140,6 +129,7 @@ def _parse_vaccines_supplied_and_used(data) -> "list[VaccineSupplyUsage]":
 
 
 def _parse_vaccinations_by_region(data) -> "list[VaccinationByRegionRow]":
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -167,6 +157,7 @@ def _parse_vaccinations_by_region(data) -> "list[VaccinationByRegionRow]":
 def _parse_vaccines_supplied_by_manufacturer(
     data,
 ) -> "list[VaccinationByManufacturerRow]":
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][1]["DM1"]
     manufacturers = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["ValueDicts"][
         "D0"
@@ -237,12 +228,7 @@ def _parse_vaccines_supplied_by_manufacturer(
 def _parse_vaccines_supplied_by_manufacturer_cum(
     data,
 ) -> "list[VaccinationByManufacturerRow]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -275,6 +261,7 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
 
 
 def _parse_vaccinations_by_age_group(data) -> "list[VaccinationByDayRow]":
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -313,14 +300,7 @@ def _parse_vaccinations_by_age_group(data) -> "list[VaccinationByDayRow]":
 
 # ? most likely we can refactor _parse_vaccinations_by_day
 def _parse_vaccinations_by_region_by_day(data):
-
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        # ? raise exception or return error obj
-        return error
-
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -357,12 +337,7 @@ def _parse_vaccinations_by_region_by_day(data):
 
 
 def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunShare]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -406,12 +381,7 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
 def _parse_vaccinations_age_group_by_region_on_day(
     data,
 ) -> "list[VaccinationAgeGroupByRegionOnDay]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
@@ -461,12 +431,7 @@ def _parse_vaccinations_age_group_by_region_on_day(
 def _parse_vaccinations_by_manufacturer_supplied_used(
     data,
 ) -> "list[VaccineSupplyUsage]":
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
@@ -488,12 +453,7 @@ def _parse_vaccinations_by_manufacturer_supplied_used(
 
 
 def _parse_vaccinations_gender_by_date(data):
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     return resp[0].get("M0", None)
@@ -501,12 +461,7 @@ def _parse_vaccinations_gender_by_date(data):
 
 # date range parsers
 def _parse_vaccinations_date_range(data):
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
@@ -546,12 +501,7 @@ def _parse_vaccinations_date_range(data):
 
 
 def _parse_vaccinations_by_manufacturer_used(data):
-    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
-        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
-            "odata.error"
-        ]
-        print(error)
-        raise Exception("Something went wrong!")
+    _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
