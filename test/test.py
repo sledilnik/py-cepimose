@@ -77,36 +77,6 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(data[grp].share_second, 0)
             self.assertGreaterEqual(data[grp].count_first, data[grp].count_second)
 
-    # @unittest.skip("TODO")
-    def test_vaccinations_by_region(self):
-        # Test feature one.
-        data = {row.region: row for row in cepimose.vaccinations_by_region()}
-
-        expected_regions = [
-            "Koroška",
-            "Zasavska",
-            "Goriška",
-            "Posavska",
-            "Gorenjska",
-            "Podravska",
-            "Pomurska",
-            "Osrednjeslovenska",
-            "Jugovzhodna Slovenija",
-            "Primorsko-notranjska",
-            "Savinjska",
-            "Obalno-kraška",
-        ]
-
-        print(data.keys())
-
-        self.assertTrue(len(data), len(expected_regions))
-
-        for grp in expected_regions:
-            self.assertGreater(data[grp].count_first, 0)
-            self.assertGreater(data[grp].share_first, 0)
-            self.assertGreater(data[grp].count_second, 0)
-            self.assertGreater(data[grp].share_second, 0)
-
     def test_vaccine_supply_and_usage(self):
         data = cepimose.vaccines_supplied_and_used()
         self.assertGreater(len(data), 100)
@@ -143,59 +113,6 @@ class CepimoseTestCase(unittest.TestCase):
             data[16], datetime.datetime(2021, 2, 25), [None, 8400, 16800, None]
         )  # combined: two response data items with same date; second has R = 1
         assertRow(data[32], datetime.datetime(2021, 4, 14), [None, None, None, 7200])
-
-        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
-
-    # @unittest.skip("TODO")
-    def test_supplied_by_manufacturer_cumulative(self):
-        data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
-        self.assertTrue(len(data) > 10)
-
-        def assertRow(row, expected_date, expected):
-            self.assertEqual(row.date, expected_date)
-            self.assertEqual(row.pfizer, expected[0])
-            self.assertEqual(row.moderna, expected[1])
-            self.assertEqual(row.az, expected[2])
-            self.assertEqual(row.janssen, expected[3])
-
-        assertRow(data[3], datetime.datetime(2021, 1, 11), [59670, None, None, None])
-        assertRow(data[7], datetime.datetime(2021, 1, 31), [None, 3600, None, None])
-        assertRow(data[10], datetime.datetime(2021, 2, 6), [None, None, 9600, None])
-        assertRow(data[16], datetime.datetime(2021, 2, 25), [None, 16800, 52800, None])
-        assertRow(data[32], datetime.datetime(2021, 4, 14), [None, None, None, 7200])
-
-        # assertRow(
-        #     data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
-        # )  # this test will fail in the future
-
-        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
-
-    # @unittest.skip("TODO")
-    def test_vaccinations_by_age_group(self):
-        data = cepimose.vaccinations_by_age_group()
-        expected_keys = [key for key in cepimose.enums.AgeGroup]
-
-        self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
-
-        for key, group_data in data.items():
-            print(key, len(group_data))
-            self.assertTrue(len(group_data) != 0)
-            self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
-            # ? more assertions
-
-    # @unittest.skip("TODO")
-    def test_vaccinations_by_age_group_with_arg(self):
-        data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
-
-        self.assertTrue(len(data) > 10)
-
-        def assertRow(row, expected_date, expected_dose):
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=30)
-            self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=30)
-
-        assertRow(data[21], datetime.datetime(2021, 1, 17), [3580, 1])
-        assertRow(data[70], datetime.datetime(2021, 3, 7), [7866, 4821])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
@@ -266,7 +183,154 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(1, m.share1)
             self.assertGreaterEqual(1, m.share2)
 
+    def test_vaccination_timestamp(self):
+        ts = cepimose.vaccinations_timestamp()
+        print("Last update:", ts)
+        day_delta = datetime.timedelta(days=3)
+        today = datetime.datetime.now()
+        diff = today - ts
+        self.assertGreaterEqual(day_delta, diff)
+        # self.assertGreaterEqual(today, ts) // TODO: adjust timezone for github actions
+
+    def test_vaccinations_gender_by_date(self):
+        test_date1 = datetime.datetime(2021, 1, 10)
+        test_date2 = datetime.datetime(2021, 2, 10)
+        test_date3 = datetime.datetime(2021, 3, 10)
+        test_date4 = datetime.datetime(2021, 4, 10)
+        test_date5 = datetime.datetime(2021, 5, 10)
+
+        data1 = cepimose.vaccinations_gender_by_date(test_date1)
+        data2 = cepimose.vaccinations_gender_by_date(test_date2)
+        data3 = cepimose.vaccinations_gender_by_date(test_date3)
+        data4 = cepimose.vaccinations_gender_by_date(test_date4)
+        data5 = cepimose.vaccinations_gender_by_date(test_date5)
+
+        def assertRow(row, expected_date, expected_data):
+            print(row)
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.female_first, expected_data[0], delta=300)
+            self.assertAlmostEqual(row.female_second, expected_data[1], delta=300)
+            self.assertAlmostEqual(row.male_first, expected_data[2], delta=300)
+            self.assertAlmostEqual(row.male_second, expected_data[3], delta=300)
+
+        assertRow(data1, test_date1, [None, None, 1, 0])
+        assertRow(data2, test_date2, [1536, 495, 916, 215])
+        assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
+        assertRow(data4, test_date4, [4652, 76, 4400, 53])
+        assertRow(data5, test_date5, [1009, 690, 1321, 681])
+
+    def test_vaccinations_gender_by_date_for_today(self):
+        test_date_today = datetime.datetime.today()
+        test_today_year = test_date_today.year
+        test_today_month = test_date_today.month
+        test_today_day = test_date_today.day
+        test_today_without_time = datetime.datetime(
+            test_today_year, test_today_month, test_today_day
+        )
+        data_today = cepimose.vaccinations_gender_by_date(test_today_without_time)
+        print(f"Today: {test_date_today}")
+        self.assertIsNot(data_today, None)
+
+
+@unittest.skip("Not implemented.")
+class CepimoseTestCaseFuture(unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+
+    def tearDown(self):
+        super().tearDown()
+
+    def assertDatesIncreaseSince(self, data, startDate):
+        previousDate = startDate - datetime.timedelta(days=1)
+        for row in data:
+            self.assertGreater(row.date, previousDate, row)
+            previousDate = row.date
+
     # @unittest.skip("TODO")
+    def test_vaccinations_by_region(self):
+        # Test feature one.
+        data = {row.region: row for row in cepimose.vaccinations_by_region()}
+
+        expected_regions = [
+            "Koroška",
+            "Zasavska",
+            "Goriška",
+            "Posavska",
+            "Gorenjska",
+            "Podravska",
+            "Pomurska",
+            "Osrednjeslovenska",
+            "Jugovzhodna Slovenija",
+            "Primorsko-notranjska",
+            "Savinjska",
+            "Obalno-kraška",
+        ]
+
+        print(data.keys())
+
+        self.assertTrue(len(data), len(expected_regions))
+
+        for grp in expected_regions:
+            self.assertGreater(data[grp].count_first, 0)
+            self.assertGreater(data[grp].share_first, 0)
+            self.assertGreater(data[grp].count_second, 0)
+            self.assertGreater(data[grp].share_second, 0)
+
+    # @unittest.skip("TODO")
+    def test_supplied_by_manufacturer_cumulative(self):
+        data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
+        self.assertTrue(len(data) > 10)
+
+        def assertRow(row, expected_date, expected):
+            self.assertEqual(row.date, expected_date)
+            self.assertEqual(row.pfizer, expected[0])
+            self.assertEqual(row.moderna, expected[1])
+            self.assertEqual(row.az, expected[2])
+            self.assertEqual(row.janssen, expected[3])
+
+        assertRow(data[3], datetime.datetime(2021, 1, 11), [59670, None, None, None])
+        assertRow(data[7], datetime.datetime(2021, 1, 31), [None, 3600, None, None])
+        assertRow(data[10], datetime.datetime(2021, 2, 6), [None, None, 9600, None])
+        assertRow(data[16], datetime.datetime(2021, 2, 25), [None, 16800, 52800, None])
+        assertRow(data[32], datetime.datetime(2021, 4, 14), [None, None, None, 7200])
+
+        # assertRow(
+        #     data[len(data) - 1], datetime.datetime(2021, 4, 2), [285480, 46800, 144000]
+        # )  # this test will fail in the future
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+    # @unittest.skip("TODO")
+    def test_vaccinations_by_age_group(self):
+        data = cepimose.vaccinations_by_age_group()
+        expected_keys = [key for key in cepimose.enums.AgeGroup]
+
+        self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
+
+        for key, group_data in data.items():
+            print(key, len(group_data))
+            self.assertTrue(len(group_data) != 0)
+            self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
+            # ? more assertions
+
+    # @unittest.skip("TODO")
+    def test_vaccinations_by_age_group_with_arg(self):
+        data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
+
+        self.assertTrue(len(data) > 10)
+
+        def assertRow(row, expected_date, expected_dose):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=30)
+            self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=30)
+
+        assertRow(data[21], datetime.datetime(2021, 1, 17), [3580, 1])
+        assertRow(data[70], datetime.datetime(2021, 3, 7), [7866, 4821])
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+        # @unittest.skip("TODO")
+
     def test_vaccinations_age_group_by_region_on_day(self):
         data = cepimose.vaccinations_age_group_by_region_on_day()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -358,54 +422,6 @@ class CepimoseTestCase(unittest.TestCase):
                 test_item["used"],
             )
             # ? more assertions
-
-    def test_vaccination_timestamp(self):
-        ts = cepimose.vaccinations_timestamp()
-        print("Last update:", ts)
-        day_delta = datetime.timedelta(days=3)
-        today = datetime.datetime.now()
-        diff = today - ts
-        self.assertGreaterEqual(day_delta, diff)
-        # self.assertGreaterEqual(today, ts) // TODO: adjust timezone for github actions
-
-    def test_vaccinations_gender_by_date(self):
-        test_date1 = datetime.datetime(2021, 1, 10)
-        test_date2 = datetime.datetime(2021, 2, 10)
-        test_date3 = datetime.datetime(2021, 3, 10)
-        test_date4 = datetime.datetime(2021, 4, 10)
-        test_date5 = datetime.datetime(2021, 5, 10)
-
-        data1 = cepimose.vaccinations_gender_by_date(test_date1)
-        data2 = cepimose.vaccinations_gender_by_date(test_date2)
-        data3 = cepimose.vaccinations_gender_by_date(test_date3)
-        data4 = cepimose.vaccinations_gender_by_date(test_date4)
-        data5 = cepimose.vaccinations_gender_by_date(test_date5)
-
-        def assertRow(row, expected_date, expected_data):
-            print(row)
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.female_first, expected_data[0], delta=300)
-            self.assertAlmostEqual(row.female_second, expected_data[1], delta=300)
-            self.assertAlmostEqual(row.male_first, expected_data[2], delta=300)
-            self.assertAlmostEqual(row.male_second, expected_data[3], delta=300)
-
-        assertRow(data1, test_date1, [None, None, 1, 0])
-        assertRow(data2, test_date2, [1536, 495, 916, 215])
-        assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
-        assertRow(data4, test_date4, [4652, 76, 4400, 53])
-        assertRow(data5, test_date5, [1009, 690, 1321, 681])
-
-    def test_vaccinations_gender_by_date_for_today(self):
-        test_date_today = datetime.datetime.today()
-        test_today_year = test_date_today.year
-        test_today_month = test_date_today.month
-        test_today_day = test_date_today.day
-        test_today_without_time = datetime.datetime(
-            test_today_year, test_today_month, test_today_day
-        )
-        data_today = cepimose.vaccinations_gender_by_date(test_today_without_time)
-        print(f"Today: {test_date_today}")
-        self.assertIsNot(data_today, None)
 
     # vaccinations_date_range
     def test_vaccinations_date_range_region(self):
