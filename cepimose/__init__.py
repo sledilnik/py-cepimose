@@ -1,3 +1,4 @@
+import pprint
 import datetime
 import requests
 import time
@@ -17,6 +18,8 @@ from .data import (
     _vaccinations_age_group_by_region_on_day_requests,
     _vaccination_by_manufacturer_supplied_used_requests,
     _vaccinations_gender_by_date_requests,
+    _create_vaccinations_data_range_request,
+    _vaccinations_by_manufacturer_used_request,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -32,6 +35,8 @@ from .parser import (
     _parse_vaccinations_age_group_by_region_on_day,
     _parse_vaccinations_by_manufacturer_supplied_used,
     _parse_vaccinations_gender_by_date,
+    _parse_vaccinations_date_range,
+    _parse_vaccinations_by_manufacturer_used,
 )
 
 from .types import (
@@ -174,6 +179,13 @@ def vaccinations_by_manufacturer_supplied_used(
     return doses
 
 
+def vaccinations_by_manufacturer_used():
+    return _get_data(
+        _vaccinations_by_manufacturer_used_request,
+        _parse_vaccinations_by_manufacturer_used,
+    )
+
+
 # PAGE 1
 # gender
 def vaccinations_gender_by_date(date: datetime.datetime = None):
@@ -228,3 +240,31 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
         male_first=male_first,
         male_second=male_second,
     )
+
+
+# PAGE 1
+# date range
+# regions, age_group
+
+
+def vaccinations_date_range(
+    end_date: datetime.datetime,
+    start_date: datetime.datetime,
+    property: Region or AgeGroup,
+):
+
+    if end_date < start_date:
+        raise Exception(
+            f"Argument [end_date]: {end_date} should be greater or equal than [start_date]: {start_date}"
+        )
+
+    if not isinstance(property, Region) and not isinstance(property, AgeGroup):
+        raise Exception(f"Argument [property] must be instance of Region or AgeGroup")
+
+    day_delta = datetime.timedelta(days=1)
+    req = _create_vaccinations_data_range_request(
+        end_date=end_date + day_delta, start_date=start_date, property=property
+    )
+
+    # if needed will make different parsers for each property
+    return _get_data(req, _parse_vaccinations_date_range)

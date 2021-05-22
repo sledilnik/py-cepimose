@@ -274,7 +274,7 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
     return parsed_data
 
 
-def _parse_vaccinations_by_age_group(data) -> "list[vaccinations_by_age_group]":
+def _parse_vaccinations_by_age_group(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data = []
 
@@ -497,3 +497,105 @@ def _parse_vaccinations_gender_by_date(data):
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     return resp[0].get("M0", None)
+
+
+# date range parsers
+def _parse_vaccinations_date_range(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    parsed_data = []
+
+    date = None
+    people_vaccinated = None
+    people_fully_vaccinated = None
+    for element in resp:
+        C = element["C"]
+        if len(C) == 3:
+            date = parse_date(C[0])
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+        elif len(C) == 2:
+            date = parse_date(C[0])
+            R = element["R"]
+            if R == 2:
+                people_fully_vaccinated = C[1]
+            else:
+                people_vaccinated = C[1]
+        elif len(C) == 1:
+            # R == 6
+            date = parse_date(C[0])
+        else:
+            raise Exception("Unknown item length!")
+
+        parsed_data.append(
+            VaccinationByDayRow(
+                date=date,
+                first_dose=people_vaccinated,
+                second_dose=people_fully_vaccinated,
+            )
+        )
+
+    return parsed_data
+
+
+def _parse_vaccinations_by_manufacturer_used(data):
+    if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
+        error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
+            "odata.error"
+        ]
+        print(error)
+        raise Exception("Something went wrong!")
+
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    manu_dict = {0: "az", 1: "janssen", 2: "moderna", 3: "pfizer"}
+
+    parsed_data = []
+    day_delta = datetime.timedelta(days=1)
+    previous_date = datetime.datetime(2020, 12, 26)
+    for index, element in enumerate(resp):
+        date = parse_date(element["G0"])
+        possible_missing_date = previous_date + day_delta
+        while possible_missing_date < date:
+            print(f"Add data for missing date: {possible_missing_date}")
+            parsed_data.append(
+                VaccinationByManufacturerRow(
+                    possible_missing_date, None, None, None, None
+                )
+            )
+            possible_missing_date += day_delta
+        previous_date = date
+
+        obj = VaccinationByManufacturerRow(date, None, None, None, None)
+        X = [el for el in element["X"] if el.get("M0", None) != None]
+        if len(X) == 4:
+            obj.az = X[0]["M0"]
+            obj.janssen = X[1]["M0"]
+            obj.moderna = X[2]["M0"]
+            obj.pfizer = X[3]["M0"]
+        else:
+            lastI = None
+            for index, item in enumerate(X):
+                I = item.get("I", None)
+                M0 = item.get("M0", None)
+
+                if I != None:
+                    key = manu_dict[I]
+                    obj.__setattr__(key, M0)
+                elif lastI == None:
+                    key = manu_dict[index]
+                    obj.__setattr__(key, M0)
+                else:
+                    key = manu_dict[lastI + 1]
+                    obj.__setattr__(key, M0)
+                lastI = I
+        parsed_data.append(obj)
+
+    return parsed_data

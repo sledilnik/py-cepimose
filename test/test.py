@@ -1,4 +1,4 @@
-from cepimose.enums import Manufacturer
+from cepimose.enums import AgeGroup, Manufacturer, Region
 import unittest
 import cepimose
 import datetime
@@ -400,7 +400,83 @@ class CepimoseTestCase(unittest.TestCase):
         test_today_year = test_date_today.year
         test_today_month = test_date_today.month
         test_today_day = test_date_today.day
-        test_today_without_time = datetime.datetime(test_today_year, test_today_month, test_today_day)
+        test_today_without_time = datetime.datetime(
+            test_today_year, test_today_month, test_today_day
+        )
         data_today = cepimose.vaccinations_gender_by_date(test_today_without_time)
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
+
+    # vaccinations_date_range
+    def test_vaccinations_date_range_region(self):
+        property = Region.POMURSKA
+
+        start_date = datetime.datetime(2021, 3, 1)
+        # assert args end_date and start_date are equal
+        data = cepimose.vaccinations_date_range(
+            end_date=start_date, start_date=start_date, property=property
+        )
+        self.assertEqual(len(data), 1)
+
+        # assert arg start_date is greater than end_date
+        end_date = datetime.datetime(2021, 2, 28)
+        with self.assertRaises(Exception):
+            cepimose.vaccinations_date_range(
+                end_date=end_date, start_date=start_date, property=property
+            )
+
+        start_date = datetime.datetime(2020, 12, 26)
+        today = datetime.datetime.today()
+        end_date = datetime.datetime(today.year, today.month, today.day)
+        data = cepimose.vaccinations_date_range(
+            end_date=end_date, start_date=start_date, property=property
+        )
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+    def test_vaccinations_date_range_age_group(self):
+        property = AgeGroup.GROUP_90
+
+        start_date = datetime.datetime(2021, 3, 1)
+        # assert args end_date and start_date are equal
+        data = cepimose.vaccinations_date_range(
+            end_date=start_date, start_date=start_date, property=property
+        )
+        self.assertEqual(len(data), 1)
+
+        # assert arg start_date is greater than arg end_date
+        end_date = datetime.datetime(2021, 2, 28)
+        with self.assertRaises(Exception):
+            cepimose.vaccinations_date_range(
+                end_date=end_date, start_date=start_date, property=property
+            )
+
+        start_date = datetime.datetime(2020, 12, 26)
+        today = datetime.datetime.today()
+        end_date = datetime.datetime(today.year, today.month, today.day)
+        data = cepimose.vaccinations_date_range(
+            end_date=end_date, start_date=start_date, property=property
+        )
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+    def test_vaccinations_by_manufacturer_used(self):
+        data = cepimose.vaccinations_by_manufacturer_used()
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
+
+        def assertRow(row, expected_date, expected):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.pfizer, expected[0], delta=50)
+            self.assertAlmostEqual(row.moderna, expected[1], delta=50)
+            self.assertAlmostEqual(row.az, expected[2], delta=50)
+            self.assertAlmostEqual(row.janssen, expected[3], delta=50)
+
+        assertRow(data[20], datetime.datetime(2021, 1, 16), [324, None, None, None])
+        assertRow(data[23], datetime.datetime(2021, 1, 19), [2103, 66, None, None])
+        assertRow(data[38], datetime.datetime(2021, 2, 3), [4805, None, 1, None])
+        assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
+        assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
+        assertRow(data[79], datetime.datetime(2021, 3, 16), [606, 445, None, None])
+        assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
+        assertRow(data[99], datetime.datetime(2021, 4, 5), [None, None, None, None])
+        assertRow(data[120], datetime.datetime(2021, 4, 26), [None, None, 385, None])
+        assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
