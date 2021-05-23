@@ -190,7 +190,7 @@ _region_age_group_Binding = {
 _region_age_group_ExecutionMetricsKind = {"ExecutionMetricsKind": 1}
 
 
-_gender_From_firest_and_second = [
+_gender_From_first_and_second = [
     {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
     {"Name": "c", "Entity": "Calendar", "Type": 0},
 ]
@@ -275,74 +275,66 @@ _gender_Binding = {
 }
 
 
-def _replace_Query_From(obj: dict):
+def _replace_gender_Query_From(obj: dict):
     obj["SemanticQueryDataShapeCommand"]["Query"]["From"][
         0
-    ] = _gender_From_firest_and_second[0]
+    ] = _gender_From_first_and_second[0]
     obj["SemanticQueryDataShapeCommand"]["Query"]["From"][
         1
-    ] = _gender_From_firest_and_second[1]
+    ] = _gender_From_first_and_second[1]
     return obj
 
 
-def _replace_Query_Select(obj: dict, replace_with: list):
-    clone_obj = {**obj}
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"]["Select"] = replace_with
-    return {**clone_obj}
+def _replace_gender_Query_Select(obj: dict, replace_with: list):
+    obj["SemanticQueryDataShapeCommand"]["Query"]["Select"] = replace_with
+    return obj
 
 
-def _replace_Query_Where(obj: dict):
-    clone_obj = {**obj}
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
+def _replace_gender_Query_Where(obj: dict):
+    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
         "Left"
     ]["Comparison"]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
+    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
         "Right"
     ]["Comparison"]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
 
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"][
+    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"][
         "Comparison"
     ]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
 
-    return clone_obj
+    return obj
 
 
-def _insert_to_Query_Where(obj: dict, insert: dict, position=0):
-    clone_obj = {**obj}
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"]["Where"].insert(
-        position, insert
-    )
-    return {**clone_obj}
+def _insert_gender_to_Query_Where(obj: dict, insert: dict, position=0):
+    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"].insert(position, insert)
+    return obj
 
 
-def _add_OrderBy_to_Query(obj: dict, order_by: dict):
-    clone_obj = {**obj}
-    clone_obj["SemanticQueryDataShapeCommand"]["Query"] = {
-        **clone_obj["SemanticQueryDataShapeCommand"]["Query"],
+def _add_gender_OrderBy_to_Query(obj: dict, order_by: dict):
+    obj["SemanticQueryDataShapeCommand"]["Query"] = {
+        **obj["SemanticQueryDataShapeCommand"]["Query"],
         "OrderBy": order_by,
     }
-    return {**clone_obj}
+    return obj
 
 
-def _replace_Binding(obj: dict):
-    clone_obj = {**obj}
-    clone_obj["SemanticQueryDataShapeCommand"]["Binding"] = _gender_Binding
-    return clone_obj
+def _replace_gender_Binding(obj: dict):
+    obj["SemanticQueryDataShapeCommand"]["Binding"] = _gender_Binding
+    return obj
 
 
 def _create_gender_command(obj: dict, options: dict = {}):
-    clone_obj = {**obj}
     select_options = options["Select"]
     where_options = options["Where"]
     order_by_options = options["OrderBy"]
 
-    new_obj = _replace_Query_Select({**clone_obj}, select_options)
-    new_obj = _replace_Query_Where({**new_obj})
-    new_obj = _insert_to_Query_Where({**new_obj}, where_options)
-    new_obj = _add_OrderBy_to_Query({**new_obj}, order_by_options)
-    new_obj = _replace_Binding({**new_obj})
+    _replace_gender_Query_Select(obj, select_options)
+    _replace_gender_Query_Where(obj)
+    _insert_gender_to_Query_Where(obj, where_options)
+    _add_gender_OrderBy_to_Query(obj, order_by_options)
+    _replace_gender_Binding(obj)
 
-    return {**new_obj}
+    return obj
 
 
 def _get_gender_commands(obj: dict):
@@ -372,7 +364,7 @@ def _get_gender_commands(obj: dict):
     }
 
     deepcopay_obj = copy.deepcopy(obj)
-    _replace_Query_From(deepcopay_obj)
+    _replace_gender_Query_From(deepcopay_obj)
 
     male1 = copy.deepcopy(deepcopay_obj)
     male2 = copy.deepcopy(deepcopay_obj)
@@ -416,6 +408,7 @@ def get_date_range_command(
         query = _get_age_group_Query(
             end_date=end_date, start_date=start_date, group=property.value
         )
+        # used
         obj["SemanticQueryDataShapeCommand"] = {
             **query,
             **obj["SemanticQueryDataShapeCommand"],
@@ -823,287 +816,4 @@ _region_date_range_by_gender_by_dose_2_command = {
             }
         }
     ]
-}
-
-
-my_gender_by_dose_1_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "e", "Entity": "eRCO_\u200b\u200bpodatki", "Type": 0},
-                {"Name": "c", "Entity": "Calendar", "Type": 0},
-                {"Name": "s", "Entity": "Sifrant_regija", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Weight for 1",
-                    },
-                    "Name": "eRCO_podatki.Weight for 1",
-                }
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "e"}},
-                                        "Property": "OsebaSpol",
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": "'Moški'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "And": {
-                            "Left": {
-                                "Comparison": {
-                                    "ComparisonKind": 2,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Date",
-                                        }
-                                    },
-                                    "Right": {
-                                        "Literal": {
-                                            "Value": "datetime'2021-01-30T00:00:00'"
-                                        }
-                                    },
-                                }
-                            },
-                            "Right": {
-                                "Comparison": {
-                                    "ComparisonKind": 3,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Date",
-                                        }
-                                    },
-                                    "Right": {
-                                        "Literal": {
-                                            "Value": "datetime'2021-03-26T00:00:00'"
-                                        }
-                                    },
-                                }
-                            },
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "s"}},
-                                        "Property": "Regija",
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": "'Pomurska'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 2,
-                    "Expression": {
-                        "Measure": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Weight for 1",
-                        }
-                    },
-                }
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
-            "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
-}
-
-my_gender_by_dose_2_command = {
-    "SemanticQueryDataShapeCommand": {
-        "Query": {
-            "Version": 2,
-            "From": [
-                {"Name": "e", "Entity": "eRCO_\u200b\u200bpodatki", "Type": 0},
-                {"Name": "c", "Entity": "Calendar", "Type": 0},
-                {"Name": "s", "Entity": "Sifrant_regija", "Type": 0},
-            ],
-            "Select": [
-                {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Precepljenost",
-                            }
-                        },
-                        "Function": 0,
-                    },
-                    "Name": "Sum(eRCO_podatki_ed.Precepljenost)",
-                }
-            ],
-            "Where": [
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "e"}},
-                                        "Property": "OsebaSpol",
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": "'Moški'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "And": {
-                            "Left": {
-                                "Comparison": {
-                                    "ComparisonKind": 2,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c1"}
-                                            },
-                                            "Property": "Date",
-                                        }
-                                    },
-                                    "Right": {
-                                        "Literal": {
-                                            "Value": "datetime'2021-01-30T00:00:00'"
-                                        }
-                                    },
-                                }
-                            },
-                            "Right": {
-                                "Comparison": {
-                                    "ComparisonKind": 3,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c1"}
-                                            },
-                                            "Property": "Date",
-                                        }
-                                    },
-                                    "Right": {
-                                        "Literal": {
-                                            "Value": "datetime'2021-03-26T00:00:00'"
-                                        }
-                                    },
-                                }
-                            },
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "In": {
-                            "Expressions": [
-                                {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "s"}},
-                                        "Property": "Regija",
-                                    }
-                                }
-                            ],
-                            "Values": [[{"Literal": {"Value": "'Pomurska'"}}]],
-                        }
-                    }
-                },
-                {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                },
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 2,
-                    "Expression": {
-                        "Aggregation": {
-                            "Expression": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "e"}},
-                                    "Property": "Precepljenost",
-                                }
-                            },
-                            "Function": 0,
-                        }
-                    },
-                }
-            ],
-        },
-        "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
-            "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
-            "Version": 1,
-        },
-        "ExecutionMetricsKind": 1,
-    }
 }
