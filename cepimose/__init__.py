@@ -37,6 +37,7 @@ from .parser import (
     _parse_vaccinations_gender_by_date,
     _parse_vaccinations_date_range,
     _parse_vaccinations_by_manufacturer_used,
+    _parse_vaccinations_date_range_manufacturers_used,
 )
 
 from .types import (
@@ -44,6 +45,7 @@ from .types import (
     VaccinationByDayRow,
     VaccinationsByGender,
     VaccinationsDateRangeByGroup,
+    VaccinationsDoses,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -245,14 +247,12 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
 
 # PAGE 1
 # date range
-# regions, age_group
-
-
+# by region or by age_group
+# with by gender and by manufacturer
 def vaccinations_date_range(
     end_date: datetime.datetime,
     start_date: datetime.datetime,
     property: Region or AgeGroup,
-    options: dict = {"gender": True},
 ) -> VaccinationsDateRangeByGroup:
 
     if end_date < start_date:
@@ -273,19 +273,19 @@ def vaccinations_date_range(
 
     result = VaccinationsDateRangeByGroup(start_date, end_date, property, group)
 
-    is_gender = options.get("gender", False)
+    male1 = _get_data(req.male1, _parse_vaccinations_gender_by_date)
+    male2 = _get_data(req.male2, _parse_vaccinations_gender_by_date)
+    result.male = VaccinationsDoses(male1, male2)
 
-    if is_gender == True:
-        male1_req = req.male1
-        male2_req = req.male2
-        female1_req = req.female1
-        female2_req = req.female2
+    female1 = _get_data(req.female1, _parse_vaccinations_gender_by_date)
+    female2 = _get_data(req.female2, _parse_vaccinations_gender_by_date)
+    result.female = VaccinationsDoses(female1, female2)
 
-        result.male_first = _get_data(male1_req, _parse_vaccinations_gender_by_date)
-        result.male_second = _get_data(male2_req, _parse_vaccinations_gender_by_date)
-        result.female_first = _get_data(female1_req, _parse_vaccinations_gender_by_date)
-        result.female_second = _get_data(
-            female2_req, _parse_vaccinations_gender_by_date
-        )
+    manufacturers = _get_data(
+        req.manufacturers, _parse_vaccinations_date_range_manufacturers_used
+    )
+
+    for manu in manufacturers:
+        result.__setattr__(manu.name, VaccinationsDoses(manu.dose1, manu.dose2))
 
     return result

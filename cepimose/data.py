@@ -2018,8 +2018,9 @@ def _create_vaccinations_data_range_request(
     male2_req = _create_req([commands.male2])
     female1_req = _create_req([commands.female1])
     female2_req = _create_req([commands.female2])
+    manufacturers_req = _create_req([commands.manufacturers])
 
     requests = DateRangeCommands_Requests(
-        group_req, male1_req, male2_req, female1_req, female2_req
+        group_req, male1_req, male2_req, female1_req, female2_req, manufacturers_req
     )
     return requests

@@ -3,6 +3,7 @@ import datetime
 from .types import (
     VaccinationByDayRow,
     VaccinationByAgeRow,
+    VaccinationsDateRangeManufacturer,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -579,4 +580,32 @@ def _parse_vaccinations_by_manufacturer_used(data):
                     lastI = I
         parsed_data.append(obj)
 
+    return parsed_data
+
+
+def _parse_vaccinations_date_range_manufacturers_used(data):
+    _validate_response_data(data)
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+
+    manu_dict = {
+        "Astra Zeneca": "az",
+        "Janssen": "janssen",
+        "Moderna": "moderna",
+        "Pfizer-BioNTech": "pfizer",
+    }
+
+    parsed_data = []
+    for element in resp:
+        C = element.get("C", None)
+        manufacturer = C[0]
+        result = VaccinationsDateRangeManufacturer(manu_dict[manufacturer])
+        if len(C) == 3:
+            result.dose1 = C[1]
+            result.dose2 = C[2]
+        if len(C) == 2:
+            if (element.get("0", None)) == None:
+                result.dose1 = C[1]
+            else:
+                result.dose2 = C[1]
+        parsed_data.append(result)
     return parsed_data

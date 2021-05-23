@@ -1,5 +1,5 @@
 from cepimose.enums import AgeGroup, Gender, Region
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import datetime
 from typing import List, Optional, Union
 
@@ -95,6 +95,20 @@ class DateRangeCommands_Requests:
     male2: dict
     female1: dict
     female2: dict
+    manufacturers: dict
+
+
+@dataclass
+class VaccinationsDateRangeManufacturer:
+    name: str
+    dose1: Optional[int] = 0
+    dose2: Optional[int] = 0
+
+
+@dataclass
+class VaccinationsDoses:
+    dose1: Optional[int] = 0
+    dose2: Optional[int] = 0
 
 
 @dataclass
@@ -103,7 +117,9 @@ class VaccinationsDateRangeByGroup:
     date_to: datetime.datetime
     property: Union[Region, AgeGroup]
     by_day: list
-    female_first: Optional[int] = 0
-    female_second: Optional[int] = 0
-    male_first: Optional[int] = 0
-    male_second: Optional[int] = 0
+    male: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    female: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    pfizer: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    az: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    moderna: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    janssen: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
