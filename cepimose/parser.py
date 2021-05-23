@@ -1,3 +1,4 @@
+from cepimose.enums import Region
 import datetime
 
 from .types import (
@@ -437,6 +438,27 @@ def _parse_vaccinations_age_group_by_region_on_day(
                         region=region, dose1=first_dose, dose2=second_dose
                     )
                 )
+
+    def is_missing(regions, value):
+        try:
+            regions.index(value)
+            return False
+        except ValueError:
+            return True
+
+    if len(Region) > len(parsed_data):
+        regions = [item.region for item in parsed_data]
+        missing_regions = [
+            item.value for item in Region if is_missing(regions, item.value)
+        ]
+        for region in missing_regions:
+            dose1 = VaccinationAgeGroupByRegionOnDayDose(region)
+            dose2 = VaccinationAgeGroupByRegionOnDayDose(region)
+            parsed_data.append(
+                VaccinationAgeGroupByRegionOnDay(
+                    region=region, dose1=dose1, dose2=dose2
+                )
+            )
 
     return parsed_data
 
