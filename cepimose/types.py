@@ -116,7 +116,7 @@ class VaccinationsDateRangeByGroup:
     date_from: datetime.datetime
     date_to: datetime.datetime
     property: Union[Region, AgeGroup]
-    by_day: list[VaccinationByDayRow]
+    by_day: List[VaccinationByDayRow] = field(default_factory=list)
     male: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     female: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     pfizer: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
