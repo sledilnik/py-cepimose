@@ -133,47 +133,46 @@ region_and_age_group_Select = {
     ]
 }
 
+Date_Range_Group_Query_Options = {
+    Region: {"Where": {"where_second": ["Regija", "s"]}, "From": region_From},
+    AgeGroup: {
+        "Where": {"where_second": ["Starostni ​razred", "x"]},
+        "From": age_group_From,
+    },
+}
 
-def _get_region_Query(
-    end_date: datetime.datetime, start_date: datetime.datetime, region
+
+def _get_date_range_group_Query(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    group: Region or AgeGroup,
 ):
+    group_type = type(group)
+    if not group_type in [Region, AgeGroup]:
+        raise Exception(
+            f"Wrong arg [group] type: {group_type}. Possible types: {Region}, {AgeGroup}"
+        )
+
+    where_second_args = [group.value]
+    group_options = Date_Range_Group_Query_Options[group_type]
+    where_options = group_options["Where"]
+    special_args = where_options["where_second"]
+    where_second_args = [*where_second_args, *special_args]
+    group_From = group_options["From"]
+
     where_left = _getWhereLeftDateCondition(start_date)
     where_right = _getWhereRightDateCondition(end_date)
     where_first = _getWhereFirstCondition(where_left, where_right)
-    where_second = _getWherePropertyCondition(region, "Regija", "s")
+    where_second = _getWherePropertyCondition(*where_second_args)
     where_third = _where_third_common
-
     where = {"Where": [where_first, where_second, where_third]}
 
     obj = {}
     obj["Query"] = {
         **region_age_group_Version,
-        **region_From,
+        **group_From,
         **region_and_age_group_Select,
         **where,
-    }
-
-    return obj
-
-
-def _get_age_group_Query(
-    end_date: datetime.datetime, start_date: datetime.datetime, group
-):
-    where_left = _getWhereLeftDateCondition(start_date)
-    where_right = _getWhereRightDateCondition(end_date)
-    where_first = _getWhereFirstCondition(where_left, where_right)
-    where_second = _getWherePropertyCondition(group, "Starostni ​razred", "x")
-    where_third = _where_third_common
-
-    where = {"Where": [where_first, where_second, where_third]}
-
-    obj = {
-        "Query": {
-            **region_age_group_Version,
-            **age_group_From,
-            **region_and_age_group_Select,
-            **where,
-        }
     }
 
     return obj
@@ -502,8 +501,8 @@ def _get_date_range_command(
         **_region_age_group_ExecutionMetricsKind,
     }
     if isinstance(property, Region):
-        query = _get_region_Query(
-            end_date=end_date, start_date=start_date, region=property.value
+        query = _get_date_range_group_Query(
+            end_date=end_date, start_date=start_date, group=property
         )
         # used
         obj["SemanticQueryDataShapeCommand"] = {
@@ -524,8 +523,8 @@ def _get_date_range_command(
         return commands
 
     if isinstance(property, AgeGroup):
-        query = _get_age_group_Query(
-            end_date=end_date, start_date=start_date, group=property.value
+        query = _get_date_range_group_Query(
+            end_date=end_date, start_date=start_date, group=property
         )
         # used
         obj["SemanticQueryDataShapeCommand"] = {
