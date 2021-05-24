@@ -5,6 +5,7 @@ from .types import (
     VaccinationByDayRow,
     VaccinationByAgeRow,
     VaccinationsDateRangeManufacturer,
+    VaccinationsDoses,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -535,72 +536,35 @@ def _parse_vaccinations_date_range(data):
     return parsed_data
 
 
-def _parse_vaccinations_by_manufacturer_used(data):
+def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
     _validate_response_data(data)
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
-    manu_dict = {0: "az", 1: "janssen", 2: "moderna", 3: "pfizer"}
-
     parsed_data = []
     day_delta = datetime.timedelta(days=1)
     previous_date = datetime.datetime(2020, 12, 26)
-    for index, element in enumerate(resp):
+    used = None
+    for element in resp:
         date = parse_date(element["G0"])
         possible_missing_date = previous_date + day_delta
         while possible_missing_date < date:
             print(f"Add data for missing date: {possible_missing_date}")
-            parsed_data.append(
-                VaccinationByManufacturerRow(
-                    possible_missing_date, None, None, None, None
-                )
-            )
+            parsed_data.append(VaccinationDose(possible_missing_date, None))
             possible_missing_date += day_delta
         previous_date = date
 
-        obj = VaccinationByManufacturerRow(date, None, None, None, None)
-        X = [el for el in element["X"] if el.get("M0", None) != None]
-        if len(X) == 4:
-            obj.az = X[0]["M0"]
-            obj.janssen = X[1]["M0"]
-            obj.moderna = X[2]["M0"]
-            obj.pfizer = X[3]["M0"]
+        X = element["X"]
+        M0 = X[0].get("M0", None)
+        R = X[0].get("R", None)
+        if M0 != None:
+            parsed_data.append(VaccinationDose(date, M0))
+            used = M0
+        elif R == 1:
+            parsed_data.append(VaccinationDose(date, used))
         else:
-            onlyTwoManufacturersDate = datetime.datetime(2021, 2, 3)
-            if date < onlyTwoManufacturersDate:
-                if len(X) == 1:
-                    I = X[0].get("I", None)
-                    M0 = X[0].get("M0", None)
-                    if I == None:
-                        obj.moderna = M0
-                    else:
-                        key = manu_dict[I]
-                        obj.__setattr__(key, M0)
-                elif len(X) == 2:
-                    obj.moderna = X[0]["M0"]
-                    obj.pfizer = X[1]["M0"]
-                else:
-                    print(X)
-                    raise Exception(
-                        "This is strange! There should be data only for 2 manufacturers!"
-                    )
-            else:
-                lastI = None
-                for index, item in enumerate(X):
-                    I = item.get("I", None)
-                    M0 = item.get("M0", None)
-
-                    if I != None:
-                        key = manu_dict[I]
-                        obj.__setattr__(key, M0)
-                    elif lastI == None:
-                        key = manu_dict[index]
-                        obj.__setattr__(key, M0)
-                    else:
-                        key = manu_dict[lastI + 1]
-                        obj.__setattr__(key, M0)
-                    lastI = I
-        parsed_data.append(obj)
+            print(R, element)
+            raise Exception(f"Unknown R: {R}")
 
     return parsed_data
 

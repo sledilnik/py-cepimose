@@ -556,7 +556,7 @@ class CepimoseTestCaseFuture(unittest.TestCase):
                 f"Too early for Moderna usage: {row}",
             )
             self.assertTrue(
-                row.date >= datetime.datetime(2021, 2, 2, 0, 0) or row.az == None,
+                row.date >= datetime.datetime(2021, 1, 28, 0, 0) or row.az == None,
                 f"Too early for Astra Zeneca usage: {row}",
             )
             self.assertTrue(

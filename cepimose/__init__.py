@@ -183,10 +183,50 @@ def vaccinations_by_manufacturer_supplied_used(
 
 
 def vaccinations_by_manufacturer_used():
-    return _get_data(
-        _vaccinations_by_manufacturer_used_request,
-        _parse_vaccinations_by_manufacturer_used,
-    )
+
+    obj = {}
+    for manu in Manufacturer:
+        print(manu)
+        obj[manu] = _get_data(
+            _vaccinations_by_manufacturer_used_request[manu],
+            _parse_vaccinations_by_manufacturer_used,
+        )
+
+    start_date = datetime.datetime(2020, 12, 27)
+    today = datetime.datetime.today()
+    end_date = datetime.datetime(today.year, today.month, today.day)
+    day_delta = datetime.timedelta(days=1)
+
+    result = []
+    while start_date <= end_date:
+        pfizer = list(filter(lambda x: x.date == start_date, obj[Manufacturer.PFIZER]))
+        moderna = list(
+            filter(lambda x: x.date == start_date, obj[Manufacturer.MODERNA])
+        )
+        az = list(filter(lambda x: x.date == start_date, obj[Manufacturer.AZ]))
+        janssen = list(
+            filter(lambda x: x.date == start_date, obj[Manufacturer.JANSSEN])
+        )
+        try:
+            pfizer_used = pfizer[0].dose if len(pfizer) != 0 else None
+            moderna_used = moderna[0].dose if len(moderna) != 0 else None
+            az_used = az[0].dose if len(az) != 0 else None
+            janssen_used = janssen[0].dose if len(janssen) != 0 else None
+            result.append(
+                VaccinationByManufacturerRow(
+                    start_date,
+                    pfizer_used,
+                    moderna_used,
+                    az_used,
+                    janssen_used,
+                )
+            )
+        except:
+            print(start_date, "Something went wrong")
+            print(pfizer, moderna, az, janssen)
+        start_date += day_delta
+
+    return result
 
 
 # PAGE 1

@@ -1,7 +1,7 @@
 import copy
 import datetime
 
-from cepimose.enums import AgeGroup, Gender, Region
+from cepimose.enums import AgeGroup, Gender, Region, Manufacturer
 from cepimose.types import DateRangeCommands_Requests
 
 _where_third_common = {
@@ -491,7 +491,7 @@ def _get_manufacturers_command(obj: dict, group: Region or AgeGroup):
     return obj
 
 
-def get_date_range_command(
+def _get_date_range_command(
     end_date: datetime.datetime,
     start_date: datetime.datetime,
     property: Region or AgeGroup,
@@ -1464,3 +1464,128 @@ _test_date_range_age_group_by_manu_command = {
         "ExecutionMetricsKind": 1,
     }
 }
+
+
+def _get_default_manufacturer_used_command(manu: Manufacturer):
+    return {
+        "SemanticQueryDataShapeCommand": {
+            "Query": {
+                "Version": 2,
+                "From": [
+                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
+                    {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
+                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
+                ],
+                "Select": [
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "c1"}},
+                            "Property": "Date",
+                        },
+                        "Name": "Calendar.Date",
+                    },
+                    {
+                        "Column": {
+                            "Expression": {"SourceRef": {"Source": "s"}},
+                            "Property": "Cepivo_Ime",
+                        },
+                        "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                    },
+                    {
+                        "Aggregation": {
+                            "Expression": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Weight",
+                                }
+                            },
+                            "Function": 0,
+                        },
+                        "Name": "Sum(eRCO_podatki_ed.Weight)",
+                    },
+                ],
+                "Where": [
+                    {
+                        "Condition": {
+                            "Comparison": {
+                                "ComparisonKind": 2,
+                                "Left": {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "c1"}},
+                                        "Property": "Date",
+                                    }
+                                },
+                                "Right": {
+                                    "DateSpan": {
+                                        "Expression": {
+                                            "Literal": {
+                                                "Value": "datetime'2020-12-26T00:00:00'"
+                                            }
+                                        },
+                                        "TimeUnit": 5,
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "Not": {
+                                "Expression": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "s"}
+                                                    },
+                                                    "Property": "Cepivo_Ime",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [[{"Literal": {"Value": "null"}}]],
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "Condition": {
+                            "In": {
+                                "Expressions": [
+                                    {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "s"}
+                                            },
+                                            "Property": "Cepivo_Ime",
+                                        }
+                                    }
+                                ],
+                                "Values": [[{"Literal": {"Value": f"'{manu.value}'"}}]],
+                            }
+                        }
+                    },
+                ],
+            },
+            "Binding": {
+                "Primary": {"Groupings": [{"Projections": [0, 2]}]},
+                "Secondary": {"Groupings": [{"Projections": [1]}]},
+                "DataReduction": {
+                    "DataVolume": 4,
+                    "Primary": {"Sample": {}},
+                    "Secondary": {"Top": {}},
+                },
+                "Version": 1,
+            },
+            "ExecutionMetricsKind": 1,
+        }
+    }
+
+
+def _create_manufacturers_used_commands():
+    obj = {}
+    for manu in Manufacturer:
+        obj[manu] = _get_default_manufacturer_used_command(manu)
+
+    return obj
