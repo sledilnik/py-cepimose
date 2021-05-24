@@ -123,3 +123,10 @@ class VaccinationsDateRangeByGroup:
     az: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     moderna: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     janssen: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+
+
+@dataclass
+class CommandQueryFrom:
+    name: str
+    entity: str
+    type: int
