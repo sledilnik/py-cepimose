@@ -1,4 +1,3 @@
-import copy
 import datetime
 from typing import Union
 
@@ -7,98 +6,6 @@ from cepimose.types import CommandQueryFrom, DateRangeCommands_Requests
 
 
 _ExecutionMetrics = {"ExecutionMetricsKind": 1}
-
-# DATE RANGE GROUP WHERE
-# Region and AgeGroup source = "c1",
-def _get_date_range_group_Query_Where_FirstCondition(
-    source: str, start_date: datetime.datetime, end_date: datetime.datetime
-):
-    left = {
-        "Left": {
-            "Comparison": {
-                "ComparisonKind": 2,
-                "Left": {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": source}},
-                        "Property": "Date",
-                    }
-                },
-                "Right": {"Literal": {"Value": f"datetime'{start_date.isoformat()}'"}},
-            }
-        }
-    }
-    right = {
-        "Right": {
-            "Comparison": {
-                "ComparisonKind": 3,
-                "Left": {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": source}},
-                        "Property": "Date",
-                    }
-                },
-                "Right": {"Literal": {"Value": f"datetime'{end_date.isoformat()}'"}},
-            }
-        },
-    }
-
-    obj = {}
-    obj["Condition"] = {"And": {**left, **right}}
-    return obj
-
-
-# for AGE GROUP: property="Starostni ​razred", source="x"
-# for REGION: property="Regija", source="s"
-def _get_date_range_group_Query_Where_SecondCondition(
-    property: str, source: str, value: str
-):
-    return {
-        "Condition": {
-            "In": {
-                "Expressions": [
-                    {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": source}},
-                            "Property": property,
-                        }
-                    }
-                ],
-                "Values": [[{"Literal": {"Value": f"'{value}'"}}]],
-            }
-        }
-    }
-
-
-# Region and AgeGroup source = "c1",
-def _get_date_range_group_Query_Where_ThirdCondition(source: str):
-    return {
-        "Condition": {
-            "Comparison": {
-                "ComparisonKind": 1,
-                "Left": {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": source}},
-                        "Property": "Date",
-                    }
-                },
-                "Right": {
-                    "DateSpan": {
-                        "Expression": {
-                            "Literal": {"Value": "datetime'2020-12-26T01:00:00'"}
-                        },
-                        "TimeUnit": 5,
-                    }
-                },
-            }
-        }
-    }
-
-
-def _get_date_range_group_From(*args: CommandQueryFrom):
-    result = []
-    for arg in args:
-        result.append({"Name": arg.name, "Entity": arg.entity, "Type": arg.type})
-    return result
 
 
 def _get_Binding(projections: list, data_volume: int, primary: dict, version: int):
@@ -109,40 +16,163 @@ def _get_Binding(projections: list, data_volume: int, primary: dict, version: in
     }
 
 
-_Date_Range_Group_Query_Options = {
+def _get_Version(version: int = 2) -> "int":
+    return version
+
+
+def _get_Where(
+    functions: list,
+    arguments: list,
+    special_args: list,
+) -> "list":
+    result = []
+    for index, func in enumerate(functions):
+        result.append(func(*arguments[index], *special_args[index]))
+
+    return result
+
+
+# DATE RANGE GROUP QUERY FROM
+def _get_From(*args: CommandQueryFrom) -> "list[dict]":
+    result = []
+    for arg in args:
+        result.append({"Name": arg.name, "Entity": arg.entity, "Type": arg.type})
+    return result
+
+
+# DATE RANGE GROUP QUERY WHERE
+def _get_Column(
+    source: str,
+    Property="Date",
+):
+    return {"Expression": {"SourceRef": {"Source": source}}, "Property": Property}
+
+
+def _get_DateSpan(value=datetime.datetime(2020, 12, 26), time_unit=5):
+    return {
+        "Expression": {"Literal": {"Value": f"datetime'{value.isoformat()}'"}},
+        "TimeUnit": time_unit,
+    }
+
+
+def _get_Comparison_With_DateSpan(comparison_kind, source, Property, value, time_unit):
+    return {
+        "ComparisonKind": comparison_kind,
+        "Left": {"Column": _get_Column(source, Property)},
+        "Right": {"DateSpan": _get_DateSpan(value, time_unit)},
+    }
+
+
+def _get_Comparison_With_Literal(
+    comparison_kind: int,
+    source,
+    Property="Date",
+    value=datetime.datetime(2020, 12, 26),
+):
+    Value = (
+        f"datetime'{value.isoformat()}'"
+        if isinstance(value, datetime.datetime)
+        else value
+    )
+
+    return {
+        "ComparisonKind": comparison_kind,
+        "Left": {"Column": _get_Column(source, Property)},
+        "Right": {"Literal": {"Value": Value}},
+    }
+
+
+def _get_Condition_Comparison_With_DateSpan(
+    source: str,
+    comparison_kind=1,
+    Property="Date",
+    value=datetime.datetime(2020, 12, 26),
+    time_unit=5,
+):
+    return {
+        "Condition": {
+            "Comparison": _get_Comparison_With_DateSpan(
+                comparison_kind, source, Property, value, time_unit
+            )
+        }
+    }
+
+
+def _get_Condition_Left_And_Right_Comparison(
+    source: str, start_date: datetime.datetime, end_date: datetime.datetime
+):
+    left = {
+        "Left": {
+            "Comparison": _get_Comparison_With_Literal(2, source, "Date", start_date)
+        }
+    }
+    right = {
+        "Right": {
+            "Comparison": _get_Comparison_With_Literal(3, source, "Date", end_date)
+        },
+    }
+    return {"Condition": {"And": {**left, **right}}}
+
+
+def _get_Condition_In_Expression(Property: str, source: str, value: str):
+    return {
+        "Condition": {
+            "In": {
+                "Expressions": [{"Column": _get_Column(source, Property)}],
+                "Values": [[{"Literal": {"Value": f"'{value}'"}}]],
+            }
+        }
+    }
+
+
+# DATE RANGE GROUP QUERY SELECT
+def _get_Select():
+    return [
+        {
+            "Column": {
+                "Expression": {"SourceRef": {"Source": "c1"}},
+                "Property": "Date",
+            },
+            "Name": "Calendar.Date",
+        },
+        {
+            "Measure": {
+                "Expression": {"SourceRef": {"Source": "c"}},
+                "Property": "Weight running total in Date",
+            },
+            "Name": "eRCO_podatki.Weight running total in Date",
+        },
+        {
+            "Measure": {
+                "Expression": {"SourceRef": {"Source": "c"}},
+                "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+            },
+            "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
+        },
+    ]
+
+
+_Date_Range_Group_Used_By_Day_Query_Options = {
     "common": {
         "Query": {
-            "Version": 2,
+            "Version": _get_Version,
+            "From": _get_From,
             "Where": [
-                _get_date_range_group_Query_Where_FirstCondition,
-                _get_date_range_group_Query_Where_SecondCondition,
-                _get_date_range_group_Query_Where_ThirdCondition,
+                _get_Condition_Left_And_Right_Comparison,
+                _get_Condition_In_Expression,
+                _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": [
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "c1"}},
-                        "Property": "Date",
-                    },
-                    "Name": "Calendar.Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
-                    },
-                    "Name": "eRCO_podatki.Weight running total in Date",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Tekoča vsota za mero Precepljenost v polju Date",
-                    },
-                    "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
-                },
-            ],
+            "Select": _get_Select,
         },
-        "Binding": _get_Binding([0, 1, 2], 4, {"BinnedLineSample": {}}, 1),
+        "Binding": _get_Binding,
+    },
+    "args": {
+        "Version": [],
+        "From": [],
+        "Where": [],
+        "Select": [],
+        "OrderBy": [],
+        "Binding": [[0, 1, 2], 4, {"BinnedLineSample": {}}, 1],
     },
     Region: {
         "Where": [["c1"], ["Regija", "s"], ["c1"]],
@@ -163,133 +193,94 @@ _Date_Range_Group_Query_Options = {
 }
 
 
-def _create_date_range_group_Where(
-    functions: list,
-    arguments: list,
-    special_args: list,
-):
-    result = []
-    for index, func in enumerate(functions):
-        result.append(func(*arguments[index], *special_args[index]))
-
-    return result
-
-
-def _get_date_range_group_Query(
-    start_date: datetime.datetime,
-    end_date: datetime.datetime,
-    group: Region or AgeGroup,
-    common_options: dict,
-    group_options: dict,
-):
-    group_type = type(group)
-    if not group_type in [Region, AgeGroup]:
-        raise Exception(
-            f"Wrong arg [group] type: {group_type}. Possible types: {Region}, {AgeGroup}"
-        )
-
-    from_args = group_options["From"]
-    where = _create_date_range_group_Where(
-        common_options["Query"]["Where"],
-        group_options["Where"],
-        [[start_date, end_date], [group.value], []],
-    )
-    command = {}
-    command["Query"] = {
-        "Version": common_options["Query"]["Version"],
-        "From": _get_date_range_group_From(*from_args),
-        "Select": common_options["Query"]["Select"],
-        "Where": where,
-    }
-    return command
-
-
 # GENDER
-def _get_gender_first_Where_item(gender):
-    return {
-        "Condition": {
-            "In": {
-                "Expressions": [
-                    {
+def _get_gender_Query_Select_Dose(dose):
+    select = {
+        "dose1": [
+            {
+                "Measure": {
+                    "Expression": {"SourceRef": {"Source": "e"}},
+                    "Property": "Weight for 1",
+                },
+                "Name": "eRCO_podatki.Weight for 1",
+            }
+        ],
+        "dose2": [
+            {
+                "Aggregation": {
+                    "Expression": {
                         "Column": {
                             "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "OsebaSpol",
+                            "Property": "Precepljenost",
                         }
-                    }
-                ],
-                "Values": [[{"Literal": {"Value": f"'{gender.value}'"}}]],
+                    },
+                    "Function": 0,
+                },
+                "Name": "Sum(eRCO_podatki_ed.Precepljenost)",
             }
-        }
+        ],
     }
+    return select[dose]
+
+
+def _get_gender_Query_Order_By_Dose(dose):
+    order_by = {
+        "dose1": [
+            {
+                "Direction": 2,
+                "Expression": {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Weight for 1",
+                    }
+                },
+            }
+        ],
+        "dose2": [
+            {
+                "Direction": 2,
+                "Expression": {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Precepljenost",
+                            }
+                        },
+                        "Function": 0,
+                    }
+                },
+            }
+        ],
+    }
+    return order_by[dose]
 
 
 _Date_Range_Group_Gender_Query_Options = {
     "common": {
         "Query": {
-            "Version": 2,
+            "Version": _get_Version,
+            "From": _get_From,
             "Where": [
-                _get_gender_first_Where_item,
-                _get_date_range_group_Query_Where_FirstCondition,
-                _get_date_range_group_Query_Where_SecondCondition,
-                _get_date_range_group_Query_Where_ThirdCondition,  # arg = "c"
+                _get_Condition_In_Expression,
+                _get_Condition_Left_And_Right_Comparison,
+                _get_Condition_In_Expression,
+                _get_Condition_Comparison_With_DateSpan,  # arg = "c"
             ],
-            "Select": {
-                "dose1": [
-                    {
-                        "Measure": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Weight for 1",
-                        },
-                        "Name": "eRCO_podatki.Weight for 1",
-                    }
-                ],
-                "dose2": [
-                    {
-                        "Aggregation": {
-                            "Expression": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "e"}},
-                                    "Property": "Precepljenost",
-                                }
-                            },
-                            "Function": 0,
-                        },
-                        "Name": "Sum(eRCO_podatki_ed.Precepljenost)",
-                    }
-                ],
-            },
-            "OrderBy": {
-                "dose1": [
-                    {
-                        "Direction": 2,
-                        "Expression": {
-                            "Measure": {
-                                "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Weight for 1",
-                            }
-                        },
-                    }
-                ],
-                "dose2": [
-                    {
-                        "Direction": 2,
-                        "Expression": {
-                            "Aggregation": {
-                                "Expression": {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "e"}},
-                                        "Property": "Precepljenost",
-                                    }
-                                },
-                                "Function": 0,
-                            }
-                        },
-                    }
-                ],
-            },
+            "Select": _get_gender_Query_Select_Dose,
+            "OrderBy": _get_gender_Query_Order_By_Dose,
         },
-        "Binding": _get_Binding([0], 3, {"Window": {}}, 1),
+        "Binding": _get_Binding,
     },
+    "args": {
+        "Version": [],
+        "From": [],
+        "Where": [],
+        "Select": [],
+        "OrderBy": [],
+        "Binding": [[0], 3, {"Window": {}}, 1],
+    },
+    "specific": ["dose1", "dose2"],
     Region: {
         "Where": [[], ["c"], ["Regija", "s"], ["c"]],
         "From": [
@@ -309,20 +300,13 @@ _Date_Range_Group_Gender_Query_Options = {
 }
 
 
-def _get_manufacturer_Where_first():
+def _get_Condition_Not_Expression():
     return {
         "Condition": {
             "Not": {
                 "Expression": {
                     "In": {
-                        "Expressions": [
-                            {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "s"}},
-                                    "Property": "Cepivo_Ime",
-                                }
-                            }
-                        ],
+                        "Expressions": [{"Column": _get_Column("s", "Cepivo_Ime")}],
                         "Values": [[{"Literal": {"Value": "null"}}]],
                     }
                 }
@@ -331,52 +315,69 @@ def _get_manufacturer_Where_first():
     }
 
 
+def _get_Select():
+    return [
+        {
+            "Measure": {
+                "Expression": {"SourceRef": {"Source": "e"}},
+                "Property": "Weight for 1",
+            },
+            "Name": "eRCO_podatki.Weight for 1",
+        },
+        {
+            "Measure": {
+                "Expression": {"SourceRef": {"Source": "e"}},
+                "Property": "Weight for 2",
+            },
+            "Name": "eRCO_podatki.Weight for 2",
+        },
+        {
+            "Column": {
+                "Expression": {"SourceRef": {"Source": "s"}},
+                "Property": "Cepivo_Ime",
+            },
+            "Name": "Sifrant_Cepivo.Cepivo_Ime",
+        },
+    ]
+
+
+def _get_OrderBy():
+    return [
+        {
+            "Direction": 2,
+            "Expression": {
+                "Measure": {
+                    "Expression": {"SourceRef": {"Source": "e"}},
+                    "Property": "Weight for 2",
+                }
+            },
+        }
+    ]
+
+
 _Date_Range_Group_Manufacturers_Query_Options = {
     "common": {
         "Query": {
-            "Version": 2,
+            "Version": _get_Version,
+            "From": _get_From,
             "Where": [
-                _get_manufacturer_Where_first,
-                _get_date_range_group_Query_Where_FirstCondition,
-                _get_date_range_group_Query_Where_SecondCondition,
-                _get_date_range_group_Query_Where_ThirdCondition,
+                _get_Condition_Not_Expression,
+                _get_Condition_Left_And_Right_Comparison,
+                _get_Condition_In_Expression,
+                _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": [
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Weight for 1",
-                    },
-                    "Name": "eRCO_podatki.Weight for 1",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Weight for 2",
-                    },
-                    "Name": "eRCO_podatki.Weight for 2",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "s"}},
-                        "Property": "Cepivo_Ime",
-                    },
-                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
-                },
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 2,
-                    "Expression": {
-                        "Measure": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Weight for 2",
-                        }
-                    },
-                }
-            ],
+            "Select": _get_Select,
+            "OrderBy": _get_OrderBy,
         },
-        "Binding": _get_Binding([0, 1, 2], 3, {"Window": {}}, 1),
+        "Binding": _get_Binding,
+    },
+    "args": {
+        "Version": [],
+        "From": [],
+        "Where": [],
+        "Select": [],
+        "OrderBy": [],
+        "Binding": [[0, 1, 2], 3, {"Window": {}}, 1],
     },
     Region: {
         "Where": [[], ["c"], ["Regija", "s1"], ["c"]],
@@ -398,134 +399,137 @@ _Date_Range_Group_Manufacturers_Query_Options = {
     },
 }
 
+_Date_Range_Group_Query_Options = {
+    "by_day": _Date_Range_Group_Used_By_Day_Query_Options,
+    "gender": _Date_Range_Group_Gender_Query_Options,
+    "manufacturers": _Date_Range_Group_Manufacturers_Query_Options,
+}
 
-def _get_gender_commands(
-    start_date,
-    end_date,
+
+def _get_date_range_group_Query(
     group: Region or AgeGroup,
+    common_options: dict,
+    group_options: dict,
+    version_args: list = [],
+    where_args: list = [],
+    select_args: list = [],
+    order_by_args: list = [],
 ):
-
     group_type = type(group)
-    group_options = _Date_Range_Group_Gender_Query_Options[group_type]
-    common_options = _Date_Range_Group_Gender_Query_Options["common"]
-
-    queries = {}
-    for gender in Gender:
-        where = _create_date_range_group_Where(
-            common_options["Query"]["Where"],
-            group_options["Where"],
-            [[gender], [start_date, end_date], [group.value], []],
+    if not group_type in [Region, AgeGroup]:
+        raise Exception(
+            f"Wrong arg [group] type: {group_type}. Possible types: {Region}, {AgeGroup}"
         )
-        _from = _get_date_range_group_From(*group_options["From"])
-        common = {
-            "Binding": common_options["Binding"],
-            **_ExecutionMetrics,
-        }
-        queries[gender] = {
-            "dose1": {
-                "Query": {
-                    "Version": common_options["Query"]["Version"],
-                    "Select": common_options["Query"]["Select"]["dose1"],
-                    "Where": where,
-                    "OrderBy": common_options["Query"]["OrderBy"]["dose1"],
-                    "From": _from,
-                },
-                **common,
-            },
-            "dose2": {
-                "Query": {
-                    "Version": common_options["Query"]["Version"],
-                    "Select": common_options["Query"]["Select"]["dose2"],
-                    "Where": where,
-                    "OrderBy": common_options["Query"]["OrderBy"]["dose2"],
-                    "From": _from,
-                },
-                **common,
-            },
-        }
 
-    male1 = {"SemanticQueryDataShapeCommand": queries[Gender.MALE]["dose1"]}
-    male2 = {"SemanticQueryDataShapeCommand": queries[Gender.MALE]["dose2"]}
-    female1 = {"SemanticQueryDataShapeCommand": queries[Gender.FEMALE]["dose1"]}
-    female2 = {"SemanticQueryDataShapeCommand": queries[Gender.FEMALE]["dose2"]}
+    from_args = group_options["From"]
 
-    return [male1, male2, female1, female2]
+    Query = common_options["Query"]
 
+    where = _get_Where(
+        Query["Where"],
+        group_options["Where"],
+        where_args,
+    )
 
-def _get_manufacturers_command(
-    start_date: datetime.datetime,
-    end_date: datetime.datetime,
-    group: Region or AgeGroup,
-):
-    group_type = type(group)
-    group_options = _Date_Range_Group_Manufacturers_Query_Options[group_type]
-    common_options = _Date_Range_Group_Manufacturers_Query_Options["common"]
+    order_by = Query.get("OrderBy", None)
+    order_by = {"OrderBy": order_by(*order_by_args)} if order_by != None else {}
 
     command = {}
-    command["SemanticQueryDataShapeCommand"] = {
-        "Binding": common_options["Binding"],
-        **_ExecutionMetrics,
+    command["Query"] = {
+        "Version": Query["Version"](*version_args),
+        "From": Query["From"](*from_args),
+        "Select": Query["Select"](*select_args),
+        "Where": where,
+        **order_by,
     }
-
-    where = _create_date_range_group_Where(
-        common_options["Query"]["Where"],
-        group_options["Where"],
-        [[], [start_date, end_date], [group.value], []],
-    )
-    _from = _get_date_range_group_From(*group_options["From"])
-
-    query = {
-        "Query": {
-            "Version": common_options["Query"]["Version"],
-            "From": _from,
-            "Where": where,
-            "Select": common_options["Query"]["Select"],
-            "OrderBy": common_options["Query"]["OrderBy"],
-        }
-    }
-
-    command["SemanticQueryDataShapeCommand"] = {
-        **query,
-        **command["SemanticQueryDataShapeCommand"],
-    }
-
     return command
 
 
-def _get_date_range_command(
-    end_date: datetime.datetime,
-    start_date: datetime.datetime,
-    property: Region or AgeGroup,
-) -> DateRangeCommands_Requests:
-    common_options = _Date_Range_Group_Query_Options["common"]
+def _get_command(
+    group: Union[Region, AgeGroup],
+    command_type: str,
+    where_args: list = [],
+    specific_args: dict = {"Select": [], "OrderBy": []},
+):
+    command_options = _Date_Range_Group_Query_Options[command_type]
+    common_options = command_options["common"]
+    args_options = command_options["args"]
+
+    version_args = args_options["Version"]
+    select_args = [*specific_args["Select"], *args_options["Select"]]
+    order_by_args = [*specific_args["OrderBy"], *args_options["OrderBy"]]
+    binding_args = args_options["Binding"]
 
     command = {}
     command["SemanticQueryDataShapeCommand"] = {
-        "Binding": common_options["Binding"],
+        "Binding": common_options["Binding"](*binding_args),
         **_ExecutionMetrics,
     }
-
-    group_type = type(property)
-    group_options = _Date_Range_Group_Query_Options[group_type]
+    group_type = type(group)
+    group_options = command_options[group_type]
 
     query = _get_date_range_group_Query(
-        start_date, end_date, property, common_options, group_options
+        group,
+        common_options,
+        group_options,
+        version_args,
+        where_args,
+        select_args,
+        order_by_args,
     )
 
     command["SemanticQueryDataShapeCommand"] = {
         **query,
         **command["SemanticQueryDataShapeCommand"],
     }
+    return command
 
-    [male1, male2, female1, female2] = _get_gender_commands(
-        start_date, end_date, property
-    )
 
-    manufacturers = _get_manufacturers_command(start_date, end_date, property)
+def _get_gender_commands(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    group: Region or AgeGroup,
+):
+    specific_options = _Date_Range_Group_Gender_Query_Options["specific"]
 
-    commands = DateRangeCommands_Requests(
-        command, male1, male2, female1, female2, manufacturers
-    )
+    commands = {}
+    for gender in Gender:
+        commands[gender] = [
+            _get_command(
+                group,
+                "gender",
+                where_args=[
+                    ["OsebaSpol", "e", gender.value],
+                    [start_date, end_date],
+                    [group.value],
+                    [],
+                ],
+                specific_args={"Select": [dose], "OrderBy": [dose]},
+            )
+            for dose in specific_options
+        ]
+
+    return commands
+
+
+def _get_date_range_group_commands(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    group: Region or AgeGroup,
+) -> DateRangeCommands_Requests:
+
+    where_by_day_args = [[start_date, end_date], [group.value], []]
+    where_manufacturers_args = [[], [start_date, end_date], [group.value], []]
+
+    by_day = _get_command(group, "by_day", where_by_day_args)
+
+    gender = _get_gender_commands(start_date, end_date, group)
+    male = gender[Gender.MALE]
+    female = gender[Gender.FEMALE]
+
+    manufacturers = _get_command(group, "manufacturers", where_manufacturers_args)
+
+    commands = DateRangeCommands_Requests(by_day, *male, *female, manufacturers)
 
     return commands
 
@@ -534,102 +538,33 @@ def _get_default_manufacturer_used_command(manu: Manufacturer):
     return {
         "SemanticQueryDataShapeCommand": {
             "Query": {
-                "Version": 2,
-                "From": [
-                    {"Name": "c1", "Entity": "Calendar", "Type": 0},
-                    {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
-                    {"Name": "c", "Entity": "eRCO_​​podatki", "Type": 0},
-                ],
+                "Version": _get_Version(),
+                "From": _get_From(
+                    CommandQueryFrom("c1", "Calendar", 0),
+                    CommandQueryFrom("s", "Sifrant_Cepivo", 0),
+                    CommandQueryFrom("c", "eRCO_​​podatki", 0),
+                ),
                 "Select": [
                     {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "c1"}},
-                            "Property": "Date",
-                        },
+                        "Column": _get_Column("c1", "Date"),
                         "Name": "Calendar.Date",
                     },
                     {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "s"}},
-                            "Property": "Cepivo_Ime",
-                        },
+                        "Column": _get_Column("s", "Cepivo_Ime"),
                         "Name": "Sifrant_Cepivo.Cepivo_Ime",
                     },
                     {
                         "Aggregation": {
-                            "Expression": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c"}},
-                                    "Property": "Weight",
-                                }
-                            },
+                            "Expression": {"Column": _get_Column("c", "Weight")},
                             "Function": 0,
                         },
                         "Name": "Sum(eRCO_podatki_ed.Weight)",
                     },
                 ],
                 "Where": [
-                    {
-                        "Condition": {
-                            "Comparison": {
-                                "ComparisonKind": 2,
-                                "Left": {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c1"}},
-                                        "Property": "Date",
-                                    }
-                                },
-                                "Right": {
-                                    "DateSpan": {
-                                        "Expression": {
-                                            "Literal": {
-                                                "Value": "datetime'2020-12-26T00:00:00'"
-                                            }
-                                        },
-                                        "TimeUnit": 5,
-                                    }
-                                },
-                            }
-                        }
-                    },
-                    {
-                        "Condition": {
-                            "Not": {
-                                "Expression": {
-                                    "In": {
-                                        "Expressions": [
-                                            {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {"Source": "s"}
-                                                    },
-                                                    "Property": "Cepivo_Ime",
-                                                }
-                                            }
-                                        ],
-                                        "Values": [[{"Literal": {"Value": "null"}}]],
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Condition": {
-                            "In": {
-                                "Expressions": [
-                                    {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "s"}
-                                            },
-                                            "Property": "Cepivo_Ime",
-                                        }
-                                    }
-                                ],
-                                "Values": [[{"Literal": {"Value": f"'{manu.value}'"}}]],
-                            }
-                        }
-                    },
+                    _get_Condition_Comparison_With_DateSpan("c1", 2),
+                    _get_Condition_Not_Expression(),
+                    _get_Condition_In_Expression("Cepivo_Ime", "s", manu.value),
                 ],
             },
             "Binding": {
@@ -642,7 +577,7 @@ def _get_default_manufacturer_used_command(manu: Manufacturer):
                 },
                 "Version": 1,
             },
-            "ExecutionMetricsKind": 1,
+            **_ExecutionMetrics,
         }
     }
 

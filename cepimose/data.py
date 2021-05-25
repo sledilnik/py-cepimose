@@ -3,7 +3,10 @@ import json
 import datetime
 from .enums import Region, AgeGroup, Manufacturer, Gender
 
-from .commands import _get_date_range_command, _create_manufacturers_used_commands
+from .commands import (
+    _get_date_range_group_commands,
+    _create_manufacturers_used_commands,
+)
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -2018,9 +2021,7 @@ def _create_vaccinations_data_range_request(
     start_date: datetime.datetime,
     property: Region or AgeGroup,
 ):
-    commands = _get_date_range_command(
-        end_date=end_date, start_date=start_date, property=property
-    )
+    commands = _get_date_range_group_commands(start_date, end_date, group=property)
 
     group_req = _create_req([commands.group])
     male1_req = _create_req([commands.male1])
