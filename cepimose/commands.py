@@ -146,19 +146,19 @@ _Date_Range_Group_Query_Options = {
     },
     Region: {
         "Where": [["c1"], ["Regija", "s"], ["c1"]],
-        "From": _get_date_range_group_From(
+        "From": [
             CommandQueryFrom("c", "eRCO_​​podatki", 0),
             CommandQueryFrom("c1", "Calendar", 0),
             CommandQueryFrom("s", "Sifrant_regija", 0),
-        ),
+        ],
     },
     AgeGroup: {
         "Where": [["c1"], ["Starostni ​razred", "x"], ["c1"]],
-        "From": _get_date_range_group_From(
+        "From": [
             CommandQueryFrom("c", "eRCO_​​podatki", 0),
             CommandQueryFrom("c1", "Calendar", 0),
             CommandQueryFrom("x", "xls_SURS_starost", 0),
-        ),
+        ],
     },
 }
 
@@ -188,9 +188,7 @@ def _get_date_range_group_Query(
             f"Wrong arg [group] type: {group_type}. Possible types: {Region}, {AgeGroup}"
         )
 
-    group_options = _Date_Range_Group_Query_Options[group_type]
-
-    group_from = group_options["From"]
+    from_args = group_options["From"]
     where = _create_date_range_group_Where(
         common_options["Query"]["Where"],
         group_options["Where"],
@@ -199,7 +197,7 @@ def _get_date_range_group_Query(
     command = {}
     command["Query"] = {
         "Version": common_options["Query"]["Version"],
-        "From": group_from,
+        "From": _get_date_range_group_From(*from_args),
         "Select": common_options["Query"]["Select"],
         "Where": where,
     }
@@ -294,152 +292,111 @@ _Date_Range_Group_Gender_Query_Options = {
     },
     Region: {
         "Where": [[], ["c"], ["Regija", "s"], ["c"]],
-        "From": _get_date_range_group_From(
+        "From": [
             CommandQueryFrom("c", "Calendar", 0),
             CommandQueryFrom("e", "eRCO_​​podatki", 0),
             CommandQueryFrom("s", "Sifrant_regija", 0),
-        ),
+        ],
     },
     AgeGroup: {
         "Where": [[], ["c"], ["Starostni ​razred", "x"], ["c"]],
-        "From": _get_date_range_group_From(
+        "From": [
             CommandQueryFrom("c", "Calendar", 0),
             CommandQueryFrom("e", "eRCO_​​podatki", 0),
             CommandQueryFrom("x", "xls_SURS_starost", 0),
-        ),
+        ],
     },
 }
 
 
-def _get_default_manufacturers_From():
+def _get_manufacturer_Where_first():
     return {
-        "From": [
-            {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
-            {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
-            {"Name": "c", "Entity": "Calendar", "Type": 0},
-        ]
-    }
-
-
-def _get_manufacturer_From(name, entity):
-    default = _get_default_manufacturers_From()
-    default["From"].append({"Name": name, "Entity": entity, "Type": 0})
-    return default
-
-
-_manufacturer_region_From = _get_manufacturer_From("s1", "Sifrant_regija")
-_manufacturer_age_group_From = _get_manufacturer_From("x1", "xls_SURS_starost")
-
-_manufacturer_Select = [
-    {
-        "Measure": {
-            "Expression": {"SourceRef": {"Source": "e"}},
-            "Property": "Weight for 1",
-        },
-        "Name": "eRCO_podatki.Weight for 1",
-    },
-    {
-        "Measure": {
-            "Expression": {"SourceRef": {"Source": "e"}},
-            "Property": "Weight for 2",
-        },
-        "Name": "eRCO_podatki.Weight for 2",
-    },
-    {
-        "Column": {
-            "Expression": {"SourceRef": {"Source": "s"}},
-            "Property": "Cepivo_Ime",
-        },
-        "Name": "Sifrant_Cepivo.Cepivo_Ime",
-    },
-]
-
-_manufacturer_Where_first = {
-    "Condition": {
-        "Not": {
-            "Expression": {
-                "In": {
-                    "Expressions": [
-                        {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "s"}},
-                                "Property": "Cepivo_Ime",
+        "Condition": {
+            "Not": {
+                "Expression": {
+                    "In": {
+                        "Expressions": [
+                            {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "s"}},
+                                    "Property": "Cepivo_Ime",
+                                }
                             }
-                        }
-                    ],
-                    "Values": [[{"Literal": {"Value": "null"}}]],
+                        ],
+                        "Values": [[{"Literal": {"Value": "null"}}]],
+                    }
                 }
             }
         }
     }
-}
 
-_manufacturer_OrderBy = [
-    {
-        "Direction": 2,
-        "Expression": {
-            "Measure": {
-                "Expression": {"SourceRef": {"Source": "e"}},
-                "Property": "Weight for 2",
-            }
+
+_Date_Range_Group_Manufacturers_Query_Options = {
+    "common": {
+        "Query": {
+            "Version": 2,
+            "Where": [
+                _get_manufacturer_Where_first,
+                _get_date_range_group_Query_Where_FirstCondition,
+                _get_date_range_group_Query_Where_SecondCondition,
+                _get_date_range_group_Query_Where_ThirdCondition,
+            ],
+            "Select": [
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Weight for 1",
+                    },
+                    "Name": "eRCO_podatki.Weight for 1",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Weight for 2",
+                    },
+                    "Name": "eRCO_podatki.Weight for 2",
+                },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                },
+            ],
+            "OrderBy": [
+                {
+                    "Direction": 2,
+                    "Expression": {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "e"}},
+                            "Property": "Weight for 2",
+                        }
+                    },
+                }
+            ],
         },
-    }
-]
-
-_manufacturer_Binding = {
-    "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
-    "DataReduction": {"DataVolume": 3, "Primary": {"Window": {}}},
-    "Version": 1,
+        "Binding": _get_Binding([0, 1, 2], 3, {"Window": {}}, 1),
+    },
+    Region: {
+        "Where": [[], ["c"], ["Regija", "s1"], ["c"]],
+        "From": [
+            CommandQueryFrom("e", "eRCO_​​podatki", 0),
+            CommandQueryFrom("s", "Sifrant_Cepivo", 0),
+            CommandQueryFrom("c", "Calendar", 0),
+            CommandQueryFrom("s1", "Sifrant_regija", 0),
+        ],
+    },
+    AgeGroup: {
+        "Where": [[], ["c"], ["Starostni ​razred", "x1"], ["c"]],
+        "From": [
+            CommandQueryFrom("e", "eRCO_​​podatki", 0),
+            CommandQueryFrom("s", "Sifrant_Cepivo", 0),
+            CommandQueryFrom("c", "Calendar", 0),
+            CommandQueryFrom("x1", "xls_SURS_starost", 0),
+        ],
+    },
 }
-
-
-def _replace_manufacturer_Query_From(obj: dict, property):
-    obj["SemanticQueryDataShapeCommand"]["Query"]["From"] = property["From"]
-
-
-def _replace_Query_Select(obj: dict, replace_with: list):
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Select"] = replace_with
-    return obj
-
-
-def _replace_gender_Query_Where(obj: dict):
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
-        "Left"
-    ]["Comparison"]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][0]["Condition"]["And"][
-        "Right"
-    ]["Comparison"]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
-
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"][
-        "Comparison"
-    ]["Left"]["Column"]["Expression"]["SourceRef"]["Source"] = "c"
-
-    return obj
-
-
-# region Source = "s1", age_group Source = "x1"
-def _replace_manufacturer_Query_Where(obj: dict, Source: str = "s1"):
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"][1]["Condition"]["In"][
-        "Expressions"
-    ][0]["Column"]["Expression"]["SourceRef"]["Source"] = Source
-
-
-def _insert_gender_to_Query_Where(obj: dict, insert: dict, position=0):
-    obj["SemanticQueryDataShapeCommand"]["Query"]["Where"].insert(position, insert)
-    return obj
-
-
-def _add_gender_OrderBy_to_Query(obj: dict, order_by: dict):
-    obj["SemanticQueryDataShapeCommand"]["Query"] = {
-        **obj["SemanticQueryDataShapeCommand"]["Query"],
-        "OrderBy": order_by,
-    }
-    return obj
-
-
-def _replace_Binding(obj: dict, property: dict):
-    obj["SemanticQueryDataShapeCommand"]["Binding"] = property
-    return obj
 
 
 def _get_gender_commands(
@@ -459,6 +416,7 @@ def _get_gender_commands(
             group_options["Where"],
             [[gender], [start_date, end_date], [group.value], []],
         )
+        _from = _get_date_range_group_From(*group_options["From"])
         common = {
             "Binding": common_options["Binding"],
             **_ExecutionMetrics,
@@ -470,7 +428,7 @@ def _get_gender_commands(
                     "Select": common_options["Query"]["Select"]["dose1"],
                     "Where": where,
                     "OrderBy": common_options["Query"]["OrderBy"]["dose1"],
-                    "From": group_options["From"],
+                    "From": _from,
                 },
                 **common,
             },
@@ -480,7 +438,7 @@ def _get_gender_commands(
                     "Select": common_options["Query"]["Select"]["dose2"],
                     "Where": where,
                     "OrderBy": common_options["Query"]["OrderBy"]["dose2"],
-                    "From": group_options["From"],
+                    "From": _from,
                 },
                 **common,
             },
@@ -494,24 +452,44 @@ def _get_gender_commands(
     return [male1, male2, female1, female2]
 
 
-def _get_manufacturers_command(obj: dict, group: Region or AgeGroup):
-    if isinstance(group, Region):
-        _replace_manufacturer_Query_From(obj, _manufacturer_region_From)
-        _replace_Query_Select(obj, _manufacturer_Select)
-        _replace_gender_Query_Where(obj)
-        _replace_manufacturer_Query_Where(obj, "s1")
-    elif isinstance(group, AgeGroup):
-        _replace_manufacturer_Query_From(obj, _manufacturer_age_group_From)
-        _replace_Query_Select(obj, _manufacturer_Select)
-        _replace_gender_Query_Where(obj)
-        _replace_manufacturer_Query_Where(obj, "x1")
-    else:
-        raise Exception("Argument [group] is not valid!")
+def _get_manufacturers_command(
+    start_date: datetime.datetime,
+    end_date: datetime.datetime,
+    group: Region or AgeGroup,
+):
+    group_type = type(group)
+    group_options = _Date_Range_Group_Manufacturers_Query_Options[group_type]
+    common_options = _Date_Range_Group_Manufacturers_Query_Options["common"]
 
-    _insert_gender_to_Query_Where(obj, _manufacturer_Where_first)
-    _add_gender_OrderBy_to_Query(obj, _manufacturer_OrderBy)
-    _replace_Binding(obj, _manufacturer_Binding)
-    return obj
+    command = {}
+    command["SemanticQueryDataShapeCommand"] = {
+        "Binding": common_options["Binding"],
+        **_ExecutionMetrics,
+    }
+
+    where = _create_date_range_group_Where(
+        common_options["Query"]["Where"],
+        group_options["Where"],
+        [[], [start_date, end_date], [group.value], []],
+    )
+    _from = _get_date_range_group_From(*group_options["From"])
+
+    query = {
+        "Query": {
+            "Version": common_options["Query"]["Version"],
+            "From": _from,
+            "Where": where,
+            "Select": common_options["Query"]["Select"],
+            "OrderBy": common_options["Query"]["OrderBy"],
+        }
+    }
+
+    command["SemanticQueryDataShapeCommand"] = {
+        **query,
+        **command["SemanticQueryDataShapeCommand"],
+    }
+
+    return command
 
 
 def _get_date_range_command(
@@ -543,8 +521,7 @@ def _get_date_range_command(
         start_date, end_date, property
     )
 
-    command_clone = copy.deepcopy(command)
-    manufacturers = _get_manufacturers_command(command_clone, property)
+    manufacturers = _get_manufacturers_command(start_date, end_date, property)
 
     commands = DateRangeCommands_Requests(
         command, male1, male2, female1, female2, manufacturers
