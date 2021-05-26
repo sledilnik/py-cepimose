@@ -56,6 +56,11 @@ from .types import (
 
 from .enums import Manufacturer, Region, AgeGroup, Gender
 
+DAY_DELTA = datetime.timedelta(days=1)
+FIRST_DATE = datetime.datetime(2020, 12, 26)
+TODAY_TIME = datetime.datetime.today()
+TODAY = datetime.datetime(TODAY_TIME.year, TODAY_TIME.month, TODAY_TIME.day)
+
 
 def _get_data(req, parse_response):
     resp = requests.post(_source, headers=_headers, json=req)
@@ -192,10 +197,8 @@ def vaccinations_by_manufacturer_used():
             _parse_vaccinations_by_manufacturer_used,
         )
 
-    start_date = datetime.datetime(2020, 12, 27)
-    today = datetime.datetime.today()
-    end_date = datetime.datetime(today.year, today.month, today.day)
-    day_delta = datetime.timedelta(days=1)
+    start_date = FIRST_DATE + DAY_DELTA
+    end_date = TODAY
 
     result = []
     while start_date <= end_date:
@@ -224,7 +227,7 @@ def vaccinations_by_manufacturer_used():
         except:
             print(start_date, "Something went wrong")
             print(pfizer, moderna, az, janssen)
-        start_date += day_delta
+        start_date += DAY_DELTA
 
     return result
 
@@ -303,9 +306,8 @@ def vaccinations_date_range(
     if not isinstance(property, Region) and not isinstance(property, AgeGroup):
         raise Exception(f"Argument [property] must be instance of Region or AgeGroup")
 
-    day_delta = datetime.timedelta(days=1)
     req = _create_vaccinations_data_range_request(
-        end_date=end_date + day_delta, start_date=start_date, property=property
+        end_date=end_date + DAY_DELTA, start_date=start_date, property=property
     )
 
     group_req = req.group
