@@ -294,7 +294,7 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
 # by region or by age_group
 # with by gender and by manufacturer
 def vaccinations_date_range(
-    property: Union[Region, AgeGroup],
+    property: Union[Region, AgeGroup, None] = None,
     start_date: datetime.datetime = FIRST_DATE + DAY_DELTA,
     end_date: datetime.datetime = TODAY,
 ) -> VaccinationsDateRangeByGroup:
@@ -304,15 +304,20 @@ def vaccinations_date_range(
             f"Argument [end_date]: {end_date} should be greater or equal than [start_date]: {start_date}"
         )
 
-    if not isinstance(property, Region) and not isinstance(property, AgeGroup):
-        raise Exception(f"Argument [property] must be instance of Region or AgeGroup")
+    if (
+        not isinstance(property, Region)
+        and not isinstance(property, AgeGroup)
+        and property != None
+    ):
+        raise Exception(
+            f"Argument [property] must be instance of Region, AgeGroup or None"
+        )
 
     req = _create_vaccinations_data_range_request(
         end_date=end_date + DAY_DELTA, start_date=start_date, property=property
     )
 
-    group_req = req.group
-    group = _get_data(group_req, _parse_vaccinations_date_range)
+    group = _get_data(req.group, _parse_vaccinations_date_range)
 
     result = VaccinationsDateRangeByGroup(start_date, end_date, property, group)
 
