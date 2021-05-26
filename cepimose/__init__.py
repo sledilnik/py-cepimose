@@ -1,5 +1,6 @@
 import pprint
 import datetime
+from typing import Union
 import requests
 import time
 from .data import (
@@ -293,9 +294,9 @@ def vaccinations_gender_by_date(date: datetime.datetime = None):
 # by region or by age_group
 # with by gender and by manufacturer
 def vaccinations_date_range(
-    end_date: datetime.datetime,
-    start_date: datetime.datetime,
-    property: Region or AgeGroup,
+    property: Union[Region, AgeGroup],
+    start_date: datetime.datetime = FIRST_DATE + DAY_DELTA,
+    end_date: datetime.datetime = TODAY,
 ) -> VaccinationsDateRangeByGroup:
 
     if end_date < start_date:
