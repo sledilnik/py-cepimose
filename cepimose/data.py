@@ -1,3 +1,4 @@
+from typing import Union
 from cepimose.types import DateRangeCommands_Requests
 import json
 import datetime
@@ -2019,7 +2020,7 @@ _vaccinations_by_manufacturer_used_request = (
 def _create_vaccinations_data_range_request(
     end_date: datetime.datetime,
     start_date: datetime.datetime,
-    property: Region or AgeGroup,
+    property: Union[Region, AgeGroup, None],
 ):
     commands = _get_date_range_group_commands(start_date, end_date, group=property)
 

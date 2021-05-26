@@ -430,7 +430,6 @@ _Date_Range_Group_Query_Options = {
 
 
 def _get_date_range_group_Query(
-    group: Region or AgeGroup,
     common_options: dict,
     group_options: dict,
     version_args: list = [],
@@ -487,7 +486,6 @@ def _get_command(
     group_options = command_options[group_type if group_type != type(None) else None]
 
     query = _get_date_range_group_Query(
-        group,
         common_options,
         group_options,
         version_args,
@@ -506,7 +504,7 @@ def _get_command(
 def _get_gender_commands(
     start_date: datetime.datetime,
     end_date: datetime.datetime,
-    group: Region or AgeGroup,
+    group: Union[Region, AgeGroup, None],
 ):
     specific_options = _Date_Range_Group_Gender_Query_Options["specific"]
 
@@ -534,7 +532,7 @@ def _get_gender_commands(
 def _get_date_range_group_commands(
     start_date: datetime.datetime,
     end_date: datetime.datetime,
-    group: Region or AgeGroup,
+    group: Union[Region, AgeGroup, None],
 ) -> DateRangeCommands_Requests:
 
     where_by_day_args = [
