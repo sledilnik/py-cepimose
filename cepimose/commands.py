@@ -1,5 +1,4 @@
 import datetime
-import copy
 from typing import Union
 
 from cepimose.enums import AgeGroup, Gender, Region, Manufacturer
@@ -22,13 +21,12 @@ def _get_Version(version: int = 2) -> "int":
 
 
 def _get_Where(
-    functions: list,
-    arguments: list,
-    special_args: list,
+    functions: list, arguments: list, special_args: list, skip_function: list
 ) -> "list":
     result = []
     for index, func in enumerate(functions):
-        result.append(func(*arguments[index], *special_args[index]))
+        if not index in skip_function:
+            result.append(func(*arguments[index], *special_args[index]))
     return result
 
 
@@ -175,11 +173,12 @@ _Date_Range_Group_Used_By_Day_Query_Options = {
         "Binding": [[0, 1, 2], 4, {"BinnedLineSample": {}}, 1],
     },
     None: {
-        "Where": [["c1"], ["c1"]],
+        "Where": [["c1"], [], ["c1"]],
         "From": [
             CommandQueryFrom("c", "eRCO_​​podatki", 0),
             CommandQueryFrom("c1", "Calendar", 0),
         ],
+        "skip_common_where_index": [1],
     },
     Region: {
         "Where": [["c1"], ["Regija", "s"], ["c1"]],
@@ -289,11 +288,12 @@ _Date_Range_Group_Gender_Query_Options = {
     },
     "specific": ["dose1", "dose2"],
     None: {
-        "Where": [[], ["c"], ["c"]],
+        "Where": [[], ["c"], [], ["c"]],
         "From": [
             CommandQueryFrom("c", "Calendar", 0),
             CommandQueryFrom("e", "eRCO_​​podatki", 0),
         ],
+        "skip_common_where_index": [2],
     },
     Region: {
         "Where": [[], ["c"], ["Regija", "s"], ["c"]],
@@ -394,12 +394,13 @@ _Date_Range_Group_Manufacturers_Query_Options = {
         "Binding": [[0, 1, 2], 3, {"Window": {}}, 1],
     },
     None: {
-        "Where": [[], ["c"], ["c"]],
+        "Where": [[], ["c"], [], ["c"]],
         "From": [
             CommandQueryFrom("e", "eRCO_​​podatki", 0),
             CommandQueryFrom("s", "Sifrant_Cepivo", 0),
             CommandQueryFrom("c", "Calendar", 0),
         ],
+        "skip_common_where_index": [2],
     },
     Region: {
         "Where": [[], ["c"], ["Regija", "s1"], ["c"]],
@@ -442,18 +443,10 @@ def _get_date_range_group_Query(
 
     Query = common_options["Query"]
 
-    where_functions = copy.deepcopy(Query["Where"])
-
-    if group == None:
-        if len(where_functions) == 3:
-            del where_functions[1]
-        elif len(where_functions) == 4:
-            del where_functions[2]
+    skip_where_function_index = group_options.get("skip_common_where_index", [])
 
     where = _get_Where(
-        where_functions,
-        group_options["Where"],
-        where_args,
+        Query["Where"], group_options["Where"], where_args, skip_where_function_index
     )
 
     order_by = Query.get("OrderBy", None)
@@ -519,15 +512,12 @@ def _get_gender_commands(
 
     commands = {}
     for gender in Gender:
-        if group == None:
-            where_args = [["OsebaSpol", "e", gender.value], [start_date, end_date], []]
-        else:
-            where_args = [
-                ["OsebaSpol", "e", gender.value],
-                [start_date, end_date],
-                [group.value],
-                [],
-            ]
+        where_args = [
+            ["OsebaSpol", "e", gender.value],
+            [start_date, end_date],
+            [group.value] if group != None else [],
+            [],
+        ]
         commands[gender] = [
             _get_command(
                 group,
@@ -547,12 +537,17 @@ def _get_date_range_group_commands(
     group: Region or AgeGroup,
 ) -> DateRangeCommands_Requests:
 
-    if group == None:
-        where_by_day_args = [[start_date, end_date], []]
-        where_manufacturers_args = [[], [start_date, end_date], []]
-    else:
-        where_by_day_args = [[start_date, end_date], [group.value], []]
-        where_manufacturers_args = [[], [start_date, end_date], [group.value], []]
+    where_by_day_args = [
+        [start_date, end_date],
+        [group.value] if group != None else [],
+        [],
+    ]
+    where_manufacturers_args = [
+        [],
+        [start_date, end_date],
+        [group.value] if group != None else [],
+        [],
+    ]
 
     by_day = _get_command(group, "by_day", where_by_day_args)
 
