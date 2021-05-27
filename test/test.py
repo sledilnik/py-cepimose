@@ -447,14 +447,14 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         self.assertEqual(
             data.by_day[0].second_dose, data.male.dose2 + data.female.dose2
         )
-        self.assertEqual(data.pfizer.dose1, 482)
-        self.assertEqual(data.pfizer.dose2, 1440)
-        self.assertEqual(data.az.dose1, 4516)
-        self.assertEqual(data.az.dose2, 10)
-        self.assertEqual(data.moderna.dose1, 220)
-        self.assertEqual(data.moderna.dose2, 5)
-        self.assertEqual(data.janssen.dose1, 0)
-        self.assertEqual(data.janssen.dose2, 0)
+        self.assertAlmostEqual(data.pfizer.dose1, 482, delta=10)
+        self.assertAlmostEqual(data.pfizer.dose2, 1440, delta=10)
+        self.assertAlmostEqual(data.az.dose1, 4516, delta=10)
+        self.assertAlmostEqual(data.az.dose2, 10, delta=10)
+        self.assertAlmostEqual(data.moderna.dose1, 220, delta=10)
+        self.assertAlmostEqual(data.moderna.dose2, 5, delta=10)
+        self.assertAlmostEqual(data.janssen.dose1, 0, delta=10)
+        self.assertAlmostEqual(data.janssen.dose2, 0, delta=10)
 
         # assert arg start_date is greater than end_date
         end_date = datetime.datetime(2021, 2, 28)
@@ -494,14 +494,14 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         self.assertEqual(
             data.by_day[0].second_dose, data.male.dose2 + data.female.dose2
         )
-        self.assertEqual(data.pfizer.dose1, 8)
-        self.assertEqual(data.pfizer.dose2, 312)
-        self.assertEqual(data.az.dose1, 20)
-        self.assertEqual(data.az.dose2, 0)
-        self.assertEqual(data.moderna.dose1, 0)
-        self.assertEqual(data.moderna.dose2, 0)
-        self.assertEqual(data.janssen.dose1, 0)
-        self.assertEqual(data.janssen.dose2, 0)
+        self.assertAlmostEqual(data.pfizer.dose1, 8, delta=10)
+        self.assertAlmostEqual(data.pfizer.dose2, 312, delta=10)
+        self.assertAlmostEqual(data.az.dose1, 20, delta=10)
+        self.assertAlmostEqual(data.az.dose2, 0, delta=10)
+        self.assertAlmostEqual(data.moderna.dose1, 0, delta=10)
+        self.assertAlmostEqual(data.moderna.dose2, 0, delta=10)
+        self.assertAlmostEqual(data.janssen.dose1, 0, delta=10)
+        self.assertAlmostEqual(data.janssen.dose2, 0, delta=10)
 
         # assert arg start_date is greater than end_date
         end_date = datetime.datetime(2021, 2, 28)
@@ -545,14 +545,14 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         self.assertEqual(
             data.by_day[0].second_dose, data.male.dose2 + data.female.dose2
         )
-        self.assertEqual(data.pfizer.dose1, 41)
-        self.assertEqual(data.pfizer.dose2, 1111)
-        self.assertEqual(data.az.dose1, 5)
-        self.assertEqual(data.az.dose2, 1)
-        self.assertEqual(data.moderna.dose1, 42)
-        self.assertEqual(data.moderna.dose2, 0)
-        self.assertEqual(data.janssen.dose1, 0)
-        self.assertEqual(data.janssen.dose2, 0)
+        self.assertAlmostEqual(data.pfizer.dose1, 41, delta=10)
+        self.assertAlmostEqual(data.pfizer.dose2, 1111, delta=10)
+        self.assertAlmostEqual(data.az.dose1, 5, delta=10)
+        self.assertAlmostEqual(data.az.dose2, 1, delta=10)
+        self.assertAlmostEqual(data.moderna.dose1, 42, delta=10)
+        self.assertAlmostEqual(data.moderna.dose2, 0, delta=10)
+        self.assertAlmostEqual(data.janssen.dose1, 0, delta=10)
+        self.assertAlmostEqual(data.janssen.dose2, 0, delta=10)
 
         # assert arg start_date is greater than arg end_date
         end_date = datetime.datetime(2021, 2, 28)
