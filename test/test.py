@@ -24,12 +24,12 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.first_dose, expected_first, delta=300)
-            self.assertAlmostEqual(row.second_dose, expected_second, delta=300)
+            self.assertAlmostEqual(row.first_dose, expected_first, delta=400)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=400)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 48745, 315)
+        assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 315)
         assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 44924)
         assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 44924)
 
@@ -83,12 +83,12 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected_supp, expected_used):
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.supplied, expected_supp, delta=30)
-            self.assertAlmostEqual(row.used, expected_used, delta=300)
+            self.assertAlmostEqual(row.supplied, expected_supp, delta=400)
+            self.assertAlmostEqual(row.used, expected_used, delta=400)
 
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
-        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 48831)
+        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 49189)
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
