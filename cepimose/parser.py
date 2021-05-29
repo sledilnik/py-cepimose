@@ -376,11 +376,12 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
             if R == 32:
                 name, population, share2, share1, dose1 = el["C"]
                 dose2 = int(population * float(share2))
-                print(dose2)
             elif R == 16:
                 name, population, share2, share1, dose2 = el["C"]
                 dose1 = int(population * float(share1))
-                print(dose1)
+            elif R == 4:
+                name, population, share1, dose1, dose2 = el["C"]
+                share2 = dose2 / population
             else:
                 print(el)
                 raise Exception(f"Unknown R: {R}")
