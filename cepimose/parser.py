@@ -477,10 +477,14 @@ def _parse_vaccinations_by_manufacturer_supplied_used(
         C = el["C"]
         date = parse_date(C[0])
         if len(C) == 2:
-            item = VaccineSupplyUsage(date=date, supplied=int(C[1]), used=0)
+            item = VaccineSupplyUsage(date=date, supplied=round(float(C[1])), used=0)
             parsed_data.append(item)
+            print(item)
         elif len(C) == 3:
-            item = VaccineSupplyUsage(date=date, supplied=int(C[2]), used=int(C[1]))
+            item = VaccineSupplyUsage(
+                date=date, supplied=round(float(C[2])), used=round(float(C[1]))
+            )
+            print(item)
             parsed_data.append(item)
         else:
             raise Exception("Unknown [C] length")
