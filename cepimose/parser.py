@@ -246,13 +246,13 @@ def _parse_vaccines_supplied_by_manufacturer_cum(
 
         for el in elements:
             if el.get("I", None) == 1:
-                janssen = int(el["M0"])
+                janssen = round(float(el["M0"]))
             elif el.get("I", None) == 2:
-                moderna = int(el["M0"])
+                moderna = round(float(el["M0"]))
             elif el.get("I", None) == 3:
-                pfizer = int(el["M0"])
+                pfizer = round(float(el["M0"]))
             else:
-                az = int(el["M0"])
+                az = round(float(el["M0"]))
 
         parsed_data.append(
             VaccinationByManufacturerRow(
