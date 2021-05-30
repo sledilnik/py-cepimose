@@ -232,7 +232,7 @@ class CepimoseTestCase(unittest.TestCase):
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
 
-    # @unittest.skip("TODO, likely not possible anymore")
+    # @unittest.skip("TODO")
     def test_vaccinations_by_manufacturer_supplied_used(self):
         data = cepimose.vaccinations_by_manufacturer_supplied_used()
         expected_keys = [key for key in cepimose.enums.Manufacturer]
@@ -425,7 +425,7 @@ class CepimoseTestCaseFuture(unittest.TestCase):
             self.assertGreaterEqual(item.dose2.group_share, 0)
             self.assertGreaterEqual(item.dose2.total_share, item.dose2.group_share)
 
-    # vaccinations_date_range
+    # @unittest.skip("TODO")
     def test_vaccinations_date_range_region(self):
         property = Region.POMURSKA
 
