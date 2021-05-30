@@ -597,15 +597,15 @@ class CepimoseTestCaseFuture(unittest.TestCase):
             else:
                 self.assertEqual(row.janssen, expected_janssen)
 
-        assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
+        assertRow(data[20], datetime.datetime(2021, 1, 16), [323, 0, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [2103, 66, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4805, None, 1, None])
-        assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
+        assertRow(data[38], datetime.datetime(2021, 2, 3), [4805, 0, 1, None])
+        assertRow(data[42], datetime.datetime(2021, 2, 7), [0, 0, 0, None])
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
-        assertRow(data[79], datetime.datetime(2021, 3, 16), [606, 445, None, None])
-        assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
-        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
-        assertRow(data[120], datetime.datetime(2021, 4, 26), [None, None, 385, None])
+        assertRow(data[79], datetime.datetime(2021, 3, 16), [606, 445, 0, None])
+        assertRow(data[98], datetime.datetime(2021, 4, 4), [0, 1594, 0, None])
+        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, 0, 0, None])
+        assertRow(data[120], datetime.datetime(2021, 4, 26), [0, 0, 385, 0])
         assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
 
         for row in data:

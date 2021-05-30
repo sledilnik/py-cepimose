@@ -37,8 +37,8 @@ from .parser import (
     _parse_vaccinations_by_manufacturer_supplied_used,
     _parse_vaccinations_gender_by_date,
     _parse_vaccinations_date_range,
-    _parse_vaccinations_by_manufacturer_used,
     _parse_vaccinations_date_range_manufacturers_used,
+    _create_vaccinations_by_manufacturer_parser,
 )
 
 from .types import (
@@ -193,9 +193,10 @@ def vaccinations_by_manufacturer_used():
     obj = {}
     for manu in Manufacturer:
         print(manu)
+        manufacturer_parser = _create_vaccinations_by_manufacturer_parser(manu)
         obj[manu] = _get_data(
             _vaccinations_by_manufacturer_used_request[manu],
-            _parse_vaccinations_by_manufacturer_used,
+            manufacturer_parser,
         )
 
     start_date = FIRST_DATE + DAY_DELTA
@@ -229,7 +230,6 @@ def vaccinations_by_manufacturer_used():
             print(start_date, "Something went wrong")
             print(pfizer, moderna, az, janssen)
         start_date += DAY_DELTA
-
     return result
 
 

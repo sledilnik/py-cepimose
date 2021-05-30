@@ -1,4 +1,4 @@
-from cepimose.enums import Region
+from cepimose.enums import Manufacturer, Region
 import datetime
 
 from .types import (
@@ -541,37 +541,71 @@ def _parse_vaccinations_date_range(data):
     return parsed_data
 
 
-def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
-    _validate_response_data(data)
+def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
 
-    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    DAY_DELTA = datetime.timedelta(days=1)
 
-    parsed_data = []
-    day_delta = datetime.timedelta(days=1)
-    previous_date = datetime.datetime(2020, 12, 26)
-    used = None
-    for element in resp:
-        date = parse_date(element["G0"])
-        possible_missing_date = previous_date + day_delta
-        while possible_missing_date < date:
-            print(f"Add data for missing date: {possible_missing_date}")
-            parsed_data.append(VaccinationDose(possible_missing_date, None))
-            possible_missing_date += day_delta
-        previous_date = date
+    Manufacturer_First_Delivery_Date = {
+        Manufacturer.PFIZER: datetime.datetime(2020, 12, 26),
+        Manufacturer.MODERNA: datetime.datetime(2021, 1, 12),
+        Manufacturer.AZ: datetime.datetime(2021, 2, 6),
+        Manufacturer.JANSSEN: datetime.datetime(2021, 4, 14),
+    }
 
-        X = element["X"]
-        M0 = X[0].get("M0", None)
-        R = X[0].get("R", None)
-        if M0 != None:
-            parsed_data.append(VaccinationDose(date, M0))
-            used = M0
-        elif R == 1:
-            parsed_data.append(VaccinationDose(date, used))
-        else:
-            print(R, element)
-            raise Exception(f"Unknown R: {R}")
+    def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
+        _validate_response_data(data)
+        resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
-    return parsed_data
+        delivery_date = Manufacturer_First_Delivery_Date[manufacturer]
+        first_date = parse_date(resp[0]["G0"])
+
+        # Someone at NIJZ (or whoever is entering data) mostlikely made a mistake.
+        # Moderna was first used on 2021-01-08 while first delivery was on 2021-01-12
+        # Astra Zeneca was first used on 2021-01-28 while first delivery was on 2021-02-06
+        is_used_before_delivered = delivery_date + DAY_DELTA > first_date
+        if is_used_before_delivered:
+            print(
+                f"{manufacturer.value} was used before it was delivered!\nFirst delivery: {delivery_date}.\nFirst use: {first_date}"
+            )
+
+        parsed_data = []
+        day_delta = datetime.timedelta(days=1)
+        previous_date = (
+            first_date if is_used_before_delivered else delivery_date + DAY_DELTA
+        )
+        used = 0
+        for element in resp:
+            date = parse_date(element["G0"])
+            if previous_date + day_delta < date:
+                print("Populate with dates with no usage!")
+                print(f"Last data date: {previous_date}")
+                print(f"Current data date: {date}")
+
+            possible_missing_date = previous_date + day_delta
+
+            while possible_missing_date < date:
+                # populate with dates in between
+                print(f"Add data for missing date: {possible_missing_date}")
+                parsed_data.append(VaccinationDose(possible_missing_date, 0))
+                possible_missing_date += day_delta
+
+            previous_date = date
+
+            X = element["X"]
+            M0 = X[0].get("M0", None)
+            R = X[0].get("R", None)
+            if M0 != None:
+                parsed_data.append(VaccinationDose(date, M0))
+                used = M0
+            elif R == 1:
+                parsed_data.append(VaccinationDose(date, used))
+            else:
+                print(R, element)
+                raise Exception(f"Unknown R: {R}")
+
+        return parsed_data
+
+    return _parse_vaccinations_by_manufacturer_used
 
 
 def _parse_vaccinations_date_range_manufacturers_used(data):
