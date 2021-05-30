@@ -594,9 +594,13 @@ def _parse_vaccinations_date_range_manufacturers_used(data):
             result.dose1 = C[1]
             result.dose2 = C[2]
         if len(C) == 2:
-            if (element.get("0", None)) == None:
+            kind_of_zero = element.get("Ø", None)  # Do not mixup Ø with 0
+            if kind_of_zero == 4:
                 result.dose1 = C[1]
-            else:
+            elif kind_of_zero == None:
                 result.dose2 = C[1]
+            else:
+                raise Exception(f'Unknown "Ø" value: {kind_of_zero}')
+
         parsed_data.append(result)
     return parsed_data
