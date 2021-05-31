@@ -81,7 +81,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(data[grp].count_first, data[grp].count_second)
 
     # vaccinations_update.py
-    def test_supplied_by_manufacturer(self):
+    def test_vaccines_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
         self.assertTrue(len(data) > 10)
 
