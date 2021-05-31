@@ -142,8 +142,8 @@ def vaccinations_by_region_by_day(
 
 
 def vaccinations_age_group_by_region_on_day(
-    group: Region = None,
-) -> "dict[AgeGroup, list[VaccinationAgeGroupByRegionOnDay]] or list[VaccinationAgeGroupByRegionOnDay]":
+    group: AgeGroup = None,
+) -> "Union[dict[AgeGroup, list[VaccinationAgeGroupByRegionOnDay]],list[VaccinationAgeGroupByRegionOnDay]]":
     obj = {}
 
     if group == None:
