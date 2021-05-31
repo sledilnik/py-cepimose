@@ -6,7 +6,6 @@ from .types import (
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
-    VaccinationDose,
     VaccinationMunShare,
     VaccinationAgeGroupByRegionOnDayDose,
     VaccinationAgeGroupByRegionOnDay,
@@ -311,14 +310,12 @@ def _parse_vaccinations_by_age_group(data) -> "list[VaccinationByDayRow]":
     return parsed_data
 
 
-# ? most likely we can refactor _parse_vaccinations_by_day
 def _parse_vaccinations_by_region_by_day(data):
 
     if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
         error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
             "odata.error"
         ]
-        # ? raise exception or return error obj
         return error
 
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]

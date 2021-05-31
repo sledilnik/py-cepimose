@@ -239,7 +239,6 @@ def _create_by_age_group_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        group_requests = []
         req = _create_req([_commands[0]])
         obj[key] = [req]
 
