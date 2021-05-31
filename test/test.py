@@ -290,7 +290,7 @@ class CepimoseTestCase(unittest.TestCase):
             )
 
 
-# @unittest.skip("Not implemented.")
+@unittest.skip("Not implemented.")
 class CepimoseTestCaseFuture(unittest.TestCase):
     def setUp(self):
         super().setUp()
