@@ -80,21 +80,6 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(data[grp].share_second, 0)
             self.assertGreaterEqual(data[grp].count_first, data[grp].count_second)
 
-    def test_vaccine_supply_and_usage(self):
-        data = cepimose.vaccines_supplied_and_used()
-        self.assertGreater(len(data), 100)
-
-        def assertRow(row, expected_date, expected_supp, expected_used):
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.supplied, expected_supp, delta=400)
-            self.assertAlmostEqual(row.used, expected_used, delta=400)
-
-        #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
-        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 49189)
-
-        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
-
     # vaccinations_update.py
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
@@ -318,6 +303,22 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         for row in data:
             self.assertGreater(row.date, previousDate, row)
             previousDate = row.date
+
+    # @unittest.skip("TODO")
+    def test_vaccine_supply_and_usage(self):
+        data = cepimose.vaccines_supplied_and_used()
+        self.assertGreater(len(data), 100)
+
+        def assertRow(row, expected_date, expected_supp, expected_used):
+            self.assertEqual(row.date, expected_date)
+            self.assertAlmostEqual(row.supplied, expected_supp, delta=400)
+            self.assertAlmostEqual(row.used, expected_used, delta=400)
+
+        #! NIJZ is changing data tests could fail in the future
+        assertRow(data[9], datetime.datetime(2021, 1, 4), 39780, 13248)
+        assertRow(data[22], datetime.datetime(2021, 1, 17), 60870, 49189)
+
+        self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
     # @unittest.skip("TODO")
     def test_vaccinations_by_region(self):
