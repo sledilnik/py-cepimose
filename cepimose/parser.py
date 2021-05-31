@@ -5,7 +5,6 @@ from .types import (
     VaccinationByDayRow,
     VaccinationByAgeRow,
     VaccinationsDateRangeManufacturer,
-    VaccinationsDoses,
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
@@ -301,7 +300,6 @@ def _parse_vaccinations_by_age_group(data) -> "list[VaccinationByDayRow]":
     return parsed_data
 
 
-# ? most likely we can refactor _parse_vaccinations_by_day
 def _parse_vaccinations_by_region_by_day(data):
     _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]

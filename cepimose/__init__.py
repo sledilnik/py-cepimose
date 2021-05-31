@@ -1,4 +1,3 @@
-import pprint
 import datetime
 from typing import Union
 import requests
@@ -50,8 +49,6 @@ from .types import (
     VaccineSupplyUsage,
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
-    VaccinationDose,
-    VaccinationAgeGroupByRegionOnDayDose,
     VaccinationAgeGroupByRegionOnDay,
 )
 
