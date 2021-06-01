@@ -215,24 +215,13 @@ def _get_gender_Query_Select_Dose(dose):
 
 
 def _get_gender_Query_Order_By_Dose(dose):
+
+    dose1_Expression = _get_gender_Query_Select_Dose("dose1")[0]["Measure"]
+    dose2_Expression = _get_gender_Query_Select_Dose("dose2")[0]["Aggregation"]
+
     order_by = {
-        "dose1": [
-            {
-                "Direction": 2,
-                "Expression": {"Measure": _get_Column("e", "Weight for 1")},
-            }
-        ],
-        "dose2": [
-            {
-                "Direction": 2,
-                "Expression": {
-                    "Aggregation": {
-                        "Expression": {"Column": _get_Column("e", "Precepljenost")},
-                        "Function": 0,
-                    }
-                },
-            }
-        ],
+        "dose1": [{"Direction": 2, "Expression": {"Measure": dose1_Expression}}],
+        "dose2": [{"Direction": 2, "Expression": {"Aggregation": dose2_Expression}}],
     }
     return order_by[dose]
 
