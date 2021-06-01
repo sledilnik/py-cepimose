@@ -214,16 +214,15 @@ def _get_gender_Query_Select_Dose(dose):
     return select[dose]
 
 
-def _get_gender_Query_Order_By_Dose(dose):
-
-    dose1_Expression = _get_gender_Query_Select_Dose("dose1")[0]["Measure"]
-    dose2_Expression = _get_gender_Query_Select_Dose("dose2")[0]["Aggregation"]
-
-    order_by = {
-        "dose1": [{"Direction": 2, "Expression": {"Measure": dose1_Expression}}],
-        "dose2": [{"Direction": 2, "Expression": {"Aggregation": dose2_Expression}}],
+def _get_gender_Query_OrderBy_dose(dose):
+    expression = {
+        "dose1": {"Measure": _get_gender_Query_Select_Dose("dose1")[0]["Measure"]},
+        "dose2": {
+            "Aggregation": _get_gender_Query_Select_Dose("dose2")[0]["Aggregation"],
+        },
     }
-    return order_by[dose]
+
+    return [{"Direction": 2, "Expression": expression[dose]}]
 
 
 _Date_Range_Group_Gender_Query_Options = {
@@ -238,7 +237,7 @@ _Date_Range_Group_Gender_Query_Options = {
                 _get_Condition_Comparison_With_DateSpan,  # arg = "c"
             ],
             "Select": _get_gender_Query_Select_Dose,
-            "OrderBy": _get_gender_Query_Order_By_Dose,
+            "OrderBy": _get_gender_Query_OrderBy_dose,
         },
         "Binding": _get_Binding,
     },
@@ -311,17 +310,8 @@ def _get_Group_Manufacturer_Select():
 
 
 def _get_OrderBy():
-    return [
-        {
-            "Direction": 2,
-            "Expression": {
-                "Measure": {
-                    "Expression": {"SourceRef": {"Source": "e"}},
-                    "Property": "Weight for 2",
-                }
-            },
-        }
-    ]
+    expression = {"Measure": _get_Group_Manufacturer_Select()[1]["Measure"]}
+    return [{"Direction": 2, "Expression": expression}]
 
 
 _Date_Range_Group_Manufacturers_Query_Options = {
