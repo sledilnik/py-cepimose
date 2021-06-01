@@ -124,27 +124,20 @@ def _get_Condition_In_Expression(Property: str, source: str, value: str):
 
 
 # DATE RANGE GROUP QUERY SELECT
-def _get_Select():
+def _get_Group_Select():
     return [
         {
-            "Column": {
-                "Expression": {"SourceRef": {"Source": "c1"}},
-                "Property": "Date",
-            },
+            "Column": _get_Column("c1", "Date"),
             "Name": "Calendar.Date",
         },
         {
-            "Measure": {
-                "Expression": {"SourceRef": {"Source": "c"}},
-                "Property": "Weight running total in Date",
-            },
+            "Measure": _get_Column("c", "Weight running total in Date"),
             "Name": "eRCO_podatki.Weight running total in Date",
         },
         {
-            "Measure": {
-                "Expression": {"SourceRef": {"Source": "c"}},
-                "Property": "Tekoča vsota za mero Precepljenost v polju Date",
-            },
+            "Measure": _get_Column(
+                "c", "Tekoča vsota za mero Precepljenost v polju Date"
+            ),
             "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
         },
     ]
@@ -160,7 +153,7 @@ _Date_Range_Group_Used_By_Day_Query_Options = {
                 _get_Condition_In_Expression,
                 _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": _get_Select,
+            "Select": _get_Group_Select,
         },
         "Binding": _get_Binding,
     },
@@ -204,22 +197,14 @@ def _get_gender_Query_Select_Dose(dose):
     select = {
         "dose1": [
             {
-                "Measure": {
-                    "Expression": {"SourceRef": {"Source": "e"}},
-                    "Property": "Weight for 1",
-                },
+                "Measure": _get_Column("e", "Weight for 1"),
                 "Name": "eRCO_podatki.Weight for 1",
             }
         ],
         "dose2": [
             {
                 "Aggregation": {
-                    "Expression": {
-                        "Column": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Precepljenost",
-                        }
-                    },
+                    "Expression": {"Column": _get_Column("e", "Precepljenost")},
                     "Function": 0,
                 },
                 "Name": "Sum(eRCO_podatki_ed.Precepljenost)",
@@ -234,12 +219,7 @@ def _get_gender_Query_Order_By_Dose(dose):
         "dose1": [
             {
                 "Direction": 2,
-                "Expression": {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Weight for 1",
-                    }
-                },
+                "Expression": {"Measure": _get_Column("e", "Weight for 1")},
             }
         ],
         "dose2": [
@@ -247,12 +227,7 @@ def _get_gender_Query_Order_By_Dose(dose):
                 "Direction": 2,
                 "Expression": {
                     "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Precepljenost",
-                            }
-                        },
+                        "Expression": {"Column": _get_Column("e", "Precepljenost")},
                         "Function": 0,
                     }
                 },
@@ -329,27 +304,18 @@ def _get_Condition_Not_Expression():
     }
 
 
-def _get_Select():
+def _get_Group_Gender_Select():
     return [
         {
-            "Measure": {
-                "Expression": {"SourceRef": {"Source": "e"}},
-                "Property": "Weight for 1",
-            },
+            "Measure": _get_Column("e", "Weight for 1"),
             "Name": "eRCO_podatki.Weight for 1",
         },
         {
-            "Measure": {
-                "Expression": {"SourceRef": {"Source": "e"}},
-                "Property": "Weight for 2",
-            },
+            "Measure": _get_Column("e", "Weight for 2"),
             "Name": "eRCO_podatki.Weight for 2",
         },
         {
-            "Column": {
-                "Expression": {"SourceRef": {"Source": "s"}},
-                "Property": "Cepivo_Ime",
-            },
+            "Column": _get_Column("s", "Cepivo_Ime"),
             "Name": "Sifrant_Cepivo.Cepivo_Ime",
         },
     ]
@@ -380,7 +346,7 @@ _Date_Range_Group_Manufacturers_Query_Options = {
                 _get_Condition_In_Expression,
                 _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": _get_Select,
+            "Select": _get_Group_Gender_Select,
             "OrderBy": _get_OrderBy,
         },
         "Binding": _get_Binding,
