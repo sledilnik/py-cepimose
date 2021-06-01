@@ -293,7 +293,7 @@ def _get_Condition_Not_Expression():
     }
 
 
-def _get_Group_Gender_Select():
+def _get_Group_Manufacturer_Select():
     return [
         {
             "Measure": _get_Column("e", "Weight for 1"),
@@ -335,7 +335,7 @@ _Date_Range_Group_Manufacturers_Query_Options = {
                 _get_Condition_In_Expression,
                 _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": _get_Group_Gender_Select,
+            "Select": _get_Group_Manufacturer_Select,
             "OrderBy": _get_OrderBy,
         },
         "Binding": _get_Binding,
