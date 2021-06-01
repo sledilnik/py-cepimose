@@ -309,8 +309,9 @@ def _get_Group_Manufacturer_Select():
     ]
 
 
-def _get_OrderBy():
-    expression = {"Measure": _get_Group_Manufacturer_Select()[1]["Measure"]}
+def _get_OrderBy(options: list = ["Measure", 1, _get_Group_Manufacturer_Select]):
+    name, index, get_select = options
+    expression = {name: get_select()[index][name]}
     return [{"Direction": 2, "Expression": expression}]
 
 
@@ -335,7 +336,7 @@ _Date_Range_Group_Manufacturers_Query_Options = {
         "From": [],
         "Where": [],
         "Select": [],
-        "OrderBy": [],
+        "OrderBy": [["Measure", 1, _get_Group_Manufacturer_Select]],
         "Binding": [[0, 1, 2], 3, {"Window": {}}, 1],
     },
     None: {
