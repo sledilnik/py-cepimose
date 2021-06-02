@@ -765,7 +765,7 @@ def _get_default_vaccinations_gender_first_between_dates_command():
             "Query": {
                 "Version": 2,
                 "From": [
-                    {"Name": "e", "Entity": "eRCO_​​\u200b\u200b​​podatki", "Type": 0},
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                     {"Name": "c", "Entity": "Calendar", "Type": 0},
                 ],
                 "Select": [
@@ -857,7 +857,7 @@ def _get_default_vaccinations_gender_second_between_dates_command():
             "Query": {
                 "Version": 2,
                 "From": [
-                    {"Name": "e", "Entity": "eRCO_​​\u200b\u200bpodatki", "Type": 0},
+                    {"Name": "e", "Entity": "eRCO_​​podatki", "Type": 0},
                     {"Name": "c", "Entity": "Calendar", "Type": 0},
                 ],
                 "Select": [
