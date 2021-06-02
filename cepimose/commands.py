@@ -217,6 +217,7 @@ def _get_OrderBy(options: list = [0], select: "list[dict]" = []):
 
     index = options[0]
     expression = {**select[index]}
+    del expression["Name"]
     return [{"Direction": 2, "Expression": expression}]
 
 
@@ -248,8 +249,8 @@ _Date_Range_Group_Gender_Query_Options = {
     None: {
         "Where": [[], ["c"], [], ["c"]],
         "From": [
-            CommandQueryFrom("c", "Calendar", 0),
             CommandQueryFrom("e", "eRCO_​​podatki", 0),
+            CommandQueryFrom("c", "Calendar", 0),
         ],
         "skip_common_where_index": [2],
     },
