@@ -124,23 +124,11 @@ def _get_Condition_In_Expression(Property: str, source: str, value: str):
 
 
 # DATE RANGE GROUP QUERY SELECT
-def _get_Group_Select():
-    return [
-        {
-            "Column": _get_Column("c1", "Date"),
-            "Name": "Calendar.Date",
-        },
-        {
-            "Measure": _get_Column("c", "Weight running total in Date"),
-            "Name": "eRCO_podatki.Weight running total in Date",
-        },
-        {
-            "Measure": _get_Column(
-                "c", "Tekoča vsota za mero Precepljenost v polju Date"
-            ),
-            "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
-        },
-    ]
+def _get_Group_Select(*options: list):
+    def create_Select_item(item):
+        return {item[0]: _get_Column(item[1], item[2]), "Name": f"{item[3]}.{item[2]}"}
+
+    return list(map(create_Select_item, options))
 
 
 _Date_Range_Group_Used_By_Day_Query_Options = {
@@ -161,7 +149,16 @@ _Date_Range_Group_Used_By_Day_Query_Options = {
         "Version": [],
         "From": [],
         "Where": [],
-        "Select": [],
+        "Select": [
+            ["Column", "c1", "Date", "Calendar"],
+            ["Measure", "c", "Weight running total in Date", "eRCO_podatki"],
+            [
+                "Measure",
+                "c",
+                "Tekoča vsota za mero Precepljenost v polju Date",
+                "eRCO_podatki_ed",
+            ],
+        ],
         "OrderBy": [],
         "Binding": [[0, 1, 2], 4, {"BinnedLineSample": {}}, 1],
     },
@@ -214,15 +211,13 @@ def _get_gender_Query_Select_Dose(dose):
     return select[dose]
 
 
-def _get_gender_Query_OrderBy_dose(dose):
-    expression = {
-        "dose1": {"Measure": _get_gender_Query_Select_Dose("dose1")[0]["Measure"]},
-        "dose2": {
-            "Aggregation": _get_gender_Query_Select_Dose("dose2")[0]["Aggregation"],
-        },
-    }
+def _get_OrderBy(options: list = [0], select: "list[dict]" = []):
+    if len(select) == 0:
+        raise Exception("Empty arg [select]!")
 
-    return [{"Direction": 2, "Expression": expression[dose]}]
+    index = options[0]
+    expression = {**select[index]}
+    return [{"Direction": 2, "Expression": expression}]
 
 
 _Date_Range_Group_Gender_Query_Options = {
@@ -237,7 +232,7 @@ _Date_Range_Group_Gender_Query_Options = {
                 _get_Condition_Comparison_With_DateSpan,  # arg = "c"
             ],
             "Select": _get_gender_Query_Select_Dose,
-            "OrderBy": _get_gender_Query_OrderBy_dose,
+            "OrderBy": _get_OrderBy,
         },
         "Binding": _get_Binding,
     },
@@ -246,7 +241,7 @@ _Date_Range_Group_Gender_Query_Options = {
         "From": [],
         "Where": [],
         "Select": [],
-        "OrderBy": [],
+        "OrderBy": [[0]],
         "Binding": [[0], 3, {"Window": {}}, 1],
     },
     "specific": ["dose1", "dose2"],
@@ -292,29 +287,6 @@ def _get_Condition_Not_Expression():
     }
 
 
-def _get_Group_Manufacturer_Select():
-    return [
-        {
-            "Measure": _get_Column("e", "Weight for 1"),
-            "Name": "eRCO_podatki.Weight for 1",
-        },
-        {
-            "Measure": _get_Column("e", "Weight for 2"),
-            "Name": "eRCO_podatki.Weight for 2",
-        },
-        {
-            "Column": _get_Column("s", "Cepivo_Ime"),
-            "Name": "Sifrant_Cepivo.Cepivo_Ime",
-        },
-    ]
-
-
-def _get_OrderBy(options: list = ["Measure", 1, _get_Group_Manufacturer_Select]):
-    name, index, get_select = options
-    expression = {name: get_select()[index][name]}
-    return [{"Direction": 2, "Expression": expression}]
-
-
 _Date_Range_Group_Manufacturers_Query_Options = {
     "common": {
         "Query": {
@@ -326,7 +298,7 @@ _Date_Range_Group_Manufacturers_Query_Options = {
                 _get_Condition_In_Expression,
                 _get_Condition_Comparison_With_DateSpan,
             ],
-            "Select": _get_Group_Manufacturer_Select,
+            "Select": _get_Group_Select,
             "OrderBy": _get_OrderBy,
         },
         "Binding": _get_Binding,
@@ -335,8 +307,12 @@ _Date_Range_Group_Manufacturers_Query_Options = {
         "Version": [],
         "From": [],
         "Where": [],
-        "Select": [],
-        "OrderBy": [["Measure", 1, _get_Group_Manufacturer_Select]],
+        "Select": [
+            ["Measure", "e", "Weight for 1", "eRCO_podatki"],
+            ["Measure", "e", "Weight for 2", "eRCO_podatki"],
+            ["Column", "s", "Cepivo_Ime", "Sifrant_Cepivo"],
+        ],
+        "OrderBy": [[1]],
         "Binding": [[0, 1, 2], 3, {"Window": {}}, 1],
     },
     None: {
@@ -390,21 +366,26 @@ def _get_date_range_group_Query(
 
     skip_where_function_index = group_options.get("skip_common_where_index", [])
 
+    select = Query["Select"](*select_args)
+
     where = _get_Where(
         Query["Where"], group_options["Where"], where_args, skip_where_function_index
     )
 
     order_by = Query.get("OrderBy", None)
-    order_by = {"OrderBy": order_by(*order_by_args)} if order_by != None else {}
 
+    order_by = {"OrderBy": order_by(*order_by_args, select)} if order_by != None else {}
     command = {}
     command["Query"] = {
         "Version": Query["Version"](*version_args),
         "From": Query["From"](*from_args),
-        "Select": Query["Select"](*select_args),
+        "Select": select,
         "Where": where,
         **order_by,
     }
+
+    print(command["Query"].get("OrderBy", None))
+
     return command
 
 
@@ -420,7 +401,7 @@ def _get_command(
 
     version_args = args_options["Version"]
     select_args = [*specific_args["Select"], *args_options["Select"]]
-    order_by_args = [*specific_args["OrderBy"], *args_options["OrderBy"]]
+    order_by_args = args_options["OrderBy"]
     binding_args = args_options["Binding"]
 
     command = {}
@@ -467,7 +448,7 @@ def _get_gender_commands(
                 group,
                 "gender",
                 where_args=where_args,
-                specific_args={"Select": [dose], "OrderBy": [dose]},
+                specific_args={"Select": [dose]},
             )
             for dose in specific_options
         ]
