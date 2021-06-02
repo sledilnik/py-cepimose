@@ -384,8 +384,6 @@ def _get_date_range_group_Query(
         **order_by,
     }
 
-    print(command["Query"].get("OrderBy", None))
-
     return command
 
 
