@@ -147,7 +147,22 @@ def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufac
 def vaccinations_by_age_group(
     group: AgeGroup = None,
 ) -> "dict[AgeGroup,list[VaccinationByDayRow]] or list[VaccinationByDayRow]":
+    """Gets cumulative number of vaccinations for age group by day
 
+    Args:
+        group (enum[AgeGroup] | None): represents age group, default is None
+
+
+    Returns:
+        dict [group = None]: a dict with keys AgeGroup enum members and values as
+        list of VaccinationByDayRow respresenting  number of vaccinated
+        persons with first dose and fully vaccinated.
+
+        list [group = AgeGroup enum member]: a list of VaccinationByDayRow
+        respresenting  number of vaccinated persons with first dose and fully
+        vaccinated for enum member.
+
+    """
     obj = {}
     if group == None:
 
