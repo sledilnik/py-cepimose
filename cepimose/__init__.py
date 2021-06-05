@@ -67,6 +67,11 @@ def _get_data(req, parse_response):
 
 
 def vaccinations_timestamp():
+    """Gets data refresh time
+
+    Returns:
+        datetime: datetime representing NIJZ data refresh time
+    """
     return _get_data(_vaccinations_timestamp_req, _parse_vaccinations_timestamp)
 
 
