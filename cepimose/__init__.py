@@ -76,6 +76,13 @@ def vaccinations_timestamp():
 
 
 def vaccinations_by_day() -> "list[VaccinationByDayRow]":
+    """Gets number of vaccinations by day
+
+
+    Returns:
+        list: a list of VaccinationByDayRow representing number of vaccinated
+        persons with first dose and fully vaccinated.
+    """
     return _get_data(_vaccinations_by_day_req, _parse_vaccinations_by_day)
 
 
