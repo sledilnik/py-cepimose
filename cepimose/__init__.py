@@ -98,6 +98,12 @@ def vaccinations_by_age() -> "list[VaccinationByAgeRow]":
 
 
 def vaccines_supplied_and_used() -> "list[VaccineSupplyUsage]":
+    """Gets cumulative number of supplied and used vaccines by day
+
+    Returns:
+        list: a list of VaccineSupplyUsage representing total supplied and used
+        vaccines on particular day
+    """
     return _get_data(_vaccines_supplied_and_used_req, _parse_vaccines_supplied_and_used)
 
 

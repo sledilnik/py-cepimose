@@ -22,6 +22,7 @@ class VaccinationByAgeRow:
     share_second: float
 
 
+# ? TODO rename VaccineSupplyUsage to VaccinesSuppliedUsed
 @dataclass
 class VaccineSupplyUsage:
     date: datetime.datetime
