@@ -87,6 +87,13 @@ def vaccinations_by_day() -> "list[VaccinationByDayRow]":
 
 
 def vaccinations_by_age() -> "list[VaccinationByAgeRow]":
+    """Gets number of vaccinations and shares per age group for today
+
+    Returns:
+        list: a list of VaccinationByAgeRow representing number of vaccinated
+        persons with first dose, fully vaccinated and corresponding shares per
+        age group for today
+    """
     return _get_data(_vaccinations_by_age_req, _parse_vaccinations_by_age)
 
 
