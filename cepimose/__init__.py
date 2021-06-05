@@ -131,6 +131,12 @@ def vaccines_supplied_by_manufacturer() -> "list[VaccinationByManufacturerRow]":
 
 
 def vaccines_supplied_by_manufacturer_cumulative() -> "list[VaccinationByManufacturerRow]":
+    """Gets cumulative number of supplied vaccines by manufacturer by day
+
+    Returns:
+        list: a list of VaccinationByManufacturerRow representing supplied
+        vaccines by manufacturer on particular day
+    """
     return _get_data(
         _vaccines_supplied_by_manufacturer_cum_req,
         _parse_vaccines_supplied_by_manufacturer_cum,
