@@ -108,6 +108,13 @@ def vaccines_supplied_and_used() -> "list[VaccineSupplyUsage]":
 
 
 def vaccinations_by_region() -> "list[VaccinationByRegionRow]":
+    """Gets number of vaccinations and shares per region for today
+
+    Returns:
+        list: a list of VaccinationByRegionRow representing number of vaccinated
+        persons with first dose, fully vaccinated and corresponding shares per
+        region for today
+    """
     return _get_data(_vaccinations_by_region_req, _parse_vaccinations_by_region)
 
 

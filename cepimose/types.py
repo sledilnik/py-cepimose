@@ -13,6 +13,7 @@ class VaccinationByDayRow:
     second_dose: int = 0
 
 
+# ? TODO merge VaccinationByAgeRow and VaccinationByRegionRow into one dataclass
 @dataclass
 class VaccinationByAgeRow:
     age_group: str
