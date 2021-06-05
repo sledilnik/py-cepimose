@@ -119,6 +119,12 @@ def vaccinations_by_region() -> "list[VaccinationByRegionRow]":
 
 
 def vaccines_supplied_by_manufacturer() -> "list[VaccinationByManufacturerRow]":
+    """Gets number of supplied vaccines by manufacturer by day
+
+    Returns:
+        list: a list of VaccinationByManufacturerRow representing supplied
+        vaccines by manufacturer on particular day
+    """
     return _get_data(
         _vaccines_supplied_by_manufacturer_req, _parse_vaccines_supplied_by_manufacturer
     )
