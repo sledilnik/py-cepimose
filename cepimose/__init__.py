@@ -399,14 +399,23 @@ def vaccinations_gender_by_date(
 
 
 # PAGE 1
-# date range
-# by region or by age_group
-# with by gender and by manufacturer
 def vaccinations_date_range(
     property: Union[Region, AgeGroup, None] = None,
     start_date: datetime.datetime = FIRST_DATE + DAY_DELTA,
     end_date: datetime.datetime = TODAY,
 ) -> VaccinationsDateRangeByGroup:
+    """Gets cumulative number of fully and first does vaccinated persons by day in date range and cumulative number of vaccinated persons by gender and cumulative number of used vaccines by manufacturer on last day in date range either for region, age group or whole country.
+
+    Source: PAGE 1 at https://app.powerbi.com/view?r=eyJrIjoiYWQ3NGE1NTMtZWJkMi00NzZmLWFiNDItZDc5YjU5MGRkOGMyIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9
+
+    Args:
+        property (enum[Region] | enum[AgeGroup] | None): represents how data is filtered, default is None
+        start_date (datetime): represent begining of date range
+        end_date (datetime): represent begining of date range
+
+    Returns:
+        VaccinationsDateRangeByGroup: a VaccinationsDateRangeByGroup representing date range, cumulative vaccinations by day in date range and cumulative vaccinations by gender and by manufacturer on last date in date range.
+    """
 
     if end_date < start_date:
         raise Exception(
