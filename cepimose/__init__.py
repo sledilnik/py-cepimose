@@ -337,8 +337,15 @@ def vaccinations_by_manufacturer_used() -> "list[VaccinationByManufacturerRow]":
 
 # PAGE 1
 # gender
-def vaccinations_gender_by_date(date: datetime.datetime = None):
+def vaccinations_gender_by_date(
+    date: datetime.datetime = None,
+) -> "Union[VaccinationsByGender, list[VaccinationsByGender]]":
+    """Gets number of presons vaccinated with first dose and fully vaccinated persons by gender on day.
 
+    Returns:
+        list [date = None]: a list of VaccinationsByGender representing fully vaccinated and vaccinated persons with first dose by gender.
+
+    """
     start = time.perf_counter()
 
     if date == None:
