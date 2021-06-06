@@ -181,7 +181,7 @@ def vaccinations_by_age_group(
 def vaccinations_by_region_by_day(
     region: Region = None,
 ) -> "dict[Region, list[VaccinationByDayRow]]":
-    # TODO make same return if arg is not None as vaccinations_by_age_group or vice verse
+    # TODO make same return if arg is not None as vaccinations_by_age_group and vaccinations_age_group_by_region_on_day or vice verse
     """Gets cumulative number of vaccinations for region by day
 
     Args:
@@ -213,6 +213,17 @@ def vaccinations_by_region_by_day(
 def vaccinations_age_group_by_region_on_day(
     group: AgeGroup = None,
 ) -> "Union[dict[AgeGroup, list[VaccinationAgeGroupByRegionOnDay]],list[VaccinationAgeGroupByRegionOnDay]]":
+    """Gets number of vaccinations for regions in each age group
+
+    Args:
+        group (enum[AgeGroup] | None): represents age group, default is None
+
+    Returns:
+        dict [group = None]: a dict with keys AgeGroup enum members and values as
+        list of VaccinationAgeGroupByRegionOnDay respresenting number of vaccinated persons with first dose and fully vaccinated per region as a list of VaccinationAgeGroupByRegionOnDayDose representing region, cumulative number of vaccinated persons in age group, number of vaccinated person in region for age group with coresponding shares.
+
+        list [group = AgeGroup enum member]: a list of VaccinationAgeGroupByRegionOnDay respresenting number of vaccinated persons with first dose and fully vaccinated per region as a list of VaccinationAgeGroupByRegionOnDayDose representing region, cumulative number of vaccinated persons in age group, number of vaccinated person in region for age group with coresponding shares.
+    """
     obj = {}
 
     if group == None:
