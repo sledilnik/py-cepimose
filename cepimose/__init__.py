@@ -259,6 +259,14 @@ def vaccinations_by_municipalities_share():
 def vaccinations_by_manufacturer_supplied_used(
     group: Manufacturer = None,
 ) -> "dict[Manufacturer, list[VaccineSupplyUsage]] or list[VaccineSupplyUsage]":
+    """Gets cumulative number of supplied and used vaccines on delivery date.
+
+    Returns:
+        dict [group = None]: a dict with keys Manufacturer enum members and values as
+        list of VaccineSupplyUsage representing manufacturer's cumulative number of supplied and used vaccines
+
+        list [group = Manufacturer enum member]: list of VaccineSupplyUsage representing manufacturer's cumulative number of supplied and used vaccines
+    """
     obj = {}
 
     if group == None:
