@@ -242,6 +242,12 @@ def vaccinations_age_group_by_region_on_day(
 # PAGE 2
 # municipalities
 def vaccinations_by_municipalities_share():
+    """Gets number of vaccinations per municipality on today.
+
+    Returns:
+        list: a list of VaccinationMunShare representing municipality, vaccinated persons with first dose and fully vaccinated with coresponding shares and municipality's population.
+
+    """
     return _get_data(
         _vaccinations_municipalities_share_req,
         _parse_vaccinations_by_municipalities_share,
