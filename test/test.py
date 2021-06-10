@@ -2,6 +2,7 @@ from cepimose.enums import AgeGroup, Manufacturer, Region
 import unittest
 import cepimose
 import datetime
+from nose.plugins.attrib import attr
 
 
 class CepimoseTestCase(unittest.TestCase):
@@ -17,6 +18,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(row.date, previousDate, row)
             previousDate = row.date
 
+    @attr('sledilnik')
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
@@ -92,6 +94,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+    @attr('sledilnik')
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
         self.assertTrue(len(data) > 10)
@@ -116,6 +119,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+    @attr('sledilnik')
     def test_vaccinations_by_region_by_day(self):
         data = cepimose.vaccinations_by_region_by_day()
         expected_keys = [key for key in cepimose.enums.Region]
@@ -162,6 +166,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
         assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
 
+    @attr('sledilnik')
     def test_vaccinations_by_municipalities_share(self):
         data = cepimose.vaccinations_by_municipalities_share()
 
@@ -231,8 +236,7 @@ class CepimoseTestCase(unittest.TestCase):
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
 
-    # @unittest.skip("TODO, likely not possible anymore")
-    def test_vaccinations_by_manufacturer_supplied_used(self):
+    def test_vaccinations_by_upplied_used(self):
         data = cepimose.vaccinations_by_manufacturer_supplied_used()
         expected_keys = [key for key in cepimose.enums.Manufacturer]
 
@@ -283,22 +287,6 @@ class CepimoseTestCase(unittest.TestCase):
             )
             # ? more assertions
 
-
-@unittest.skip("Not implemented.")
-class CepimoseTestCaseFuture(unittest.TestCase):
-    def setUp(self):
-        super().setUp()
-
-    def tearDown(self):
-        super().tearDown()
-
-    def assertDatesIncreaseSince(self, data, startDate):
-        previousDate = startDate - datetime.timedelta(days=1)
-        for row in data:
-            self.assertGreater(row.date, previousDate, row)
-            previousDate = row.date
-
-    # @unittest.skip("TODO")
     def test_vaccinations_by_region(self):
         # Test feature one.
         data = {row.region: row for row in cepimose.vaccinations_by_region()}
@@ -328,7 +316,6 @@ class CepimoseTestCaseFuture(unittest.TestCase):
             self.assertGreater(data[grp].count_second, 0)
             self.assertGreater(data[grp].share_second, 0)
 
-    # @unittest.skip("TODO")
     def test_supplied_by_manufacturer_cumulative(self):
         data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
         self.assertTrue(len(data) > 10)
@@ -352,7 +339,7 @@ class CepimoseTestCaseFuture(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    # @unittest.skip("TODO")
+    @attr('sledilnik')
     def test_vaccinations_by_age_group(self):
         data = cepimose.vaccinations_by_age_group()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -365,7 +352,6 @@ class CepimoseTestCaseFuture(unittest.TestCase):
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
             # ? more assertions
 
-    # @unittest.skip("TODO")
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
 
@@ -381,8 +367,6 @@ class CepimoseTestCaseFuture(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-        # @unittest.skip("TODO")
-
     def test_vaccinations_age_group_by_region_on_day(self):
         data = cepimose.vaccinations_age_group_by_region_on_day()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -394,7 +378,6 @@ class CepimoseTestCaseFuture(unittest.TestCase):
             self.assertTrue(len(group_data) == len(list(cepimose.Region)))
             # ? more assertions
 
-    # @unittest.skip("TODO")
     def test_vaccinations_age_group_by_region_on_day_with_arg(self):
         chosen_group = cepimose.AgeGroup.GROUP_0_17
         data = cepimose.vaccinations_age_group_by_region_on_day(chosen_group)
@@ -474,6 +457,7 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         )
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+    @attr('sledilnik')
     def test_vaccinations_by_manufacturer_used(self):
         data = cepimose.vaccinations_by_manufacturer_used()
 
@@ -493,7 +477,7 @@ class CepimoseTestCaseFuture(unittest.TestCase):
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
         assertRow(data[79], datetime.datetime(2021, 3, 16), [606, 445, None, None])
         assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
-        assertRow(data[99], datetime.datetime(2021, 4, 5), [None, None, None, None])
+        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
         assertRow(data[120], datetime.datetime(2021, 4, 26), [None, None, 385, None])
         assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
 
