@@ -1944,7 +1944,6 @@ manufacturers_date_range_queries_2021_05_21_2021_05_03 = [
 ]
 
 
-@unittest.skip("Just don't want to run tests")
 class CepimoseTestCommands(unittest.TestCase):
     def setUp(self):
         super().setUp()
