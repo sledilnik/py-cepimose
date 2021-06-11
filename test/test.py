@@ -576,16 +576,11 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.male_first, expected_data[2], delta=300)
             self.assertAlmostEqual(row.male_second, expected_data[3], delta=300)
 
-        assertRow(data[20], datetime.datetime(2021, 1, 16), [324, None, None, None])
-        assertRow(data[23], datetime.datetime(2021, 1, 19), [2103, 66, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4805, None, 1, None])
-        assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
-        assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
-        assertRow(data[79], datetime.datetime(2021, 3, 16), [606, 445, None, None])
-        assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
-        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
-        assertRow(data[120], datetime.datetime(2021, 4, 26), [None, None, 385, None])
-        assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
+        assertRow(data1, test_date1, [None, None, 1, 0])
+        assertRow(data2, test_date2, [1536, 495, 916, 215])
+        assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
+        assertRow(data4, test_date4, [4652, 76, 4400, 53])
+        assertRow(data5, test_date5, [1009, 690, 1321, 681])
 
     # @unittest.skip("TODO")
     def test_vaccinations_gender_by_date_for_today(self):
