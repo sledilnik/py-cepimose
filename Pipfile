@@ -5,6 +5,7 @@ name = "pypi"
 
 [scripts]
 test = "nosetests -v"
+testForSledilnik = "nosetests -v -a 'sledilnik'"
 fmt = "black ."
 
 [packages]

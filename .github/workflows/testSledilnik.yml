@@ -1,0 +1,33 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Tests for Sledilnik.org
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: 
+      - master
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '15 */1 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Install dependencies
+      run: |
+        pip install pipenv
+        pipenv install -d
+    - name: Run tests
+      run: pipenv run testForSledilnik
