@@ -236,7 +236,7 @@ class CepimoseTestCase(unittest.TestCase):
         print(f"Today: {test_date_today}")
         self.assertIsNot(data_today, None)
 
-    def test_vaccinations_by_upplied_used(self):
+    def test_vaccinations_by_supplied_used(self):
         data = cepimose.vaccinations_by_manufacturer_supplied_used()
         expected_keys = [key for key in cepimose.enums.Manufacturer]
 
