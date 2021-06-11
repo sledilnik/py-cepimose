@@ -1,8 +1,13 @@
+from typing import Union
+from cepimose.types import DateRangeCommands_Requests
 import json
 import datetime
 from .enums import Region, AgeGroup, Manufacturer, Gender
 
-from .commands import get_date_range_command
+from .commands import (
+    _get_date_range_group_commands,
+    _create_manufacturers_used_commands,
+)
 
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
@@ -89,7 +94,7 @@ def _get_default_query():
     }
 
 
-def _create_req(commands, cache_key=False):
+def _create_req(commands: list, cache_key=False):
     query = _get_default_query()
     for command in commands:
         query["Query"]["Commands"].append(command)
@@ -1027,6 +1032,14 @@ def _create_vaccination_gender_requests():
     return request_by_date
 
 
+def _create_vaccinations_by_manufacturer_requests():
+    commands = _create_manufacturers_used_commands()
+    obj = {}
+    for key, value in commands.items():
+        obj[key] = _create_req([value])
+    return obj
+
+
 # COMMANDS
 _vaccinations_timestamp_command = {
     "SemanticQueryDataShapeCommand": {
@@ -1861,6 +1874,7 @@ _vaccinations_by_municipalities_share_command = {
     }
 }
 
+# all manufacturers in one response
 _vaccinations_by_manufacturer_used_command = {
     "SemanticQueryDataShapeCommand": {
         "Query": {
@@ -1997,8 +2011,8 @@ _vaccination_by_manufacturer_supplied_used_requests = (
 
 _vaccinations_gender_by_date_requests = _create_vaccination_gender_requests()
 
-_vaccinations_by_manufacturer_used_request = _create_req(
-    [_vaccinations_by_manufacturer_used_command]
+_vaccinations_by_manufacturer_used_request = (
+    _create_vaccinations_by_manufacturer_requests()
 )
 
 
@@ -2006,9 +2020,18 @@ _vaccinations_by_manufacturer_used_request = _create_req(
 def _create_vaccinations_data_range_request(
     end_date: datetime.datetime,
     start_date: datetime.datetime,
-    property: Region or AgeGroup,
+    property: Union[Region, AgeGroup, None],
 ):
-    command = get_date_range_command(
-        end_date=end_date, start_date=start_date, property=property
+    commands = _get_date_range_group_commands(start_date, end_date, group=property)
+
+    group_req = _create_req([commands.group])
+    male1_req = _create_req([commands.male1])
+    male2_req = _create_req([commands.male2])
+    female1_req = _create_req([commands.female1])
+    female2_req = _create_req([commands.female2])
+    manufacturers_req = _create_req([commands.manufacturers])
+
+    requests = DateRangeCommands_Requests(
+        group_req, male1_req, male2_req, female1_req, female2_req, manufacturers_req
     )
-    return _create_req([command])
+    return requests

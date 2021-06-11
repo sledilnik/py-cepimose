@@ -1,7 +1,7 @@
-from cepimose.enums import Gender
-from dataclasses import dataclass
+from cepimose.enums import AgeGroup, Gender, Region
+from dataclasses import dataclass, field
 import datetime
-from typing import Optional
+from typing import List, Optional, Union
 
 
 @dataclass
@@ -13,6 +13,7 @@ class VaccinationByDayRow:
     second_dose: int = 0
 
 
+# ? TODO merge VaccinationByAgeRow and VaccinationByRegionRow into one dataclass
 @dataclass
 class VaccinationByAgeRow:
     age_group: str
@@ -22,6 +23,7 @@ class VaccinationByAgeRow:
     share_second: float
 
 
+# ? TODO rename VaccineSupplyUsage to VaccinesSuppliedUsed
 @dataclass
 class VaccineSupplyUsage:
     date: datetime.datetime
@@ -86,3 +88,47 @@ class VaccinationsByGender:
     female_second: int = 0
     male_first: int = 0
     male_second: int = 0
+
+
+@dataclass
+class DateRangeCommands_Requests:
+    group: dict
+    male1: dict
+    male2: dict
+    female1: dict
+    female2: dict
+    manufacturers: dict
+
+
+@dataclass
+class VaccinationsDateRangeManufacturer:
+    name: str
+    dose1: Optional[int] = 0
+    dose2: Optional[int] = 0
+
+
+@dataclass
+class VaccinationsDoses:
+    dose1: Optional[int] = 0
+    dose2: Optional[int] = 0
+
+
+@dataclass
+class VaccinationsDateRangeByGroup:
+    date_from: datetime.datetime
+    date_to: datetime.datetime
+    property: Union[Region, AgeGroup]
+    by_day: List[VaccinationByDayRow] = field(default_factory=list)
+    male: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    female: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    pfizer: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    az: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    moderna: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    janssen: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+
+
+@dataclass
+class CommandQueryFrom:
+    name: str
+    entity: str
+    type: int
