@@ -47,7 +47,6 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
-    # vaccinations_update.py
     def test_vaccinations_by_age(self):
         # Test feature one.
         data = {row.age_group: row for row in cepimose.vaccinations_by_age()}
@@ -152,7 +151,6 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
         assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
 
-    # vaccinations_update.py
     def test_vaccinations_by_region_by_day_with_arg(self):
         data = cepimose.vaccinations_by_region_by_day(cepimose.data.Region.POMURSKA)
         expected_keys = [cepimose.data.Region.POMURSKA]
@@ -289,7 +287,6 @@ class CepimoseTestCase(unittest.TestCase):
             )
             # ? more assertions
 
-    # vaccinations_update.py
     def test_vaccinations_by_manufacturer_used(self):
         data = cepimose.vaccinations_by_manufacturer_used()
         expected_regions = [
