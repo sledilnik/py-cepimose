@@ -22,7 +22,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
-        self.assertGreater(len(data), 100)
+        self.assertGreater(len(data), 150)
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
@@ -97,7 +97,7 @@ class CepimoseTestCase(unittest.TestCase):
     @attr('sledilnik')
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
-        self.assertTrue(len(data) > 10)
+        self.assertGreater(len(data), 50)
 
         def assertRow(row, expected_date, expected):
             self.assertEqual(row.date, expected_date)
@@ -172,7 +172,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         mun_number = 212
 
-        self.assertTrue(len(data), mun_number)
+        self.assertEqual(len(data), mun_number, "Unexpected number of municipalities")
 
         for m in data:
             print(m)
@@ -350,7 +350,10 @@ class CepimoseTestCase(unittest.TestCase):
             print(key, len(group_data))
             self.assertTrue(len(group_data) != 0)
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
-            # ? more assertions
+
+            for group_day in group_data:
+                self.assertGreaterEqual(group_day.first_dose, 0)
+                self.assertGreaterEqual(group_day.second_dose, 0)
 
     def test_vaccinations_by_age_group_with_arg(self):
         data = cepimose.vaccinations_by_age_group(cepimose.enums.AgeGroup.GROUP_90)
