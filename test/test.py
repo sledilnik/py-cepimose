@@ -18,7 +18,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(row.date, previousDate, row)
             previousDate = row.date
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_vaccinations_by_day(self):
         # Test feature one.
         data = cepimose.vaccinations_by_day()
@@ -94,7 +94,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_supplied_by_manufacturer(self):
         data = cepimose.vaccines_supplied_by_manufacturer()
         self.assertTrue(len(data) > 10)
@@ -119,7 +119,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_vaccinations_by_region_by_day(self):
         data = cepimose.vaccinations_by_region_by_day()
         expected_keys = [key for key in cepimose.enums.Region]
@@ -166,7 +166,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
         assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_vaccinations_by_municipalities_share(self):
         data = cepimose.vaccinations_by_municipalities_share()
 
@@ -339,7 +339,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_vaccinations_by_age_group(self):
         data = cepimose.vaccinations_by_age_group()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -457,7 +457,7 @@ class CepimoseTestCase(unittest.TestCase):
         )
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-    @attr('sledilnik')
+    @attr("sledilnik")
     def test_vaccinations_by_manufacturer_used(self):
         data = cepimose.vaccinations_by_manufacturer_used()
 
