@@ -559,22 +559,10 @@ class CepimoseTestCase(unittest.TestCase):
             print(row)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
-            if expected_pfizer != None:
-                self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
-            else:
-                self.assertEqual(row.pfizer, expected_pfizer)
-            if expected_moderna != None:
-                self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
-            else:
-                self.assertEqual(row.moderna, expected_moderna)
-            if expected_az != None:
-                self.assertAlmostEqual(row.az, expected_az, delta=50)
-            else:
-                self.assertEqual(row.az, expected_az)
-            if expected_janssen != None:
-                self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
-            else:
-                self.assertEqual(row.janssen, expected_janssen)
+            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
+            self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
+            self.assertAlmostEqual(row.az, expected_az, delta=50)
+            self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [2103, 66, None, None])
