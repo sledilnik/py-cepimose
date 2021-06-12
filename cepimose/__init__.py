@@ -285,9 +285,7 @@ def vaccinations_by_manufacturer_supplied_used(
 def vaccinations_by_manufacturer_used() -> "list[VaccinationByManufacturerRow]":
     """Gets number of used vaccines per manufacturer per day.
 
-    In case manufacturer's field is None than particular manufacturer's vaccines was not yet on disposal.
-
-    Warning: There is some discrepancy for first supply and first use of Moderna and Astra Zeneca   vaccine! Both vaccines were used before first supply! See: 2021-01-08 for Moderna, 2021-01-28 for Astra Zeneca
+    Warning: There is some discrepancy for first supply and first use of Moderna and Astra Zeneca vaccine! Both vaccines were used before first supply! See: 2021-01-08 for Moderna, 2021-01-28 for Astra Zeneca
 
     Returns:
         list: a list of VaccinationByManufacturerRow representing each manufacturer's number of used vaccines on day.

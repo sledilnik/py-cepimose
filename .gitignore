@@ -167,3 +167,7 @@ Thumbs.db #thumbnail cache on Windows
 /examples
 
 .DS_Store
+
+/nosetests
+
+.noseids

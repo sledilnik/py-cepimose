@@ -570,7 +570,7 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
         previous_date = (
             first_date if is_used_before_delivered else delivery_date + DAY_DELTA
         )
-        used = 0
+        used = None
         for element in resp:
             date = parse_date(element["G0"])
             if previous_date + day_delta < date:
@@ -583,7 +583,7 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
             while possible_missing_date < date:
                 # populate with dates in between
                 print(f"Add data for missing date: {possible_missing_date}")
-                parsed_data.append(VaccinationDose(possible_missing_date, 0))
+                parsed_data.append(VaccinationDose(possible_missing_date, None))
                 possible_missing_date += day_delta
 
             previous_date = date
