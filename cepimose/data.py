@@ -75,11 +75,24 @@ def _get_model_version(ver):
 
 
 _vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
+_lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
 _headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
     "Accept": "application/json, text/plain, */*",
     "X-PowerBI-ResourceKey": _vaccinations_dashboard_model_ver["X-PowerBI-ResourceKey"],
+    "Content-Type": "application/json;charset=UTF-8",
+    "Origin": "https://app.powerbi.com",
+    "Connection": "keep-alive",
+    "Referer": "https://app.powerbi.com/",
+    "Pragma": "no-cache",
+    "Cache-Control": "no-cache",
+}
+
+_lab_dashboard_headers = {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
+    "Accept": "application/json, text/plain, */*",
+    "X-PowerBI-ResourceKey": _lab_dashboard_model_ver["X-PowerBI-ResourceKey"],
     "Content-Type": "application/json;charset=UTF-8",
     "Origin": "https://app.powerbi.com",
     "Connection": "keep-alive",
