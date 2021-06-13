@@ -47,6 +47,19 @@ _models = {
             ],
         },
     },
+    "nijz-lab-ver1": {
+        "headers": {"X-PowerBI-ResourceKey": "0770982d-8a85-4a4d-82b9-5d329983e65a"},
+        "modelId": 165881,
+        "ApplicationContext": {
+            "DatasetId": "b61173e7-66f4-4659-808b-ba7bd1e74fb5",
+            "Sources": [
+                {
+                    "ReportId": "130880e0-231a-49f2-b031-0669ae443a50",
+                    "VisualId": "5620f6f79b45ee8dcb57",
+                }
+            ],
+        },
+    },
 }
 
 
