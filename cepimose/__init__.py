@@ -4,7 +4,7 @@ import requests
 import time
 from .data import (
     _source,
-    _headers,
+    _vaccinations_dashboard_headers,
     _vaccinations_by_day_req,
     _vaccinations_by_age_req,
     _vaccines_supplied_and_used_req,
@@ -61,7 +61,7 @@ TODAY = datetime.datetime(TODAY_TIME.year, TODAY_TIME.month, TODAY_TIME.day)
 
 
 def _get_data(req, parse_response):
-    resp = requests.post(_source, headers=_headers, json=req)
+    resp = requests.post(_source, headers=_vaccinations_dashboard_headers, json=req)
     resp.raise_for_status()
     return parse_response(resp.json())
 

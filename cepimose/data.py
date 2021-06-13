@@ -77,7 +77,7 @@ def _get_model_version(ver):
 _vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
-_headers = {
+_vaccinations_dashboard_headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
     "Accept": "application/json, text/plain, */*",
     "X-PowerBI-ResourceKey": _vaccinations_dashboard_model_ver["X-PowerBI-ResourceKey"],
