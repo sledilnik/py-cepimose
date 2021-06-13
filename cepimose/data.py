@@ -102,31 +102,33 @@ _vaccinations_dashboard_headers = _get_dashboard_headers("vaccinations")
 _lab_dashboard_headers = _get_dashboard_headers("lab")
 
 
-def _get_default_req():
+def _get_default_req(dashboard: str):
+    _model_ver = _model_versions[dashboard]
     return {
         "cancelQueries": [],
-        "modelId": _vaccinations_dashboard_model_ver["modelId"],
+        "modelId": _model_ver["modelId"],
         "version": "1.0.0",
         "queries": [],
     }
 
 
-def _get_default_query():
+def _get_default_query(dashboard: str):
+    _model_ver = _model_versions[dashboard]
     return {
-        "ApplicationContext": _vaccinations_dashboard_model_ver["ApplicationContext"],
+        "ApplicationContext": _model_ver["ApplicationContext"],
         "CacheKey": "",
         "Query": {"Commands": []},
         "QueryId": "",
     }
 
 
-def _create_req(commands: list, cache_key=False):
-    query = _get_default_query()
+def _create_req(dashboard: str, commands: list, cache_key=False):
+    query = _get_default_query(dashboard)
     for command in commands:
         query["Query"]["Commands"].append(command)
     if cache_key:
         query["CacheKey"] = json.dumps(query["Query"]["Commands"])
-    req = _get_default_req()
+    req = _get_default_req(dashboard)
     req["queries"].append(query)
     return req
 
@@ -271,7 +273,7 @@ def _create_by_age_group_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -394,7 +396,7 @@ def _create_by_region_by_day_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        doses_req = _create_req([_commands[0]])
+        doses_req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [doses_req]
 
     return obj
@@ -643,7 +645,7 @@ def _create_age_group_by_region_on_day_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -768,7 +770,7 @@ def _create_vaccination_by_manufacturer_supplied_used_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -1044,10 +1046,10 @@ def _create_vaccination_gender_requests():
         female_first_command, female_second_command = commands[Gender.FEMALE]
         male_first_command, male_second_command = commands[Gender.MALE]
 
-        female_first_req = _create_req([female_first_command])
-        female_second_req = _create_req([female_second_command])
-        male_first_req = _create_req([male_first_command])
-        male_second_req = _create_req([male_second_command])
+        female_first_req = _create_req("vaccinations", [female_first_command])
+        female_second_req = _create_req("vaccinations", [female_second_command])
+        male_first_req = _create_req("vaccinations", [male_first_command])
+        male_second_req = _create_req("vaccinations", [male_second_command])
 
         obj = {
             "date": date,
@@ -1062,7 +1064,7 @@ def _create_vaccinations_by_manufacturer_requests():
     commands = _create_manufacturers_used_commands()
     obj = {}
     for key, value in commands.items():
-        obj[key] = _create_req([value])
+        obj[key] = _create_req("vaccinations", [value])
     return obj
 
 
@@ -2000,22 +2002,28 @@ _vaccinations_by_manufacturer_used_command = {
 }
 
 # REQ
-_vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
+_vaccinations_timestamp_req = _create_req(
+    "vaccinations", [_vaccinations_timestamp_command]
+)
 
-_vaccinations_by_day_req = _create_req([_vaccinations_by_day_command])
+_vaccinations_by_day_req = _create_req("vaccinations", [_vaccinations_by_day_command])
 
-_vaccinations_by_age_req = _create_req([_vaccinations_by_age_command])
+_vaccinations_by_age_req = _create_req("vaccinations", [_vaccinations_by_age_command])
 
-_vaccines_supplied_and_used_req = _create_req([_vaccinations_supplied_and_used_command])
+_vaccines_supplied_and_used_req = _create_req(
+    "vaccinations", [_vaccinations_supplied_and_used_command]
+)
 
-_vaccinations_by_region_req = _create_req([_vaccination_by_region_command], True)
+_vaccinations_by_region_req = _create_req(
+    "vaccinations", [_vaccination_by_region_command], True
+)
 
 _vaccines_supplied_by_manufacturer_req = _create_req(
-    [_vaccination_supplied_by_manufacturer_command]
+    "vaccinations", [_vaccination_supplied_by_manufacturer_command]
 )
 
 _vaccines_supplied_by_manufacturer_cum_req = _create_req(
-    [_vaccination_supplied_by_manufacturer_cum_command]
+    "vaccinations", [_vaccination_supplied_by_manufacturer_cum_command]
 )
 
 _vaccination_by_age_group_requests = _create_by_age_group_requests()
@@ -2023,7 +2031,7 @@ _vaccination_by_age_group_requests = _create_by_age_group_requests()
 _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 
 _vaccinations_municipalities_share_req = _create_req(
-    [_vaccinations_by_municipalities_share_command], True
+    "vaccinations", [_vaccinations_by_municipalities_share_command], True
 )
 
 _vaccinations_age_group_by_region_on_day_requests = (
@@ -2050,12 +2058,12 @@ def _create_vaccinations_data_range_request(
 ):
     commands = _get_date_range_group_commands(start_date, end_date, group=property)
 
-    group_req = _create_req([commands.group])
-    male1_req = _create_req([commands.male1])
-    male2_req = _create_req([commands.male2])
-    female1_req = _create_req([commands.female1])
-    female2_req = _create_req([commands.female2])
-    manufacturers_req = _create_req([commands.manufacturers])
+    group_req = _create_req("vaccinations", [commands.group])
+    male1_req = _create_req("vaccinations", [commands.male1])
+    male2_req = _create_req("vaccinations", [commands.male2])
+    female1_req = _create_req("vaccinations", [commands.female1])
+    female2_req = _create_req("vaccinations", [commands.female2])
+    manufacturers_req = _create_req("vaccinations", [commands.manufacturers])
 
     requests = DateRangeCommands_Requests(
         group_req, male1_req, male2_req, female1_req, female2_req, manufacturers_req
