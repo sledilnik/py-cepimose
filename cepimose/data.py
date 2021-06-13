@@ -12,7 +12,7 @@ from .commands import (
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
 _models = {
-    "ver1": {
+    "nijz-vaccinations-ver1": {
         "headers": {
             "X-PowerBI-ResourceKey": "e868280f-1322-4be2-a19a-e9fc2112609f",
         },
@@ -22,7 +22,7 @@ _models = {
             "Sources": [{"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"}],
         },
     },
-    "ver2": {
+    "nijz-vaccinations-ver2": {
         "headers": {
             "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
         },
@@ -32,7 +32,7 @@ _models = {
             "Sources": [{"ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee"}],
         },
     },
-    "ver3": {
+    "nijz-vaccinations-ver3": {
         "headers": {
             "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
         },
@@ -61,7 +61,7 @@ def _get_model_version(ver):
     }
 
 
-_model_ver = _get_model_version("ver3")
+_model_ver = _get_model_version("nijz-vaccinations-ver3")
 
 _headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
