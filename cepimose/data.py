@@ -74,12 +74,12 @@ def _get_model_version(ver):
     }
 
 
-_model_ver = _get_model_version("nijz-vaccinations-ver3")
+_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
 
 _headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
     "Accept": "application/json, text/plain, */*",
-    "X-PowerBI-ResourceKey": _model_ver["X-PowerBI-ResourceKey"],
+    "X-PowerBI-ResourceKey": _vaccinations_dashboard_model_ver["X-PowerBI-ResourceKey"],
     "Content-Type": "application/json;charset=UTF-8",
     "Origin": "https://app.powerbi.com",
     "Connection": "keep-alive",
@@ -92,7 +92,7 @@ _headers = {
 def _get_default_req():
     return {
         "cancelQueries": [],
-        "modelId": _model_ver["modelId"],
+        "modelId": _vaccinations_dashboard_model_ver["modelId"],
         "version": "1.0.0",
         "queries": [],
     }
@@ -100,7 +100,7 @@ def _get_default_req():
 
 def _get_default_query():
     return {
-        "ApplicationContext": _model_ver["ApplicationContext"],
+        "ApplicationContext": _vaccinations_dashboard_model_ver["ApplicationContext"],
         "CacheKey": "",
         "Query": {"Commands": []},
         "QueryId": "",
