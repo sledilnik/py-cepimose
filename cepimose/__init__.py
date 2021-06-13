@@ -461,7 +461,7 @@ def vaccinations_date_range(
 
 
 def lab_start_timestamp():
-    """Gets NIJZ first COVID-19 case
+    """Gets NIJZ first COVID-19 case time
 
     Returns:
         datetime: datetime representing NIJZ first COVID-19 case
