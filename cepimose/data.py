@@ -77,29 +77,29 @@ def _get_model_version(ver):
 _vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
-_vaccinations_dashboard_headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
-    "Accept": "application/json, text/plain, */*",
-    "X-PowerBI-ResourceKey": _vaccinations_dashboard_model_ver["X-PowerBI-ResourceKey"],
-    "Content-Type": "application/json;charset=UTF-8",
-    "Origin": "https://app.powerbi.com",
-    "Connection": "keep-alive",
-    "Referer": "https://app.powerbi.com/",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
+_model_versions = {
+    "vaccinations": _vaccinations_dashboard_model_ver,
+    "lab": _lab_dashboard_model_ver,
 }
 
-_lab_dashboard_headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
-    "Accept": "application/json, text/plain, */*",
-    "X-PowerBI-ResourceKey": _lab_dashboard_model_ver["X-PowerBI-ResourceKey"],
-    "Content-Type": "application/json;charset=UTF-8",
-    "Origin": "https://app.powerbi.com",
-    "Connection": "keep-alive",
-    "Referer": "https://app.powerbi.com/",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
-}
+
+def _get_dashboard_headers(dashboard: str):
+    _model_ver = _model_versions[dashboard]
+    return {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
+        "Accept": "application/json, text/plain, */*",
+        "X-PowerBI-ResourceKey": _model_ver["X-PowerBI-ResourceKey"],
+        "Content-Type": "application/json;charset=UTF-8",
+        "Origin": "https://app.powerbi.com",
+        "Connection": "keep-alive",
+        "Referer": "https://app.powerbi.com/",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache",
+    }
+
+
+_vaccinations_dashboard_headers = _get_dashboard_headers("vaccinations")
+_lab_dashboard_headers = _get_dashboard_headers("lab")
 
 
 def _get_default_req():
