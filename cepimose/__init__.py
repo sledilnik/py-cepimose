@@ -60,8 +60,8 @@ TODAY_TIME = datetime.datetime.today()
 TODAY = datetime.datetime(TODAY_TIME.year, TODAY_TIME.month, TODAY_TIME.day)
 
 
-def _get_data(req, parse_response):
-    resp = requests.post(_source, headers=_vaccinations_dashboard_headers, json=req)
+def _get_data(req, parse_response, headers=_vaccinations_dashboard_headers):
+    resp = requests.post(_source, headers=headers, json=req)
     resp.raise_for_status()
     return parse_response(resp.json())
 
