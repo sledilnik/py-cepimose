@@ -5,6 +5,7 @@ import time
 from .data import (
     _source,
     _vaccinations_dashboard_headers,
+    _lab_dashboard_headers,
     _vaccinations_by_day_req,
     _vaccinations_by_age_req,
     _vaccines_supplied_and_used_req,
@@ -20,6 +21,7 @@ from .data import (
     _vaccinations_gender_by_date_requests,
     _create_vaccinations_data_range_request,
     _vaccinations_by_manufacturer_used_request,
+    _lab_start_ts_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -453,3 +455,17 @@ def vaccinations_date_range(
         result.__setattr__(manu.name, VaccinationsDoses(manu.dose1, manu.dose2))
 
     return result
+
+
+# DASHBOARD LAB
+
+
+def lab_start_timestamp():
+    """Gets NIJZ first COVID-19 case
+
+    Returns:
+        datetime: datetime representing NIJZ first COVID-19 case
+    """
+    return _get_data(
+        _lab_start_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
+    )
