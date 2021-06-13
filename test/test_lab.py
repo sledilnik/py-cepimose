@@ -18,3 +18,11 @@ class CepimoseTestCase(unittest.TestCase):
         today = datetime.datetime.now()
 
         self.assertEqual(first_case, ts)
+
+    def test_lab_end_timestamp(self):
+        ts = cepimose.lab_end_timestamp()
+        print("Last update:", ts)
+        day_delta = datetime.timedelta(days=3)
+        today = datetime.datetime.now()
+        diff = today - ts
+        self.assertGreaterEqual(day_delta, diff)

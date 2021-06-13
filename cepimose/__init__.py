@@ -22,6 +22,7 @@ from .data import (
     _create_vaccinations_data_range_request,
     _vaccinations_by_manufacturer_used_request,
     _lab_start_ts_req,
+    _lab_end_ts_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -468,4 +469,15 @@ def lab_start_timestamp():
     """
     return _get_data(
         _lab_start_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
+    )
+
+
+def lab_end_timestamp():
+    """Gets NIJZ last data update time
+
+    Returns:
+        datetime: datetime representing NIJZ last data update time
+    """
+    return _get_data(
+        _lab_end_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
     )
