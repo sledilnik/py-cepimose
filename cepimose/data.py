@@ -2069,3 +2069,84 @@ def _create_vaccinations_data_range_request(
         group_req, male1_req, male2_req, female1_req, female2_req, manufacturers_req
     )
     return requests
+
+
+# DASHBOARD LAB
+_lab_start_ts_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "datum_izvida",
+                            }
+                        },
+                        "Function": 3,
+                    },
+                    "Name": "Min(All.datum_izvida)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "a"}
+                                            },
+                                            "Property": "datum_izvida",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "null"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_start_ts_req = _create_req("lab", [_lab_start_ts_command])
