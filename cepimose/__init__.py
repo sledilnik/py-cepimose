@@ -475,7 +475,7 @@ def vaccinations_date_range(
 # DASHBOARD LAB
 
 
-def lab_start_timestamp():
+def lab_start_timestamp() -> datetime.datetime:
     """Gets NIJZ first COVID-19 case time
 
     Returns:
@@ -486,7 +486,7 @@ def lab_start_timestamp():
     )
 
 
-def lab_end_timestamp():
+def lab_end_timestamp() -> datetime.datetime:
     """Gets NIJZ last data update time
 
     Returns:
