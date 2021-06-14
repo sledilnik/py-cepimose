@@ -23,6 +23,7 @@ from .data import (
     _vaccinations_by_manufacturer_used_request,
     _lab_start_ts_req,
     _lab_end_ts_req,
+    _lab_PCR_tests_performed_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -482,3 +483,17 @@ def lab_end_timestamp():
     return _get_data(
         _lab_end_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
     )
+
+
+def lab_PCR_tests_performed() -> int:
+    """Gets performed PCR tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed PCR tests on today
+    """
+    return _get_data(
+        _lab_PCR_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+

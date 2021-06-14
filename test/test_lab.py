@@ -26,3 +26,7 @@ class CepimoseTestCase(unittest.TestCase):
         today = datetime.datetime.now()
         diff = today - ts
         self.assertGreaterEqual(day_delta, diff)
+
+    def test_lab_PCR_tests_performed(self):
+        performed_PCR = cepimose.lab_PCR_tests_performed()
+        self.assertGreaterEqual(performed_PCR, 0)
