@@ -26,6 +26,7 @@ from .data import (
     _lab_PCR_tests_performed_req,
     _lab_PCR_total_tests_performed_req,
     _lab_active_cases_estimated_req,
+    _lab_confirmed_total_male_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
