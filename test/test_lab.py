@@ -4,7 +4,7 @@ import cepimose
 import datetime
 from nose.plugins.attrib import attr
 
-# ? TODO some more assertions
+
 class CepimoseTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
@@ -34,7 +34,7 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_lab_PCR_total_tests_performed(self):
         performed_PCR_total = cepimose.lab_PCR_total_tests_performed()
-        self.assertGreaterEqual(performed_PCR_total, 0)
+        self.assertGreaterEqual(performed_PCR_total, 1300000)
 
     def test_lab_active_cases_estimated(self):
         active_cases_estimated = cepimose.lab_active_cases_estimated()
@@ -42,11 +42,11 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_lab_confirmed_total_male(self):
         male_total = cepimose.lab_confirmed_total_male()
-        self.assertGreaterEqual(male_total, 0)
+        self.assertGreaterEqual(male_total, 120000)
 
     def test_lab_total_vaccinated_first_dose(self):
         total_first_dose = cepimose.lab_total_vaccinated_first_dose()
-        self.assertGreaterEqual(total_first_dose, 0)
+        self.assertGreaterEqual(total_first_dose, 760000)
 
     def test_lab_active_cases_100k(self):
         active_cases_100k = cepimose.lab_active_cases_100k()
@@ -55,11 +55,11 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_lab_cases_total_confirmed(self):
         cases_total = cepimose.lab_cases_total_confirmed()
-        self.assertGreaterEqual(cases_total, 0)
+        self.assertGreaterEqual(cases_total, 250000)
 
     def test_lab_HAT_total_tests_performed(self):
         performed_HAT = cepimose.lab_HAT_total_tests_performed()
-        self.assertGreaterEqual(performed_HAT, 0)
+        self.assertGreaterEqual(performed_HAT, 3500000)
 
     def test_lab_cases_confirmed(self):
         cases_confirmed = cepimose.lab_cases_confirmed()
@@ -67,11 +67,11 @@ class CepimoseTestCase(unittest.TestCase):
 
     def test_lab_confirmed_total_female(self):
         female_total = cepimose.lab_confirmed_total_female()
-        self.assertGreaterEqual(female_total, 0)
+        self.assertGreaterEqual(female_total, 135000)
 
     def test_lab_total_vaccinated_fully(self):
         fully_vaccinated = cepimose.lab_total_vaccinated_fully()
-        self.assertGreaterEqual(fully_vaccinated, 0)
+        self.assertGreaterEqual(fully_vaccinated, 540000)
 
     def test_lab_cases_avg_7Days(self):
         cases_avg_7days = cepimose.lab_cases_avg_7Days()
