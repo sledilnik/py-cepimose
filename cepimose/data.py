@@ -2808,3 +2808,156 @@ _lab_cases_total_confirmed_req = _create_req(
     "lab", [_lab_cases_total_confirmed_command]
 )
 
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "d", "Entity": "Date_agg", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "d"}},
+                                "Property": "vsi_pacienti_hagt",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(Date_agg.vsi_pacienti_hagt)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_HAT_total_tests_performed_req = _create_req(
+    "lab", [_lab_HAT_total_tests_performed_command]
+)
+
+_lab_cases_confirmed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "weight",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.weight)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
+                                }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_cases_confirmed_req = _create_req("lab", [_lab_cases_confirmed_command])
+

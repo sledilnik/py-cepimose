@@ -55,3 +55,11 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_cases_total_confirmed(self):
         cases_total = cepimose.lab_cases_total_confirmed()
         self.assertGreaterEqual(cases_total, 0)
+
+    def test_lab_HAT_total_tests_performed(self):
+        performed_HAT = cepimose.lab_HAT_total_tests_performed()
+        self.assertGreaterEqual(performed_HAT, 0)
+
+    def test_lab_cases_confirmed(self):
+        cases_confirmed = cepimose.lab_cases_confirmed()
+        self.assertGreaterEqual(cases_confirmed, 0)
