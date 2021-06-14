@@ -71,3 +71,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_total_vaccinated_fully(self):
         fully_vaccinated = cepimose.lab_total_vaccinated_fully()
         self.assertGreaterEqual(fully_vaccinated, 0)
+
+    def test_lab_cases_avg_7Days(self):
+        cases_avg_7days = cepimose.lab_cases_avg_7Days()
+        self.assertGreaterEqual(cases_avg_7days, 0)
