@@ -25,6 +25,7 @@ from .data import (
     _lab_end_ts_req,
     _lab_PCR_tests_performed_req,
     _lab_PCR_total_tests_performed_req,
+    _lab_active_cases_estimated_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -510,5 +511,16 @@ def lab_PCR_total_tests_performed() -> int:
     """
     return _get_data(
         _lab_PCR_total_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_active_cases_estimated() -> int:
+    """Gets estimated active cases
+
+    Returns:
+        int: a int number representing estimated active cases
+    """
+    return _get_data(
+        _lab_active_cases_estimated_req, _parse_single_data, _lab_dashboard_headers
     )
 
