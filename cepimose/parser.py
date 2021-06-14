@@ -635,3 +635,9 @@ def _parse_vaccinations_date_range_manufacturers_used(data):
 
         parsed_data.append(result)
     return parsed_data
+
+
+def _parse_single_data(data):
+    _validate_response_data(data)
+    resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
+    return resp[0]["M0"]

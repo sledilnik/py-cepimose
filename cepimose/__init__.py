@@ -41,6 +41,7 @@ from .parser import (
     _parse_vaccinations_date_range,
     _parse_vaccinations_date_range_manufacturers_used,
     _create_vaccinations_by_manufacturer_parser,
+    _parse_single_data,
 )
 
 from .types import (
