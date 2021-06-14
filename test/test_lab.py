@@ -46,3 +46,8 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_total_vaccinated_first_dose(self):
         performed_PCR = cepimose.lab_total_vaccinated_first_dose()
         self.assertGreaterEqual(performed_PCR, 0)
+
+    def test_lab_active_cases_100k(self):
+        active_cases_100k = cepimose.lab_active_cases_100k()
+        self.assertGreaterEqual(active_cases_100k, 0)
+        self.assertIsInstance(active_cases_100k, float)

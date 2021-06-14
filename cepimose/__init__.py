@@ -28,6 +28,7 @@ from .data import (
     _lab_active_cases_estimated_req,
     _lab_confirmed_total_male_req,
     _lab_total_vaccinated_first_dose_req,
+    _lab_active_cases_100k_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -553,4 +554,16 @@ def lab_total_vaccinated_first_dose() -> int:
     return _get_data(
         _lab_total_vaccinated_first_dose_req, _parse_single_data, _lab_dashboard_headers
     )
+
+
+def lab_active_cases_100k() -> float:
+    """Gets number of active cases per 100k population
+
+    Returns:
+        float: a float number representing active cases per 100k population
+    """
+    parsed_resp = _get_data(
+        _lab_active_cases_100k_req, _parse_single_data, _lab_dashboard_headers
+    )
+    return float(parsed_resp)
 
