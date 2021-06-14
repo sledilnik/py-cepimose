@@ -3058,3 +3058,84 @@ _lab_confirmed_total_female_req = _create_req(
     "lab", [_lab_confirmed_total_female_command]
 )
 
+_lab_total_vaccinated_fully_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "e", "Entity": "eRCO", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Z vsemi odmerki",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO.Z vsemi odmerki)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_total_vaccinated_fully_req = _create_req(
+    "lab", [_lab_total_vaccinated_fully_command]
+)
+

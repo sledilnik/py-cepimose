@@ -67,3 +67,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_confirmed_total_female(self):
         female_total = cepimose.lab_confirmed_total_female()
         self.assertGreaterEqual(female_total, 0)
+
+    def test_lab_total_vaccinated_fully(self):
+        fully_vaccinated = cepimose.lab_total_vaccinated_fully()
+        self.assertGreaterEqual(fully_vaccinated, 0)
