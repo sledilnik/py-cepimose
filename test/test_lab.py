@@ -1,9 +1,10 @@
+from cepimose.types import LabDashboard
 import unittest
 import cepimose
 import datetime
 from nose.plugins.attrib import attr
 
-
+# ? TODO some more assertions
 class CepimoseTestCase(unittest.TestCase):
     def setUp(self):
         super().setUp()
@@ -79,3 +80,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_HAT_tests_performed(self):
         performed_HAT = cepimose.lab_HAT_tests_performed()
         self.assertGreaterEqual(performed_HAT, 0)
+
+    def test_get_lab_dashboard(self):
+        dashboard = cepimose.get_lab_dashboard()
+        self.assertIsInstance(dashboard, LabDashboard)

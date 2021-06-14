@@ -67,6 +67,7 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationAgeGroupByRegionOnDay,
+    LabDashboard,
 )
 
 from .enums import Manufacturer, Region, AgeGroup, Gender
@@ -670,3 +671,49 @@ def lab_HAT_tests_performed():
     return _get_data(
         _lab_HAT_tests_performed_req, _parse_single_data, _lab_dashboard_headers
     )
+
+
+def get_lab_dashboard() -> LabDashboard:
+    """Gets NIJZ dashboard:
+        'Prikaz števila opravljenih cepljenj, testiranj in potrjenih okužb s covid-19 v SLoveniji'
+
+    source: https://app.powerbi.com/view?r=eyJrIjoiMDc3MDk4MmQtOGE4NS00YTRkLTgyYjktNWQzMjk5ODNlNjVhIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9&pageName=ReportSection24198f7e6d06db643832
+
+    Returns:
+        LabDashboard: a LabDashboard represent all data from dashboard
+    """
+    start_date = lab_start_timestamp()
+    end_date = lab_end_timestamp()
+    pcr = lab_PCR_tests_performed()
+    pcr_total = lab_PCR_total_tests_performed()
+    hat = lab_HAT_tests_performed()
+    hat_total = lab_HAT_total_tests_performed()
+    estimated_cases = lab_active_cases_estimated()
+    cases_avg_100k = lab_active_cases_100k()
+    cases_avg_7days = lab_cases_avg_7Days()
+    cases = lab_cases_confirmed()
+    cases_total = lab_cases_total_confirmed()
+    cases_total_male = lab_confirmed_total_male()
+    cases_total_female = lab_confirmed_total_female()
+    vaccinated_first_dose = lab_total_vaccinated_first_dose()
+    vaccinated_fully = lab_total_vaccinated_fully()
+
+    result = LabDashboard(
+        date=end_date,
+        pcr=pcr,
+        hat=hat,
+        confirmed=cases,
+        active_estimated=estimated_cases,
+        cases_active_100k=cases_avg_100k,
+        cases_active_7days=cases_avg_7days,
+        date_start=start_date,
+        pcr_total=pcr_total,
+        hat_total=hat_total,
+        confirmed_total=cases_total,
+        male_total=cases_total_male,
+        female_total=cases_total_female,
+        vaccinated_first_dose=vaccinated_first_dose,
+        vaccinated_fully=vaccinated_fully,
+    )
+
+    return result
