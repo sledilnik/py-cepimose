@@ -42,3 +42,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_confirmed_total_male(self):
         performed_PCR = cepimose.lab_confirmed_total_male()
         self.assertGreaterEqual(performed_PCR, 0)
+
+    def test_lab_total_vaccinated_first_dose(self):
+        performed_PCR = cepimose.lab_total_vaccinated_first_dose()
+        self.assertGreaterEqual(performed_PCR, 0)

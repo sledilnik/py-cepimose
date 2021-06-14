@@ -2546,3 +2546,84 @@ _lab_confirmed_total_male_command = {
 
 _lab_confirmed_total_male_req = _create_req("lab", [_lab_confirmed_total_male_command])
 
+_lab_total_vaccinated_first_dose_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "e", "Entity": "eRCO", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Z 1 odmerkom",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO.Z 1 odmerkom)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_total_vaccinated_first_dose_req = _create_req(
+    "lab", [_lab_total_vaccinated_first_dose_command]
+)
+

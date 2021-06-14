@@ -27,6 +27,7 @@ from .data import (
     _lab_PCR_total_tests_performed_req,
     _lab_active_cases_estimated_req,
     _lab_confirmed_total_male_req,
+    _lab_total_vaccinated_first_dose_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -523,5 +524,33 @@ def lab_active_cases_estimated() -> int:
     """
     return _get_data(
         _lab_active_cases_estimated_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_confirmed_total_male() -> int:
+    """Gets male total confirmed cases in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing male total confirmed cases in date range
+    """
+    return _get_data(
+        _lab_confirmed_total_male_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_total_vaccinated_first_dose() -> int:
+    """Gets vaccinated population with first dose in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing vaccinated population with first dose in date range
+    """
+    return _get_data(
+        _lab_total_vaccinated_first_dose_req, _parse_single_data, _lab_dashboard_headers
     )
 
