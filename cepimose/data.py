@@ -2808,6 +2808,7 @@ _lab_cases_total_confirmed_req = _create_req(
     "lab", [_lab_cases_total_confirmed_command]
 )
 
+_lab_HAT_total_tests_performed_command = {
     "SemanticQueryDataShapeCommand": {
         "Query": {
             "Version": 2,
