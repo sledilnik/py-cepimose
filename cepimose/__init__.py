@@ -29,6 +29,7 @@ from .data import (
     _lab_confirmed_total_male_req,
     _lab_total_vaccinated_first_dose_req,
     _lab_active_cases_100k_req,
+    _lab_cases_total_confirmed_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -566,4 +567,18 @@ def lab_active_cases_100k() -> float:
         _lab_active_cases_100k_req, _parse_single_data, _lab_dashboard_headers
     )
     return float(parsed_resp)
+
+
+def lab_cases_total_confirmed() -> int:
+    """Gets total confirmed cases in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing total confirmed cases in date range
+    """
+    return _get_data(
+        _lab_cases_total_confirmed_req, _parse_single_data, _lab_dashboard_headers
+    )
 

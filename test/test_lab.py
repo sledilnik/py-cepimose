@@ -51,3 +51,7 @@ class CepimoseTestCase(unittest.TestCase):
         active_cases_100k = cepimose.lab_active_cases_100k()
         self.assertGreaterEqual(active_cases_100k, 0)
         self.assertIsInstance(active_cases_100k, float)
+
+    def test_lab_cases_total_confirmed(self):
+        cases_total = cepimose.lab_cases_total_confirmed()
+        self.assertGreaterEqual(cases_total, 0)
