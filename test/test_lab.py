@@ -32,20 +32,20 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertGreaterEqual(performed_PCR, 0)
 
     def test_lab_PCR_total_tests_performed(self):
-        performed_PCR = cepimose.lab_PCR_total_tests_performed()
-        self.assertGreaterEqual(performed_PCR, 0)
+        performed_PCR_total = cepimose.lab_PCR_total_tests_performed()
+        self.assertGreaterEqual(performed_PCR_total, 0)
 
     def test_lab_active_cases_estimated(self):
-        performed_PCR = cepimose.lab_active_cases_estimated()
-        self.assertGreaterEqual(performed_PCR, 0)
+        active_cases_estimated = cepimose.lab_active_cases_estimated()
+        self.assertGreaterEqual(active_cases_estimated, 0)
 
     def test_lab_confirmed_total_male(self):
-        performed_PCR = cepimose.lab_confirmed_total_male()
-        self.assertGreaterEqual(performed_PCR, 0)
+        male_total = cepimose.lab_confirmed_total_male()
+        self.assertGreaterEqual(male_total, 0)
 
     def test_lab_total_vaccinated_first_dose(self):
-        performed_PCR = cepimose.lab_total_vaccinated_first_dose()
-        self.assertGreaterEqual(performed_PCR, 0)
+        total_first_dose = cepimose.lab_total_vaccinated_first_dose()
+        self.assertGreaterEqual(total_first_dose, 0)
 
     def test_lab_active_cases_100k(self):
         active_cases_100k = cepimose.lab_active_cases_100k()
