@@ -644,15 +644,19 @@ def lab_total_vaccinated_fully() -> int:
     )
 
 
-def lab_cases_avg_7Days() -> int:
+def lab_cases_avg_7Days() -> float:
     """Gets 7 days average confirmed cases
 
+    Warning: we receive int but cast to float; could happen that we will someday in the future
+    receive float number as string like in lab_active_cases_100k or vice versa;
+
     Returns:
-        int: a int number representing 7 days average confirmed cases
+        float: a float number representing 7 days average confirmed cases
     """
-    return _get_data(
+    parsed_resp = _get_data(
         _lab_cases_avg_7Days_req, _parse_single_data, _lab_dashboard_headers
     )
+    return float(parsed_resp)
 
 
 def lab_HAT_tests_performed():
