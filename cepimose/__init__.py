@@ -35,6 +35,7 @@ from .data import (
     _lab_confirmed_total_female_req,
     _lab_total_vaccinated_fully_req,
     _lab_cases_avg_7Days_req,
+    _lab_HAT_tests_performed_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -653,3 +654,15 @@ def lab_cases_avg_7Days() -> int:
         _lab_cases_avg_7Days_req, _parse_single_data, _lab_dashboard_headers
     )
 
+
+def lab_HAT_tests_performed():
+    """Gets performed HAT tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed HAT tests on today
+    """
+    return _get_data(
+        _lab_HAT_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )

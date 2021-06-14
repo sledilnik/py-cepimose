@@ -75,3 +75,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_cases_avg_7Days(self):
         cases_avg_7days = cepimose.lab_cases_avg_7Days()
         self.assertGreaterEqual(cases_avg_7days, 0)
+
+    def test_lab_HAT_tests_performed(self):
+        performed_HAT = cepimose.lab_HAT_tests_performed()
+        self.assertGreaterEqual(performed_HAT, 0)
