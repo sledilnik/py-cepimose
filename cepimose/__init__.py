@@ -4,7 +4,8 @@ import requests
 import time
 from .data import (
     _source,
-    _headers,
+    _vaccinations_dashboard_headers,
+    _lab_dashboard_headers,
     _vaccinations_by_day_req,
     _vaccinations_by_age_req,
     _vaccines_supplied_and_used_req,
@@ -20,6 +21,21 @@ from .data import (
     _vaccinations_gender_by_date_requests,
     _create_vaccinations_data_range_request,
     _vaccinations_by_manufacturer_used_request,
+    _lab_start_ts_req,
+    _lab_end_ts_req,
+    _lab_PCR_tests_performed_req,
+    _lab_PCR_total_tests_performed_req,
+    _lab_active_cases_estimated_req,
+    _lab_confirmed_total_male_req,
+    _lab_total_vaccinated_first_dose_req,
+    _lab_active_cases_100k_req,
+    _lab_cases_total_confirmed_req,
+    _lab_HAT_total_tests_performed_req,
+    _lab_cases_confirmed_req,
+    _lab_confirmed_total_female_req,
+    _lab_total_vaccinated_fully_req,
+    _lab_cases_avg_7Days_req,
+    _lab_HAT_tests_performed_req,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -38,6 +54,7 @@ from .parser import (
     _parse_vaccinations_date_range,
     _parse_vaccinations_date_range_manufacturers_used,
     _create_vaccinations_by_manufacturer_parser,
+    _parse_single_data,
 )
 
 from .types import (
@@ -50,6 +67,7 @@ from .types import (
     VaccinationByRegionRow,
     VaccinationByManufacturerRow,
     VaccinationAgeGroupByRegionOnDay,
+    LabDashboard,
 )
 
 from .enums import Manufacturer, Region, AgeGroup, Gender
@@ -60,8 +78,8 @@ TODAY_TIME = datetime.datetime.today()
 TODAY = datetime.datetime(TODAY_TIME.year, TODAY_TIME.month, TODAY_TIME.day)
 
 
-def _get_data(req, parse_response):
-    resp = requests.post(_source, headers=_headers, json=req)
+def _get_data(req, parse_response, headers=_vaccinations_dashboard_headers):
+    resp = requests.post(_source, headers=headers, json=req)
     resp.raise_for_status()
     return parse_response(resp.json())
 
@@ -451,5 +469,248 @@ def vaccinations_date_range(
 
     for manu in manufacturers:
         result.__setattr__(manu.name, VaccinationsDoses(manu.dose1, manu.dose2))
+
+    return result
+
+
+# DASHBOARD LAB
+
+
+def lab_start_timestamp() -> datetime.datetime:
+    """Gets NIJZ first COVID-19 case time
+
+    Returns:
+        datetime: datetime representing NIJZ first COVID-19 case
+    """
+    return _get_data(
+        _lab_start_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
+    )
+
+
+def lab_end_timestamp() -> datetime.datetime:
+    """Gets NIJZ last data update time
+
+    Returns:
+        datetime: datetime representing NIJZ last data update time
+    """
+    return _get_data(
+        _lab_end_ts_req, _parse_vaccinations_timestamp, _lab_dashboard_headers
+    )
+
+
+def lab_PCR_tests_performed() -> int:
+    """Gets performed PCR tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed PCR tests on today
+    """
+    return _get_data(
+        _lab_PCR_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_PCR_total_tests_performed() -> int:
+    """Gets performed PCR tests in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed PCR tests in date range
+    """
+    return _get_data(
+        _lab_PCR_total_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_active_cases_estimated() -> int:
+    """Gets estimated active cases
+
+    Returns:
+        int: a int number representing estimated active cases
+    """
+    return _get_data(
+        _lab_active_cases_estimated_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_confirmed_total_male() -> int:
+    """Gets male total confirmed cases in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing male total confirmed cases in date range
+    """
+    return _get_data(
+        _lab_confirmed_total_male_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_total_vaccinated_first_dose() -> int:
+    """Gets vaccinated population with first dose in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing vaccinated population with first dose in date range
+    """
+    return _get_data(
+        _lab_total_vaccinated_first_dose_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_active_cases_100k() -> float:
+    """Gets number of active cases per 100k population
+
+    Returns:
+        float: a float number representing active cases per 100k population
+    """
+    parsed_resp = _get_data(
+        _lab_active_cases_100k_req, _parse_single_data, _lab_dashboard_headers
+    )
+    return float(parsed_resp)
+
+
+def lab_cases_total_confirmed() -> int:
+    """Gets total confirmed cases in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing total confirmed cases in date range
+    """
+    return _get_data(
+        _lab_cases_total_confirmed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_HAT_total_tests_performed() -> int:
+    """Gets performed HAT tests in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed HAT tests in date range
+    """
+    return _get_data(
+        _lab_HAT_total_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_cases_confirmed() -> int:
+    """Gets confirmed cases on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing confirmed cases on today
+    """
+    return _get_data(
+        _lab_cases_confirmed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_confirmed_total_female() -> int:
+    """Gets female total confirmed cases in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing female total confirmed cases in date range
+    """
+    return _get_data(
+        _lab_confirmed_total_female_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_total_vaccinated_fully() -> int:
+    """Gets fully vaccinated population in date range
+
+    start -> date from lab_start_timestamp()
+    end -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing fully vaccinated population in date range
+    """
+    return _get_data(
+        _lab_total_vaccinated_fully_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_cases_avg_7Days() -> float:
+    """Gets 7 days average confirmed cases
+
+    Returns:
+        float: a float number representing 7 days average confirmed cases
+    """
+    parsed_resp = _get_data(
+        _lab_cases_avg_7Days_req, _parse_single_data, _lab_dashboard_headers
+    )
+    return float(parsed_resp)
+
+
+def lab_HAT_tests_performed():
+    """Gets performed HAT tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed HAT tests on today
+    """
+    return _get_data(
+        _lab_HAT_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def get_lab_dashboard() -> LabDashboard:
+    """Gets NIJZ dashboard:
+        'Prikaz števila opravljenih cepljenj, testiranj in potrjenih okužb s covid-19 v SLoveniji'
+
+    source: https://app.powerbi.com/view?r=eyJrIjoiMDc3MDk4MmQtOGE4NS00YTRkLTgyYjktNWQzMjk5ODNlNjVhIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9&pageName=ReportSection24198f7e6d06db643832
+
+    Returns:
+        LabDashboard: a LabDashboard represent all data from dashboard
+    """
+    start_date = lab_start_timestamp()
+    end_date = lab_end_timestamp()
+    pcr = lab_PCR_tests_performed()
+    pcr_total = lab_PCR_total_tests_performed()
+    hat = lab_HAT_tests_performed()
+    hat_total = lab_HAT_total_tests_performed()
+    estimated_cases = lab_active_cases_estimated()
+    cases_avg_100k = lab_active_cases_100k()
+    cases_avg_7days = lab_cases_avg_7Days()
+    cases = lab_cases_confirmed()
+    cases_total = lab_cases_total_confirmed()
+    cases_total_male = lab_confirmed_total_male()
+    cases_total_female = lab_confirmed_total_female()
+    vaccinated_first_dose = lab_total_vaccinated_first_dose()
+    vaccinated_fully = lab_total_vaccinated_fully()
+
+    result = LabDashboard(
+        date=end_date,
+        pcr=pcr,
+        hat=hat,
+        confirmed=cases,
+        active_estimated=estimated_cases,
+        cases_active_100k=cases_avg_100k,
+        cases_active_7days=cases_avg_7days,
+        date_start=start_date,
+        pcr_total=pcr_total,
+        hat_total=hat_total,
+        confirmed_total=cases_total,
+        male_total=cases_total_male,
+        female_total=cases_total_female,
+        vaccinated_first_dose=vaccinated_first_dose,
+        vaccinated_fully=vaccinated_fully,
+    )
 
     return result
