@@ -132,3 +132,28 @@ class CommandQueryFrom:
     name: str
     entity: str
     type: int
+
+
+@dataclass
+class LabDashboard:
+    """Represents data from NIJZ dashboard:
+        'Prikaz števila opravljenih cepljenj, testiranj in potrjenih okužb s covid-19 v SLoveniji'
+
+    source: https://app.powerbi.com/view?r=eyJrIjoiMDc3MDk4MmQtOGE4NS00YTRkLTgyYjktNWQzMjk5ODNlNjVhIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9&pageName=ReportSection24198f7e6d06db643832
+    """
+
+    date: datetime.datetime
+    pcr: int
+    hat: int
+    confirmed: int
+    active_estimated: int
+    cases_active_100k: float
+    cases_active_7days: float
+    date_start: datetime.datetime
+    pcr_total: int
+    hat_total: int
+    confirmed_total: int
+    male_total: int
+    female_total: int
+    vaccinated_first_dose: int
+    vaccinated_fully: int

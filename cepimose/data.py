@@ -12,7 +12,7 @@ from .commands import (
 _source = "https://wabi-west-europe-e-primary-api.analysis.windows.net/public/reports/querydata?synchronous=true"
 
 _models = {
-    "ver1": {
+    "nijz-vaccinations-ver1": {
         "headers": {
             "X-PowerBI-ResourceKey": "e868280f-1322-4be2-a19a-e9fc2112609f",
         },
@@ -22,7 +22,7 @@ _models = {
             "Sources": [{"ReportId": "b201281d-b2e7-4470-9f4e-0b3063794c76"}],
         },
     },
-    "ver2": {
+    "nijz-vaccinations-ver2": {
         "headers": {
             "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
         },
@@ -32,7 +32,7 @@ _models = {
             "Sources": [{"ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee"}],
         },
     },
-    "ver3": {
+    "nijz-vaccinations-ver3": {
         "headers": {
             "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
         },
@@ -43,6 +43,19 @@ _models = {
                 {
                     "ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee",
                     "VisualId": "022fd838583336ee7f55",
+                }
+            ],
+        },
+    },
+    "nijz-lab-ver1": {
+        "headers": {"X-PowerBI-ResourceKey": "0770982d-8a85-4a4d-82b9-5d329983e65a"},
+        "modelId": 165881,
+        "ApplicationContext": {
+            "DatasetId": "b61173e7-66f4-4659-808b-ba7bd1e74fb5",
+            "Sources": [
+                {
+                    "ReportId": "130880e0-231a-49f2-b031-0669ae443a50",
+                    "VisualId": "5620f6f79b45ee8dcb57",
                 }
             ],
         },
@@ -61,22 +74,36 @@ def _get_model_version(ver):
     }
 
 
-_model_ver = _get_model_version("ver3")
+_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
+_lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
-_headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
-    "Accept": "application/json, text/plain, */*",
-    "X-PowerBI-ResourceKey": _model_ver["X-PowerBI-ResourceKey"],
-    "Content-Type": "application/json;charset=UTF-8",
-    "Origin": "https://app.powerbi.com",
-    "Connection": "keep-alive",
-    "Referer": "https://app.powerbi.com/",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
+_model_versions = {
+    "vaccinations": _vaccinations_dashboard_model_ver,
+    "lab": _lab_dashboard_model_ver,
 }
 
 
-def _get_default_req():
+def _get_dashboard_headers(dashboard: str):
+    _model_ver = _model_versions[dashboard]
+    return {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0",
+        "Accept": "application/json, text/plain, */*",
+        "X-PowerBI-ResourceKey": _model_ver["X-PowerBI-ResourceKey"],
+        "Content-Type": "application/json;charset=UTF-8",
+        "Origin": "https://app.powerbi.com",
+        "Connection": "keep-alive",
+        "Referer": "https://app.powerbi.com/",
+        "Pragma": "no-cache",
+        "Cache-Control": "no-cache",
+    }
+
+
+_vaccinations_dashboard_headers = _get_dashboard_headers("vaccinations")
+_lab_dashboard_headers = _get_dashboard_headers("lab")
+
+
+def _get_default_req(dashboard: str):
+    _model_ver = _model_versions[dashboard]
     return {
         "cancelQueries": [],
         "modelId": _model_ver["modelId"],
@@ -85,7 +112,8 @@ def _get_default_req():
     }
 
 
-def _get_default_query():
+def _get_default_query(dashboard: str):
+    _model_ver = _model_versions[dashboard]
     return {
         "ApplicationContext": _model_ver["ApplicationContext"],
         "CacheKey": "",
@@ -94,13 +122,13 @@ def _get_default_query():
     }
 
 
-def _create_req(commands: list, cache_key=False):
-    query = _get_default_query()
+def _create_req(dashboard: str, commands: list, cache_key=False):
+    query = _get_default_query(dashboard)
     for command in commands:
         query["Query"]["Commands"].append(command)
     if cache_key:
         query["CacheKey"] = json.dumps(query["Query"]["Commands"])
-    req = _get_default_req()
+    req = _get_default_req(dashboard)
     req["queries"].append(query)
     return req
 
@@ -245,7 +273,7 @@ def _create_by_age_group_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -368,7 +396,7 @@ def _create_by_region_by_day_requests():
         key = el[0]
         _commands = el[1]
         group_requests = []
-        doses_req = _create_req([_commands[0]])
+        doses_req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [doses_req]
 
     return obj
@@ -617,7 +645,7 @@ def _create_age_group_by_region_on_day_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -742,7 +770,7 @@ def _create_vaccination_by_manufacturer_supplied_used_requests():
     for el in key_value:
         key = el[0]
         _commands = el[1]
-        req = _create_req([_commands[0]])
+        req = _create_req("vaccinations", [_commands[0]])
         obj[key] = [req]
 
     return obj
@@ -1018,10 +1046,10 @@ def _create_vaccination_gender_requests():
         female_first_command, female_second_command = commands[Gender.FEMALE]
         male_first_command, male_second_command = commands[Gender.MALE]
 
-        female_first_req = _create_req([female_first_command])
-        female_second_req = _create_req([female_second_command])
-        male_first_req = _create_req([male_first_command])
-        male_second_req = _create_req([male_second_command])
+        female_first_req = _create_req("vaccinations", [female_first_command])
+        female_second_req = _create_req("vaccinations", [female_second_command])
+        male_first_req = _create_req("vaccinations", [male_first_command])
+        male_second_req = _create_req("vaccinations", [male_second_command])
 
         obj = {
             "date": date,
@@ -1036,7 +1064,7 @@ def _create_vaccinations_by_manufacturer_requests():
     commands = _create_manufacturers_used_commands()
     obj = {}
     for key, value in commands.items():
-        obj[key] = _create_req([value])
+        obj[key] = _create_req("vaccinations", [value])
     return obj
 
 
@@ -1974,22 +2002,28 @@ _vaccinations_by_manufacturer_used_command = {
 }
 
 # REQ
-_vaccinations_timestamp_req = _create_req([_vaccinations_timestamp_command])
+_vaccinations_timestamp_req = _create_req(
+    "vaccinations", [_vaccinations_timestamp_command]
+)
 
-_vaccinations_by_day_req = _create_req([_vaccinations_by_day_command])
+_vaccinations_by_day_req = _create_req("vaccinations", [_vaccinations_by_day_command])
 
-_vaccinations_by_age_req = _create_req([_vaccinations_by_age_command])
+_vaccinations_by_age_req = _create_req("vaccinations", [_vaccinations_by_age_command])
 
-_vaccines_supplied_and_used_req = _create_req([_vaccinations_supplied_and_used_command])
+_vaccines_supplied_and_used_req = _create_req(
+    "vaccinations", [_vaccinations_supplied_and_used_command]
+)
 
-_vaccinations_by_region_req = _create_req([_vaccination_by_region_command], True)
+_vaccinations_by_region_req = _create_req(
+    "vaccinations", [_vaccination_by_region_command], True
+)
 
 _vaccines_supplied_by_manufacturer_req = _create_req(
-    [_vaccination_supplied_by_manufacturer_command]
+    "vaccinations", [_vaccination_supplied_by_manufacturer_command]
 )
 
 _vaccines_supplied_by_manufacturer_cum_req = _create_req(
-    [_vaccination_supplied_by_manufacturer_cum_command]
+    "vaccinations", [_vaccination_supplied_by_manufacturer_cum_command]
 )
 
 _vaccination_by_age_group_requests = _create_by_age_group_requests()
@@ -1997,7 +2031,7 @@ _vaccination_by_age_group_requests = _create_by_age_group_requests()
 _vaccinations_by_region_by_day_requests = _create_by_region_by_day_requests()
 
 _vaccinations_municipalities_share_req = _create_req(
-    [_vaccinations_by_municipalities_share_command], True
+    "vaccinations", [_vaccinations_by_municipalities_share_command], True
 )
 
 _vaccinations_age_group_by_region_on_day_requests = (
@@ -2024,14 +2058,1208 @@ def _create_vaccinations_data_range_request(
 ):
     commands = _get_date_range_group_commands(start_date, end_date, group=property)
 
-    group_req = _create_req([commands.group])
-    male1_req = _create_req([commands.male1])
-    male2_req = _create_req([commands.male2])
-    female1_req = _create_req([commands.female1])
-    female2_req = _create_req([commands.female2])
-    manufacturers_req = _create_req([commands.manufacturers])
+    group_req = _create_req("vaccinations", [commands.group])
+    male1_req = _create_req("vaccinations", [commands.male1])
+    male2_req = _create_req("vaccinations", [commands.male2])
+    female1_req = _create_req("vaccinations", [commands.female1])
+    female2_req = _create_req("vaccinations", [commands.female2])
+    manufacturers_req = _create_req("vaccinations", [commands.manufacturers])
 
     requests = DateRangeCommands_Requests(
         group_req, male1_req, male2_req, female1_req, female2_req, manufacturers_req
     )
     return requests
+
+
+# DASHBOARD LAB
+_lab_start_ts_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [{"Name": "c", "Entity": "Calendar", "Type": 0}],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "c"}},
+                                "Property": "Date",
+                            }
+                        },
+                        "Function": 3,
+                    },
+                    "Name": "Min(Calendar.Date)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                }
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_start_ts_req = _create_req("lab", [_lab_start_ts_command])
+
+
+_lab_end_ts_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [{"Name": "c", "Entity": "Calendar", "Type": 0}],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "c"}},
+                                "Property": "Date",
+                            }
+                        },
+                        "Function": 3,
+                    },
+                    "Name": "Min(Calendar.Date)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
+                                }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_end_ts_req = _create_req("lab", [_lab_end_ts_command])
+
+_lab_PCR_tests_performed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "d", "Entity": "Date_agg", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "d"}},
+                                "Property": "vsi_pacienti_pcr_cnb",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(Date_agg.vsi_pacienti_pcr_cnb)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_PCR_tests_performed_req = _create_req("lab", [_lab_PCR_tests_performed_command])
+
+_lab_PCR_total_tests_performed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "d", "Entity": "Date_agg", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "d"}},
+                                "Property": "sum_vsi_pacienti_pcr_cnb",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(Date_agg.sum_vsi_pacienti_pcr_cnb)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_PCR_total_tests_performed_req = _create_req(
+    "lab", [_lab_PCR_total_tests_performed_command]
+)
+
+_lab_active_cases_estimated_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_aktivnih",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_aktivnih)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_active_cases_estimated_req = _create_req(
+    "lab", [_lab_active_cases_estimated_command]
+)
+
+_lab_confirmed_total_male_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_vseh_primerov",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_vseh_primerov)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "In": {
+                            "Expressions": [
+                                {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "a"}},
+                                        "Property": "spol",
+                                    }
+                                }
+                            ],
+                            "Values": [[{"Literal": {"Value": "'M'"}}]],
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_confirmed_total_male_req = _create_req("lab", [_lab_confirmed_total_male_command])
+
+_lab_total_vaccinated_first_dose_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "e", "Entity": "eRCO", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Z 1 odmerkom",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO.Z 1 odmerkom)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_total_vaccinated_first_dose_req = _create_req(
+    "lab", [_lab_total_vaccinated_first_dose_command]
+)
+
+_lab_active_cases_100k_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_aktivnih_100",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_aktivnih_100)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_active_cases_100k_req = _create_req("lab", [_lab_active_cases_100k_command])
+
+_lab_cases_total_confirmed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_vseh_primerov",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_vseh_primerov)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_cases_total_confirmed_req = _create_req(
+    "lab", [_lab_cases_total_confirmed_command]
+)
+
+_lab_HAT_total_tests_performed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "d", "Entity": "Date_agg", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "d"}},
+                                "Property": "sum_vsi_pacienti_hagt",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(Date_agg.sum_vsi_pacienti_hagt)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_HAT_total_tests_performed_req = _create_req(
+    "lab", [_lab_HAT_total_tests_performed_command]
+)
+
+_lab_cases_confirmed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_primerov",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_primerov)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
+                                }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_cases_confirmed_req = _create_req("lab", [_lab_cases_confirmed_command])
+
+_lab_confirmed_total_female_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "St_vseh_primerov",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.St_vseh_primerov)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "In": {
+                            "Expressions": [
+                                {
+                                    "Column": {
+                                        "Expression": {"SourceRef": {"Source": "a"}},
+                                        "Property": "spol",
+                                    }
+                                }
+                            ],
+                            "Values": [[{"Literal": {"Value": "'F'"}}]],
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_confirmed_total_female_req = _create_req(
+    "lab", [_lab_confirmed_total_female_command]
+)
+
+_lab_total_vaccinated_fully_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "e", "Entity": "eRCO", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "e"}},
+                                "Property": "Z vsemi odmerki",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(eRCO.Z vsemi odmerki)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_total_vaccinated_fully_req = _create_req(
+    "lab", [_lab_total_vaccinated_fully_command]
+)
+
+_lab_cases_avg_7Days_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "a"}},
+                                "Property": "Povp_7_dni",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(All.Povp_7_dni)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_cases_avg_7Days_req = _create_req("lab", [_lab_cases_avg_7Days_command])
+
+_lab_HAT_tests_performed_command = {
+    "SemanticQueryDataShapeCommand": {
+        "Query": {
+            "Version": 2,
+            "From": [
+                {"Name": "d", "Entity": "Date_agg", "Type": 0},
+                {"Name": "c", "Entity": "Calendar", "Type": 0},
+            ],
+            "Select": [
+                {
+                    "Aggregation": {
+                        "Expression": {
+                            "Column": {
+                                "Expression": {"SourceRef": {"Source": "d"}},
+                                "Property": "vsi_pacienti_hagt",
+                            }
+                        },
+                        "Function": 0,
+                    },
+                    "Name": "Sum(Date_agg.vsi_pacienti_hagt)",
+                }
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "Comparison": {
+                                    "ComparisonKind": 0,
+                                    "Left": {
+                                        "Column": {
+                                            "Expression": {
+                                                "SourceRef": {"Source": "c"}
+                                            },
+                                            "Property": "Razlika_dan",
+                                        }
+                                    },
+                                    "Right": {"Literal": {"Value": "0L"}},
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "Condition": {
+                        "Comparison": {
+                            "ComparisonKind": 1,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Date",
+                                }
+                            },
+                            "Right": {
+                                "DateSpan": {
+                                    "Expression": {
+                                        "Literal": {
+                                            "Value": "datetime'2020-03-03T01:01:00'"
+                                        }
+                                    },
+                                    "TimeUnit": 5,
+                                }
+                            },
+                        }
+                    }
+                },
+            ],
+        },
+        "Binding": {
+            "Primary": {"Groupings": [{"Projections": [0]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Top": {}}},
+            "Version": 1,
+        },
+        "ExecutionMetricsKind": 1,
+    }
+}
+
+_lab_HAT_tests_performed_req = _create_req("lab", [_lab_HAT_tests_performed_command])
