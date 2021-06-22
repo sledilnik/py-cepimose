@@ -1770,8 +1770,9 @@ _vaccinations_by_municipalities_share_command = {
         "Query": {
             "Version": 2,
             "From": [
+                {"Name": "s", "Entity": "Sifrant_Obcina", "Type": 0},
                 {"Name": "e", "Entity": "eRCO_podatki_občine", "Type": 0},
-                {"Name": "s", "Entity": "xls_SURS_obcine", "Type": 0},
+                {"Name": "x", "Entity": "xls_SURS_obcine", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
@@ -1780,81 +1781,36 @@ _vaccinations_by_municipalities_share_command = {
                         "Expression": {"SourceRef": {"Source": "s"}},
                         "Property": "Obcina",
                     },
-                    "Name": "SURS_obcine.Obcina",
-                },
-                {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "s"}},
-                                "Property": "PopulacijaObcina",
-                            }
-                        },
-                        "Function": 0,
-                    },
-                    "Name": "CountNonNull(SURS_obcine.PopulacijaObcina)",
-                },
-                {
-                    "Measure": {
-                        "Expression": {"SourceRef": {"Source": "e"}},
-                        "Property": "Odst_CelotnaSLO_P",
-                    },
-                    "Name": "eRCO_podatki_obcine_pop.Odst_CelotnaSLO_P",
+                    "Name": "Sifrant_Obcina.Obcina",
                 },
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "e"}},
                         "Property": "Odst_CelotnaSLO_C",
                     },
-                    "Name": "eRCO_podatki_obcine_pop.Odst_CelotnaSLO_C",
+                    "Name": "eRCO_podatki_občine.Odst_CelotnaSLO_C",
+                },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "e"}},
+                        "Property": "Odst_CelotnaSLO_P",
+                    },
+                    "Name": "eRCO_podatki_občine.Odst_CelotnaSLO_P",
                 },
                 {
                     "Aggregation": {
                         "Expression": {
                             "Column": {
-                                "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Cepljeni​",
+                                "Expression": {"SourceRef": {"Source": "x"}},
+                                "Property": "PopulacijaObcina",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(eRCO_podatki_občine.Cepljeni​)",
-                },
-                {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "e"}},
-                                "Property": "Polno ﻿Cepljeni",
-                            }
-                        },
-                        "Function": 0,
-                    },
-                    "Name": "Sum(eRCO_podatki_občine.PolnöCepljeni)",
+                    "Name": "Sum(xls_SURS_obcine.PopulacijaObcina)",
                 },
             ],
             "Where": [
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "s"}
-                                                },
-                                                "Property": "Obcina",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [[{"Literal": {"Value": "null"}}]],
-                                }
-                            }
-                        }
-                    }
-                },
                 {
                     "Condition": {
                         "Comparison": {
@@ -1877,28 +1833,14 @@ _vaccinations_by_municipalities_share_command = {
                             },
                         }
                     }
-                },
-            ],
-            "OrderBy": [
-                {
-                    "Direction": 2,
-                    "Expression": {
-                        "Measure": {
-                            "Expression": {"SourceRef": {"Source": "e"}},
-                            "Property": "Odst_CelotnaSLO_P",
-                        }
-                    },
                 }
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4, 5]}]},
-            "DataReduction": {"DataVolume": 4, "Primary": {"Top": {}}},
-            "Aggregates": [{"Select": 2, "Aggregations": [{"Min": {}}, {"Max": {}}]}],
-            "SuppressedJoinPredicates": [1, 3, 4, 5],
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
+            "DataReduction": {"DataVolume": 3, "Primary": {"Window": {"Count": 500}}},
             "Version": 1,
         },
-        "ExecutionMetricsKind": 1,
     }
 }
 
