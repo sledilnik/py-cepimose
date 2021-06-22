@@ -173,6 +173,9 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(1, m.share1)
             self.assertGreaterEqual(1, m.share2)
 
+            self.assertAlmostEqual(m.dose1, m.population * float(m.share1), delta=0.00001)
+            self.assertAlmostEqual(m.dose2, m.population * float(m.share2), delta=0.00001)
+
     def test_vaccination_timestamp(self):
         ts = cepimose.vaccinations_timestamp()
         print("Last update:", ts)

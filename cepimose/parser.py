@@ -349,8 +349,8 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
         dose2 = None
         if len(C) == 4:
             name, share1, share2, population = C
-            dose1 = int(population * float(share1))
-            dose2 = int(population * float(share2))
+            dose1 = round(population * float(share1))
+            dose2 = round(population * float(share2))
         else:
             print(el)
             raise Exception(f"Unknown C length: {len(C)}")
