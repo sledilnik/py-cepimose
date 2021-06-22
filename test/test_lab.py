@@ -28,6 +28,7 @@ class CepimoseTestCase(unittest.TestCase):
         diff = today - ts
         self.assertGreaterEqual(day_delta, diff)
 
+    @attr("sledilnik")
     def test_lab_PCR_tests_performed(self):
         performed_PCR = cepimose.lab_PCR_tests_performed()
         self.assertGreaterEqual(performed_PCR, 0)
@@ -61,6 +62,7 @@ class CepimoseTestCase(unittest.TestCase):
         performed_HAT = cepimose.lab_HAT_total_tests_performed()
         self.assertGreaterEqual(performed_HAT, 3500000)
 
+    @attr("sledilnik")
     def test_lab_cases_confirmed(self):
         cases_confirmed = cepimose.lab_cases_confirmed()
         self.assertGreaterEqual(cases_confirmed, 0)
@@ -77,6 +79,7 @@ class CepimoseTestCase(unittest.TestCase):
         cases_avg_7days = cepimose.lab_cases_avg_7Days()
         self.assertGreaterEqual(cases_avg_7days, 0)
 
+    @attr("sledilnik")
     def test_lab_HAT_tests_performed(self):
         performed_HAT = cepimose.lab_HAT_tests_performed()
         self.assertGreaterEqual(performed_HAT, 0)
