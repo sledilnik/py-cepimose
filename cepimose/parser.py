@@ -362,6 +362,15 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
                 print(el)
                 raise Exception(f"Unknown R: {R}")
 
+        elif len(C) == 4:
+            if R == 48:
+                name, population, share2, share1 = el["C"]
+                dose2 = int(population * float(share2))
+                dose1 = int(population * float(share1))
+            else:
+                print(el)
+                raise Exception(f"Unknown R: {R}")
+
         else:
             print(el)
             raise Exception(f"Unknown C length: {len(C)}")
