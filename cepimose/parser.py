@@ -345,23 +345,12 @@ def _parse_vaccinations_by_municipalities_share(data) -> "list[VaccinationMunSha
     for el in resp:
         C = el["C"]
         R = el.get("R", None)
-        if len(C) == 6:
-            name, population, share2, share1, dose1, dose2 = el["C"]
-
-        elif len(C) == 5:
-            if R == 32:
-                name, population, share2, share1, dose1 = el["C"]
-                dose2 = int(population * float(share2))
-            elif R == 16:
-                name, population, share2, share1, dose2 = el["C"]
-                dose1 = int(population * float(share1))
-            elif R == 4:
-                name, population, share1, dose1, dose2 = el["C"]
-                share2 = dose2 / population
-            else:
-                print(el)
-                raise Exception(f"Unknown R: {R}")
-
+        dose1 = None
+        dose2 = None
+        if len(C) == 4:
+            name, share1, share2, population = C
+            dose1 = int(population * float(share1))
+            dose2 = int(population * float(share2))
         else:
             print(el)
             raise Exception(f"Unknown C length: {len(C)}")
