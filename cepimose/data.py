@@ -1630,7 +1630,7 @@ _vaccination_supplied_by_manufacturer_command = {
                                     "Function": 0,
                                 }
                             },
-                            "Right": {"Literal": {"Value": "1L"}},
+                            "Right": {"Literal": {"Value": "-100000000000L"}},
                         }
                     },
                     "Target": [
