@@ -209,7 +209,7 @@ class CepimoseTestCase(unittest.TestCase):
                 "row": 2,
                 "date": datetime.datetime(2021, 1, 4),
                 "supplied": 39780,
-                "used": 13259,
+                "used": 13563,
             },
             Manufacturer.AZ: {
                 "row": 2,
