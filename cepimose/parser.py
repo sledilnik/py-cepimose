@@ -177,7 +177,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             raise Exception("Missing manufacturer!")
         return manu_keys[num]
 
-    r_list = [None, 1, 2, 4, 6]
+    r_list = [None, 1, 2, 4, 5, 6]
 
     date = None
     manufacturer = None
@@ -229,7 +229,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             setattr(manu_row, "date", date)
             setattr(manu_row, manufacturer, value)
 
-        if R != 1:
+        if R != 1 and R != 5:
             parsed_data.append(manu_row)
     return parsed_data
 
