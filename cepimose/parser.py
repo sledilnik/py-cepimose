@@ -177,7 +177,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             raise Exception("Missing manufacturer!")
         return manu_keys[num]
 
-    r_list = [None, 1, 2, 6]
+    r_list = [None, 1, 2, 4, 6]
 
     date = None
     manufacturer = None
@@ -215,6 +215,13 @@ def _parse_vaccines_supplied_by_manufacturer(
             value = int(C[1])
             setattr(manu_row, "date", date)
             setattr(manu_row, manufacturer, value)
+
+        if R == 4:
+            # same value as previous, but different manufacturer
+            date = parse_date(C[0])
+            manufacturer = get_manufacturer((C[1]))
+            setattr(manu_row, "date", date)
+            setattr(manu_row, manufacturer, value) # reuse value from previous iteration
 
         if R == 6:
             # same manufacturer and value as previous
