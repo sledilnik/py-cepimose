@@ -173,8 +173,12 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(1, m.share1)
             self.assertGreaterEqual(1, m.share2)
 
-            self.assertAlmostEqual(m.dose1, m.population * float(m.share1), delta=0.00001)
-            self.assertAlmostEqual(m.dose2, m.population * float(m.share2), delta=0.00001)
+            self.assertAlmostEqual(
+                m.dose1, m.population * float(m.share1), delta=0.00001
+            )
+            self.assertAlmostEqual(
+                m.dose2, m.population * float(m.share2), delta=0.00001
+            )
 
     def test_vaccination_timestamp(self):
         ts = cepimose.vaccinations_timestamp()
@@ -208,7 +212,7 @@ class CepimoseTestCase(unittest.TestCase):
                 "row": 2,
                 "date": datetime.datetime(2021, 1, 4),
                 "supplied": 39780,
-                "used": 13259,
+                "used": 13563,
             },
             Manufacturer.AZ: {
                 "row": 2,
@@ -220,14 +224,15 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected_first, expected_second):
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.supplied, expected_first, delta=300)
-            self.assertAlmostEqual(row.used, expected_second, delta=300)
+            self.assertAlmostEqual(row.supplied, expected_first, delta=350)
+            self.assertAlmostEqual(row.used, expected_second, delta=350)
 
         for key, group_data in data.items():
             print(key, len(group_data))
             self.assertTrue(len(group_data) > 0)
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 26))
             test_item = Test_data[key]
+            print(group_data[test_item["row"]])
             assertRow(
                 group_data[test_item["row"]],
                 test_item["date"],
