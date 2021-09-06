@@ -4,7 +4,9 @@
 [![Tests](https://github.com/sledilnik/py-cepimose/actions/workflows/test.yml/badge.svg)](https://github.com/sledilnik/py-cepimose/actions/workflows/test.yml)
 [![Tests for Sledilnik.org](https://github.com/sledilnik/py-cepimose/actions/workflows/testSledilnik.yml/badge.svg)](https://github.com/sledilnik/py-cepimose/actions/workflows/testSledilnik.yml)
 
-Small library to parse raw data from NIJZ's PowerBI [dashboard](https://app.powerbi.com/view?r=eyJrIjoiYWQ3NGE1NTMtZWJkMi00NzZmLWFiNDItZDc5YjU5MGRkOGMyIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9) displaying vaccination stats for Slovenia
+Small library to parse raw data from NIJZ's PowerBI dashboards embedded in [NIJZ stats page](https://www.nijz.si/sl/dnevno-spremljanje-okuzb-s-sars-cov-2-covid-19):
+- [vaccination stats for Slovenia](https://app.powerbi.com/view?r=eyJrIjoiYWQ3NGE1NTMtZWJkMi00NzZmLWFiNDItZDc5YjU5MGRkOGMyIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9)
+- [latest epidemic data](https://app.powerbi.com/view?r=eyJrIjoiMDc3MDk4MmQtOGE4NS00YTRkLTgyYjktNWQzMjk5ODNlNjVhIiwidCI6ImFkMjQ1ZGFlLTQ0YTAtNGQ5NC04OTY3LTVjNjk5MGFmYTQ2MyIsImMiOjl9&pageName=ReportSection24198f7e6d06db643832) 
 
 
 ## Examples
