@@ -104,6 +104,9 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(
             data[65], datetime.datetime(2021, 7, 12), [72540, None, -250000, None]
         )  # Negative
+        assertRow(
+            data[73], datetime.datetime(2021, 7, 30), [None, 12000, None, 12000]
+        )  # R = 5, combined: two response data items with same, date, same value, different manufacturer
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
