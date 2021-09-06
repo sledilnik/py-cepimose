@@ -221,7 +221,16 @@ def _parse_vaccines_supplied_by_manufacturer(
             date = parse_date(C[0])
             manufacturer = get_manufacturer((C[1]))
             setattr(manu_row, "date", date)
-            setattr(manu_row, manufacturer, value) # reuse value from previous iteration
+            setattr(
+                manu_row, manufacturer, value
+            )  # reuse value from previous iteration
+
+        if R == 5:
+            # same value, same date, but different manufacturer
+            manufacturer = get_manufacturer((C[0]))
+            setattr(
+                parsed_data[-1], manufacturer, value
+            )  # reuse value from previous iteration
 
         if R == 6:
             # same manufacturer and value as previous
