@@ -561,7 +561,7 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
         delivery_date = Manufacturer_First_Delivery_Date[manufacturer]
         first_date = parse_date(resp[0]["G0"])
 
-        # Someone at NIJZ (or whoever is entering data) mostlikely made a mistake.
+        # Someone at NIJZ (or whoever is entering data) most likely made a mistake.
         # Moderna was first used on 2021-01-08 while first delivery was on 2021-01-12
         # Astra Zeneca was first used on 2021-01-28 while first delivery was on 2021-02-06
         is_used_before_delivered = delivery_date + DAY_DELTA > first_date
@@ -578,16 +578,10 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
         used = None
         for element in resp:
             date = parse_date(element["G0"])
-            if previous_date + day_delta < date:
-                print("Populate with dates with no usage!")
-                print(f"Last data date: {previous_date}")
-                print(f"Current data date: {date}")
-
             possible_missing_date = previous_date + day_delta
 
             while possible_missing_date < date:
                 # populate with dates in between
-                print(f"Add data for missing date: {possible_missing_date}")
                 parsed_data.append(VaccinationDose(possible_missing_date, None))
                 possible_missing_date += day_delta
 
