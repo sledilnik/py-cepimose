@@ -35,6 +35,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 44168)
         assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 44168)
 
+
         # values should be growing
         firstPrevious = 0
         secondPrevious = 0
