@@ -32,19 +32,8 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
         assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 315)
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 44168)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 44168)
-=======
         assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 43747)
         assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 43747)
-
->>>>>>> upstream/master
-=======
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 43747)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 43747)
->>>>>>> Stashed changes
 
         # values should be growing
         firstPrevious = 0
@@ -264,45 +253,18 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
-        def getDelta(num):
-            if num == None:
-                return 0
-            if num <= 500:
-                return 50
-            if num <= 1000:
-                return 100
-            if num <= 2000:
-                return 200
-            if num <= 4000:
-                return 400
-            return 500
-
         def assertRow(row, expected_date, expected):
             print(row)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(
-                row.pfizer, expected_pfizer, delta=getDelta(expected_pfizer)
-            )
-            self.assertAlmostEqual(
-                row.moderna, expected_moderna, delta=getDelta(expected_moderna)
-            )
-            self.assertAlmostEqual(row.az, expected_az, delta=getDelta(expected_az))
-            self.assertAlmostEqual(
-                row.janssen, expected_janssen, delta=getDelta(expected_janssen)
-            )
+            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
+            self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
+            self.assertAlmostEqual(row.az, expected_az, delta=50)
+            self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [2050, 66, None, None])
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4741, None, 1, None])
-=======
         assertRow(data[38], datetime.datetime(2021, 2, 3), [4672, None, 1, None])
->>>>>>> upstream/master
-=======
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4672, None, 1, None])
->>>>>>> Stashed changes
         assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
         assertRow(data[79], datetime.datetime(2021, 3, 16), [603, 445, 12, None])
