@@ -6,6 +6,7 @@ from .data import (
     _source,
     _vaccinations_dashboard_headers,
     _lab_dashboard_headers,
+    _schools_dashboard_headers,
     _vaccinations_by_day_req,
     _vaccinations_by_age_req,
     _vaccines_supplied_and_used_req,
@@ -38,6 +39,9 @@ from .data import (
     _lab_cases_avg_7Days_req,
     _lab_HAT_tests_performed_req,
 )
+import cepimose.schools_requests as schools_requests
+import cepimose.schools_parsers as schools_parsers
+
 from .parser import (
     _parse_vaccinations_by_age,
     _parse_vaccinations_by_day,
@@ -57,6 +61,7 @@ from .parser import (
     _create_vaccinations_by_manufacturer_parser,
     _parse_single_data,
 )
+
 
 from .types import (
     VaccinationByAgeRow,
@@ -746,3 +751,116 @@ def get_lab_dashboard() -> LabDashboard:
     )
 
     return result
+
+
+# DASHBOARD SCHOOLS PAGE 1
+
+
+def schools_timestamp():
+    return _get_data(
+        schools_requests._schools_timestamp_req,
+        _parse_vaccinations_timestamp,
+        _schools_dashboard_headers,
+    )
+
+
+def schools_date_range_timestamps():
+    return _get_data(
+        schools_requests._schools_date_range_timestamps_req,
+        schools_parsers._parse_schools_date_range_timestamps,
+        _schools_dashboard_headers,
+    )
+
+
+def schools_confirmed_and_active_cases():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_confirmed_and_active_cases_req,
+        schools_parsers._parse_schools_confirmed_and_active_cases,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_group():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_group_req,
+        schools_parsers._parse_schools_age_group,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_group_confirmed_weekly():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_group_confirmed_weekly_req,
+        schools_parsers._parse_schools_age_group_confirmed_weekly,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_groups_triada():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_groups_triada_req,
+        schools_parsers._parse_schools_age_groups_triada,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_group_percent_per_capita_weekly():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_group_percent_per_capita_weekly_req,
+        schools_parsers._parse_schools_age_group_percent_per_capita_weekly,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_groups_percent_triada_weekly():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_groups_percent_triada_weekly_req,
+        schools_parsers._parse_schools_age_groups_percent_triada_weekly,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+def schools_age_group_percent_weekly():
+    timestamp = schools_timestamp()
+    date_range_ts = schools_date_range_timestamps()
+
+    data = _get_data(
+        schools_requests._schools_age_group_percent_weekly_req,
+        schools_parsers._parse_schools_age_group_percent_weekly,
+        _schools_dashboard_headers,
+    )
+
+    return {"data": data, "ts": timestamp, "date_range_ts": date_range_ts}
+
+
+# TODO DASHBOARD SCHOOLS PAGE 2
