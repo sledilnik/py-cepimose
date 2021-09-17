@@ -61,6 +61,19 @@ _models = {
             ],
         },
     },
+    "nijz-schools-ver1": {
+        "headers": {"X-PowerBI-ResourceKey": "67f1618e-4f8d-4b31-831a-ea152fbb10db"},
+        "modelId": 350772,
+        "ApplicationContext": {
+            "DatasetId": "4b1a6e38-c16d-433b-aa33-bc389974eaad",
+            "Sources": [
+                {
+                    "ReportId": "e2e79021-643d-4264-b403-6e0cc305438f",
+                    "VisualId": "86c423d3705c86303ebe",
+                }
+            ],
+        },
+    },
 }
 
 
@@ -77,10 +90,12 @@ def _get_model_version(ver):
 
 _vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
+_schools_dashboard_model_ver = _get_model_version("nijz-schools-ver1")
 
 _model_versions = {
     "vaccinations": _vaccinations_dashboard_model_ver,
     "lab": _lab_dashboard_model_ver,
+    "schools": _schools_dashboard_model_ver,
 }
 
 
@@ -101,6 +116,7 @@ def _get_dashboard_headers(dashboard: str):
 
 _vaccinations_dashboard_headers = _get_dashboard_headers("vaccinations")
 _lab_dashboard_headers = _get_dashboard_headers("lab")
+_schools_dashboard_headers = _get_dashboard_headers("schools")
 
 
 def _get_default_req(dashboard: str):
@@ -128,7 +144,7 @@ def _create_req(dashboard: str, commands: list, cache_key=False):
     for command in commands:
         query["Query"]["Commands"].append(command)
     if cache_key:
-        query["CacheKey"] = json.dumps(query["Query"]["Commands"])
+        query["CacheKey"] = json.dumps({"Commands": query["Query"]["Commands"]}, sort_keys=True)
     req = _get_default_req(dashboard)
     req["queries"].append(query)
     return req
@@ -3235,3 +3251,6 @@ _lab_HAT_tests_performed_command = {
 }
 
 _lab_HAT_tests_performed_req = _create_req("lab", [_lab_HAT_tests_performed_command])
+
+
+# SCHOOLS DASHBOARD -> schools_request.py
