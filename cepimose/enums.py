@@ -49,3 +49,21 @@ class Manufacturer(Enum):
 class Gender(Enum):
     FEMALE = "Ženske"
     MALE = "Moški"
+
+
+@unique
+class SchoolGroups(Enum):
+    A = "a: 0 let"
+    B = "b: 1 - 5 let"
+    C = "c: 6 - 14 let"
+    D = "d: 15 - 18 let"
+    E = "e: 19 let in več"
+    TOTAL = "skupaj"
+
+
+@unique
+class SchoolTriadaGroups(Enum):
+    A = "a: 6 - 8 let"
+    B = "b: 9 - 11 let"
+    C = "c: 12 - 14 let"
+    TOTAL = "skupaj"
