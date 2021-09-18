@@ -264,7 +264,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [1987, 66, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4456, None, 1, None])
+        assertRow(data[38], datetime.datetime(2021, 2, 3), [4376, None, 1, None])
         assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
         assertRow(data[79], datetime.datetime(2021, 3, 16), [603, 445, 12, None])
@@ -378,7 +378,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=300)
 
         assertRow(data[21], datetime.datetime(2021, 1, 17), [3623, 1])
-        assertRow(data[70], datetime.datetime(2021, 3, 7), [7920, 4922])
+        assertRow(data[70], datetime.datetime(2021, 3, 7), [7920, 4562])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
