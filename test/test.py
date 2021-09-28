@@ -644,4 +644,4 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertAlmostEqual(group90.female.dose1, 9062, delta=200)
         self.assertAlmostEqual(group90.female.dose2, 7886, delta=200)
         self.assertAlmostEqual(group90.male.dose1, 2969, delta=200)
-        self.assertAlmostEqual(group90.male.dose2, 2809, delta=200)
+        self.assertAlmostEqual(group90.male.dose2, 2605, delta=200)
