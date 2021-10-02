@@ -32,8 +32,8 @@ class CepimoseTestCase(unittest.TestCase):
         #! NIJZ is changing data tests could fail in the future
         assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
         assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 315)
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 32934)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 32934)
+        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 32339)
+        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 32339)
 
         # values should be growing
         firstPrevious = 0
