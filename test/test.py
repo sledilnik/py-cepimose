@@ -257,24 +257,39 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+        def getDelta(value):
+            if value == None:
+                return 0
+            if value <= 500:
+                return 50
+            return value * 0.1
+
         def assertRow(row, expected_date, expected):
             print(row)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
-            self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
-            self.assertAlmostEqual(row.az, expected_az, delta=50)
-            self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
+            self.assertAlmostEqual(
+                row.pfizer, expected_pfizer, delta=getDelta(expected_pfizer)
+            )
+            self.assertAlmostEqual(
+                row.moderna, expected_moderna, delta=getDelta(expected_moderna)
+            )
+            self.assertAlmostEqual(row.az, expected_az, delta=getDelta(expected_az))
+            self.assertAlmostEqual(
+                row.janssen,
+                expected_janssen,
+                delta=getDelta(expected_janssen),
+            )
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [1625, 66, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [3573, None, 1, None])
+        assertRow(data[38], datetime.datetime(2021, 2, 3), [3509, None, 1, None])
         assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
-        assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
+        assertRow(data[50], datetime.datetime(2021, 2, 15), [24, 40, 18, None])
         assertRow(data[79], datetime.datetime(2021, 3, 16), [546, 445, 12, None])
         assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
         assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
-        assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None])
+        assertRow(data[120], datetime.datetime(2021, 4, 26), [2, None, 381, None])
         assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
 
         for row in data:
