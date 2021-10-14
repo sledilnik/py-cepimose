@@ -261,7 +261,7 @@ class CepimoseTestCase(unittest.TestCase):
             print(row)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
+            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=150)
             self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
             self.assertAlmostEqual(row.az, expected_az, delta=50)
             self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
