@@ -613,7 +613,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(data1, test_date1, [None, None, 1, 0])
         assertRow(data2, test_date2, [1536, 495, 916, 215])
-        assertRow(data3, test_date3, [2851, 2722, 1870, 1902])
+        assertRow(data3, test_date3, [2851, 2722, 1870, 1597])
         assertRow(data4, test_date4, [4652, 76, 4400, 53])
         assertRow(data5, test_date5, [1009, 690, 1321, 681])
 
