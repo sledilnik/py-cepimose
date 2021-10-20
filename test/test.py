@@ -364,7 +364,6 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertEquals(expected_keys, list(data.keys()), "Dict keys")
 
         for key, group_data in data.items():
-            print(key, len(group_data))
             self.assertTrue(len(group_data) != 0)
             self.assertDatesIncreaseSince(group_data, datetime.datetime(2020, 12, 27))
 
@@ -382,8 +381,8 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=300)
             self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=300)
 
-        assertRow(data[21], datetime.datetime(2021, 1, 17), [3547, 1])
-        assertRow(data[70], datetime.datetime(2021, 3, 7), [7920, 3547])
+        assertRow(data[21], datetime.datetime(2021, 1, 17), [4385, 1])
+        assertRow(data[70], datetime.datetime(2021, 3, 7), [9725, 5938])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
