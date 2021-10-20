@@ -37,36 +37,61 @@ def _parse_vaccinations_timestamp(data):
 def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     _validate_response_data(data)
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
-    parsed_data = []
+    parsed_data: "list[VaccinationByDayRow]" = []
+
+    r_list = [None, 8, 10, 12, 14]
 
     date = None
     people_vaccinated = None
     people_fully_vaccinated = None
+    people_third_dose = None
     for element in resp:
+
         C = element["C"]
-        if len(C) == 3:
-            date = parse_date(C[0])
+        R = element.get("R", None)
+        date = parse_date(C[0])
+
+        if R not in r_list:
+            print(R, C, sep="\t")
+            print(date)
+            raise Exception("Unknown R value!")
+
+        if R == None:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
-        elif len(C) == 2:
-            date = parse_date(C[0])
-            R = element["R"]
-            if R == 2:
-                people_fully_vaccinated = C[1]
-            else:
-                people_vaccinated = C[1]
-        elif len(C) == 1:
-            date = parse_date(C[0])
-        else:
-            raise Exception("Unknown item length!")
+            people_third_dose = C[3]
+        if R == 8:
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+            people_third_dose = parsed_data[-1].third_dose
 
+        if R == 10:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = parsed_data[-1].third_dose
+
+        if R == 12:
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = parsed_data[-1].third_dose
+
+        if R == 14:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = parsed_data[-1].third_dose
+
+        print(date)
         parsed_data.append(
             VaccinationByDayRow(
                 date=date,
                 first_dose=people_vaccinated,
                 second_dose=people_fully_vaccinated,
+                third_dose=people_third_dose,
             )
         )
+        print(parsed_data[-1])
+        print(element)
+        print()
 
     return parsed_data
 

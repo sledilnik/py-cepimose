@@ -25,6 +25,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertGreater(len(data), 150)
 
         def assertRow(row, expected_date, expected_first, expected_second):
+            print(row)
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(
                 row.first_dose, expected_first, delta=expected_first * 0.1
@@ -34,10 +35,10 @@ class CepimoseTestCase(unittest.TestCase):
             )
 
         #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 8)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 193)
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 30845)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 30845)
+        assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
+        assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 324)
+        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 46072)
+        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 46072)
 
         # values should be growing
         firstPrevious = 0
