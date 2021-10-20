@@ -170,16 +170,23 @@ def _get_default_by_age_group_command():
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Weight running total in Date",
+                            "Property": "KUM_St_en_odmerek",
                         },
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+                            "Property": "KUM_St_precepljenost",
                         },
                         "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "KUM_St_dodaten",
+                        },
+                        "Name": "eRCO_​​podatki.KUM_St_dodaten",
                     },
                 ],
                 "Where": [
@@ -199,55 +206,11 @@ def _get_default_by_age_group_command():
                                 "Values": [],
                             }
                         }
-                    },
-                    {
-                        "Condition": {
-                            "Not": {
-                                "Expression": {
-                                    "In": {
-                                        "Expressions": [
-                                            {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {"Source": "c"}
-                                                    },
-                                                    "Property": "CepivoIme",
-                                                }
-                                            }
-                                        ],
-                                        "Values": [[{"Literal": {"Value": "null"}}]],
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Condition": {
-                            "Comparison": {
-                                "ComparisonKind": 1,
-                                "Left": {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c1"}},
-                                        "Property": "Date",
-                                    }
-                                },
-                                "Right": {
-                                    "DateSpan": {
-                                        "Expression": {
-                                            "Literal": {
-                                                "Value": "datetime'2020-12-26T01:00:00'"
-                                            }
-                                        },
-                                        "TimeUnit": 5,
-                                    }
-                                },
-                            }
-                        }
-                    },
+                    }
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
                 "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
