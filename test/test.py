@@ -273,6 +273,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
         assertRow(data[23], datetime.datetime(2021, 1, 19), [2119, 66, None, None])
+        assertRow(data[33], datetime.datetime(2021, 1, 29), [4601, 1, None, None])
         assertRow(data[38], datetime.datetime(2021, 2, 3), [4854, None, None, None])
         assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
@@ -281,6 +282,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
         assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None])
         assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
+        assertRow(data[290], datetime.datetime(2021, 10, 13), [5192, 438, 4, 1])
 
         for row in data:
             print(row)
