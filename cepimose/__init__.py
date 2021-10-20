@@ -217,12 +217,12 @@ def vaccinations_by_region_by_day(
         key_value = _vaccinations_by_region_by_day_requests.items()
         for key, req_list in key_value:
             req = req_list[0]
-            doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+            doses = _get_data(req, _parse_vaccinations_by_day)
             obj[key] = doses
         return obj
 
     req = _vaccinations_by_region_by_day_requests[region][0]
-    doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+    doses = _get_data(req, _parse_vaccinations_by_day)
     obj[region] = doses
 
     return obj
