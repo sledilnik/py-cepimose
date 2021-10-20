@@ -297,6 +297,16 @@ class CepimoseTestCase(unittest.TestCase):
                 f"Too early for Janssen usage: {row}",
             )
 
+            # check for absurdly high numbers (eg leaked timestamps)
+            if row.pfizer is not None:
+                self.assertLess(row.pfizer, 100000, row)
+            if row.moderna is not None:
+                self.assertLess(row.moderna, 100000, row)
+            if row.az is not None:
+                self.assertLess(row.az, 100000, row)
+            if row.janssen is not None:
+                self.assertLess(row.janssen, 100000, row)
+
     @skip
     def test_vaccine_supply_and_usage(self):
         data = cepimose.vaccines_supplied_and_used()
