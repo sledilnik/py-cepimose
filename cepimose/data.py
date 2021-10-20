@@ -47,6 +47,21 @@ _models = {
             ],
         },
     },
+    "nijz-vaccinations-ver4": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
+        },
+        "modelId": 175575,
+        "ApplicationContext": {
+            "DatasetId": "51c64860-e9ec-49d8-8a36-743bced78e1a",
+            "Sources": [
+                {
+                    "ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee",
+                    "VisualId": "6c5cb705405bd5425008",
+                }
+            ],
+        },
+    },
     "nijz-lab-ver1": {
         "headers": {"X-PowerBI-ResourceKey": "0770982d-8a85-4a4d-82b9-5d329983e65a"},
         "modelId": 165881,
@@ -74,7 +89,7 @@ def _get_model_version(ver):
     }
 
 
-_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
+_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver4")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
 _model_versions = {
@@ -1145,46 +1160,28 @@ _vaccinations_by_day_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
+                        "Property": "KUM_St_en_odmerek",
                     },
                     "Name": "eRCO_podatki.Weight running total in Date",
                 },
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+                        "Property": "KUM_St_precepljenost",
                     },
                     "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
                 },
-            ],
-            "Where": [
                 {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                }
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "c"}},
+                        "Property": "KUM_St_dodaten",
+                    },
+                    "Name": "eRCO_​​podatki.KUM_St_dodaten",
+                },
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
             "Version": 1,
         },
