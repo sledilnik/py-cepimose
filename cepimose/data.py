@@ -1536,6 +1536,7 @@ _vaccination_supplied_by_manufacturer_command = {
             "From": [
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
                 {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
             ],
             "Select": [
                 {
@@ -1544,13 +1545,6 @@ _vaccination_supplied_by_manufacturer_command = {
                         "Property": "Date",
                     },
                     "Name": "Calendar.Date",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "n"}},
-                        "Property": "Vrsta cepiva",
-                    },
-                    "Name": "NIJZ_Odmerki.Vrsta cepiva",
                 },
                 {
                     "Aggregation": {
@@ -1564,32 +1558,15 @@ _vaccination_supplied_by_manufacturer_command = {
                     },
                     "Name": "Sum(NIJZ_Odmerki.odmerki*)",
                 },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                },
             ],
             "Where": [
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "n"}
-                                                },
-                                                "Property": "Vrsta cepiva",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [
-                                        [{"Literal": {"Value": "null"}}],
-                                        [{"Literal": {"Value": "'Skupaj'"}}],
-                                    ],
-                                }
-                            }
-                        }
-                    }
-                },
                 {
                     "Condition": {
                         "Not": {
@@ -1639,8 +1616,8 @@ _vaccination_supplied_by_manufacturer_command = {
                         },
                         {
                             "Column": {
-                                "Expression": {"SourceRef": {"Source": "n"}},
-                                "Property": "Vrsta cepiva",
+                                "Expression": {"SourceRef": {"Source": "s"}},
+                                "Property": "Cepivo_Ime",
                             }
                         },
                     ],
