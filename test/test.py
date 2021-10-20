@@ -28,18 +28,14 @@ class CepimoseTestCase(unittest.TestCase):
         def assertRow(row, expected_date, expected_first, expected_second):
             print(row)
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(
-                row.first_dose, expected_first, delta=expected_first * 0.1
-            )
-            self.assertAlmostEqual(
-                row.second_dose, expected_second, delta=expected_second * 0.1
-            )
+            self.assertAlmostEqual(row.first_dose, expected_first, delta=400)
+            self.assertAlmostEqual(row.second_dose, expected_second, delta=400)
 
         #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 324)
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 46072)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 46072)
+        assertRow(data[9], datetime.datetime(2021, 1, 5), 16121, 0)
+        assertRow(data[22], datetime.datetime(2021, 1, 18), 49563, 315)
+        assertRow(data[41], datetime.datetime(2021, 2, 6), 56697, 45823)
+        assertRow(data[42], datetime.datetime(2021, 2, 7), 56697, 45823)
 
         # values should be growing
         firstPrevious = 0
@@ -266,17 +262,17 @@ class CepimoseTestCase(unittest.TestCase):
             print(row)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=150)
+            self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=50)
             self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
             self.assertAlmostEqual(row.az, expected_az, delta=50)
             self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
 
         assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
-        assertRow(data[23], datetime.datetime(2021, 1, 19), [2119, 66, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4854, None, None, None])
+        assertRow(data[23], datetime.datetime(2021, 1, 19), [2103, 66, None, None])
+        assertRow(data[38], datetime.datetime(2021, 2, 3), [4805, None, None, None])
         assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
         assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
-        assertRow(data[79], datetime.datetime(2021, 3, 16), [609, 452, None, None])
+        assertRow(data[79], datetime.datetime(2021, 3, 16), [603, 445, None, None])
         assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
         assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
         assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None])
@@ -388,8 +384,8 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=300)
             self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=300)
 
-        assertRow(data[21], datetime.datetime(2021, 1, 17), [4385, 1])
-        assertRow(data[70], datetime.datetime(2021, 3, 7), [9725, 5938])
+        assertRow(data[21], datetime.datetime(2021, 1, 17), [3623, 1])
+        assertRow(data[70], datetime.datetime(2021, 3, 7), [7920, 4922])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
@@ -626,7 +622,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(data1, test_date1, [None, None, 1, 0])
         assertRow(data2, test_date2, [1536, 495, 916, 215])
-        assertRow(data3, test_date3, [2851, 2722, 1870, 1597])
+        assertRow(data3, test_date3, [2851, 3024, 1870, 1902])
         assertRow(data4, test_date4, [4652, 76, 4400, 53])
         assertRow(data5, test_date5, [1009, 690, 1321, 681])
 
