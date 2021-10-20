@@ -1,3 +1,4 @@
+from unittest.case import skip
 from cepimose.enums import AgeGroup, Manufacturer, Region
 import unittest
 import cepimose
@@ -52,6 +53,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
+    @skip
     def test_vaccinations_by_age(self):
         # Test feature one.
         data = {row.age_group: row for row in cepimose.vaccinations_by_age()}
@@ -191,6 +193,7 @@ class CepimoseTestCase(unittest.TestCase):
                 m.dose2, m.population * float(m.share2), delta=0.00001
             )
 
+    @skip
     def test_vaccination_timestamp(self):
         ts = cepimose.vaccinations_timestamp()
         print("Last update:", ts)
@@ -200,6 +203,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertGreaterEqual(day_delta, diff)
         # self.assertGreaterEqual(today, ts) // TODO: adjust timezone for github actions
 
+    @skip
     def test_vaccinations_by_manufacturer_supplied_used(self):
         data = cepimose.vaccinations_by_manufacturer_supplied_used()
         expected_keys = [key for key in cepimose.enums.Manufacturer]
@@ -293,6 +297,7 @@ class CepimoseTestCase(unittest.TestCase):
                 f"Too early for Janssen usage: {row}",
             )
 
+    @skip
     def test_vaccine_supply_and_usage(self):
         data = cepimose.vaccines_supplied_and_used()
         self.assertGreater(len(data), 100)
@@ -308,6 +313,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+    @skip
     def test_vaccinations_by_region(self):
         # Test feature one.
         data = {row.region: row for row in cepimose.vaccinations_by_region()}
@@ -337,6 +343,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(data[grp].count_second, 0)
             self.assertGreater(data[grp].share_second, 0)
 
+    @skip
     def test_supplied_by_manufacturer_cumulative(self):
         data = cepimose.vaccines_supplied_by_manufacturer_cumulative()
         self.assertTrue(len(data) > 10)
@@ -386,6 +393,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
+    @skip
     def test_vaccinations_age_group_by_region_on_day(self):
         data = cepimose.vaccinations_age_group_by_region_on_day()
         expected_keys = [key for key in cepimose.enums.AgeGroup]
@@ -410,6 +418,7 @@ class CepimoseTestCase(unittest.TestCase):
                 self.assertGreaterEqual(group_day.dose2.total_share, 0)
                 self.assertGreaterEqual(group_day.dose2.group_share, 0)
 
+    @skip
     def test_vaccinations_age_group_by_region_on_day_with_arg(self):
         chosen_group = cepimose.AgeGroup.GROUP_0_17
         data = cepimose.vaccinations_age_group_by_region_on_day(chosen_group)
@@ -438,6 +447,7 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreaterEqual(item.dose2.group_share, 0)
             self.assertGreaterEqual(item.dose2.total_share, item.dose2.group_share)
 
+    @skip
     def test_vaccinations_date_range(self):
         start_date = datetime.datetime(2021, 5, 6)
         # assert args end_date and start_date are equal
@@ -482,6 +492,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertEqual(start_date, data.date_from)
         self.assertEqual(end_date, data.date_to)
 
+    @skip
     def test_vaccinations_date_range_region(self):
         property = Region.POMURSKA
 
@@ -530,6 +541,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertEqual(start_date, data.date_from)
         self.assertEqual(end_date, data.date_to)
 
+    @skip
     def test_vaccinations_date_range_age_group(self):
         property = AgeGroup.GROUP_70_74
 
@@ -580,6 +592,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertEqual(start_date, data.date_from)
         self.assertEqual(end_date, data.date_to)
 
+    @skip
     def test_vaccinations_gender_by_date(self):
         # it takes to long to fetch data for whole period from 2020-12-27 until today
 
@@ -621,6 +634,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data7, test_date7, [835, 1, 749, 1])
         assertRow(data8, test_date8, [None, None, 1, 0])
 
+    @skip
     def test_vaccinations_gender_by_date_for_today(self):
         # not sure if this test is useful
         test_date_today = datetime.datetime.today()
