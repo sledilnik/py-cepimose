@@ -603,6 +603,17 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
 
             date = parse_date(C[0])
             total_used = C[-1]
+
+            if R == 30:
+                total_used = parsed_data[-1].dose
+
+            # I have no idea what Ø is. I can speculate that is related to doses: first, second or third
+            if R == 28 and Ø == None:
+                total_used = parsed_data[-1].dose
+
+            if R == 28 and Ø == 2:
+                total_used = parsed_data[-1].dose
+
             parsed_data.append(VaccinationDose(date, total_used))
 
         return parsed_data
