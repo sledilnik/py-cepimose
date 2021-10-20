@@ -2234,12 +2234,12 @@ _lab_PCR_total_tests_performed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "d"}},
-                                "Property": "sum_vsi_pacienti_pcr_cnb",
+                                "Property": "vsi_pacienti_pcr_cnb",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(Date_agg.sum_vsi_pacienti_pcr_cnb)",
+                    "Name": "Sum(Date_agg.vsi_pacienti_pcr_cnb)",
                 }
             ],
             "Where": [
@@ -2311,16 +2311,11 @@ _lab_active_cases_estimated_command = {
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_aktivnih",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Aktivni_primeri",
                     },
-                    "Name": "Sum(All.St_aktivnih)",
+                    "Name": "All.Aktivni_primeri",
                 }
             ],
             "Where": [
@@ -2396,12 +2391,12 @@ _lab_confirmed_total_male_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2563,23 +2558,44 @@ _lab_active_cases_100k_command = {
             "Version": 2,
             "From": [
                 {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "r", "Entity": "Regija", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_aktivnih_100",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Aktivni_100k",
                     },
-                    "Name": "Sum(All.St_aktivnih_100)",
+                    "Name": "All.Aktivni_100k",
                 }
             ],
             "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "r"}
+                                                },
+                                                "Property": "Regija",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [
+                                        [{"Literal": {"Value": "null"}}],
+                                        [{"Literal": {"Value": "'Celotna Slovenija'"}}],
+                                        [{"Literal": {"Value": "'TUJINA'"}}],
+                                    ],
+                                }
+                            }
+                        }
+                    }
+                },
                 {
                     "Condition": {
                         "Not": {
@@ -2634,6 +2650,7 @@ _lab_active_cases_100k_command = {
     }
 }
 
+
 _lab_active_cases_100k_req = _create_req("lab", [_lab_active_cases_100k_command])
 
 _lab_cases_total_confirmed_command = {
@@ -2650,12 +2667,12 @@ _lab_cases_total_confirmed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2731,12 +2748,12 @@ _lab_HAT_total_tests_performed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "d"}},
-                                "Property": "sum_vsi_pacienti_hagt",
+                                "Property": "vsi_pacienti_hagt",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(Date_agg.sum_vsi_pacienti_hagt)",
+                    "Name": "Sum(Date_agg.vsi_pacienti_hagt)",
                 }
             ],
             "Where": [
@@ -2812,12 +2829,12 @@ _lab_cases_confirmed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2885,12 +2902,12 @@ _lab_confirmed_total_female_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -3054,23 +3071,43 @@ _lab_cases_avg_7Days_command = {
             "Version": 2,
             "From": [
                 {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "r", "Entity": "Regija", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "Povp_7_dni",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Povprečje_7dni",
                     },
-                    "Name": "Sum(All.Povp_7_dni)",
+                    "Name": "All.Povprečje_7dni",
                 }
             ],
             "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "r"}
+                                                },
+                                                "Property": "Regija",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [
+                                        [{"Literal": {"Value": "null"}}],
+                                        [{"Literal": {"Value": "'Celotna Slovenija'"}}],
+                                    ],
+                                }
+                            }
+                        }
+                    }
+                },
                 {
                     "Condition": {
                         "Not": {
