@@ -39,7 +39,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data: "list[VaccinationByDayRow]" = []
 
-    r_list = [None, 8, 10, 12, 14]
+    r_list = [None, 2, 6, 8, 10, 12, 14]
 
     date = None
     people_vaccinated = None
@@ -52,14 +52,24 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
         date = parse_date(C[0])
 
         if R not in r_list:
-            print(R, C, sep="\t")
-            print(date)
+            print(date, R, C, sep="\t")
             raise Exception("Unknown R value!")
 
         if R == None:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = C[3]
+
+        if R == 2:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = C[2]
+
+        if R == 6:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].first_dose
+            people_third_dose = C[1]
+
         if R == 8:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
@@ -80,7 +90,6 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
 
-        print(date)
         parsed_data.append(
             VaccinationByDayRow(
                 date=date,
@@ -89,9 +98,6 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
                 third_dose=people_third_dose,
             )
         )
-        print(parsed_data[-1])
-        print(element)
-        print()
 
     return parsed_data
 
