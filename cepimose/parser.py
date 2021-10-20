@@ -586,49 +586,24 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
     }
 
     def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
+        # Here is possible to get data for, first, second, third and total.
+        # We need total at the moment.
         _validate_response_data(data)
         resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
-        delivery_date = Manufacturer_First_Delivery_Date[manufacturer]
-        first_date = parse_date(resp[0]["G0"])
-
-        # Someone at NIJZ (or whoever is entering data) most likely made a mistake.
-        # Moderna was first used on 2021-01-08 while first delivery was on 2021-01-12
-        # Astra Zeneca was first used on 2021-01-28 while first delivery was on 2021-02-06
-        is_used_before_delivered = delivery_date + DAY_DELTA > first_date
-        if is_used_before_delivered:
-            print(
-                f"{manufacturer.value} was used before it was delivered!\nFirst delivery: {delivery_date}.\nFirst use: {first_date}"
-            )
-
-        parsed_data = []
-        day_delta = datetime.timedelta(days=1)
-        previous_date = (
-            first_date if is_used_before_delivered else delivery_date + DAY_DELTA
-        )
-        used = None
+        parsed_data: "list[VaccinationDose]" = []
         for element in resp:
-            date = parse_date(element["G0"])
-            possible_missing_date = previous_date + day_delta
+            C = element.get("C")
+            R = element.get(
+                "R", None
+            )  # maybe for later if we decide to parse for each dose
+            Ø = element.get(
+                "Ø", None
+            )  # maybe for later if we decide to parse for each dose
 
-            while possible_missing_date < date:
-                # populate with dates in between
-                parsed_data.append(VaccinationDose(possible_missing_date, None))
-                possible_missing_date += day_delta
-
-            previous_date = date
-
-            X = element["X"]
-            M0 = X[0].get("M0", None)
-            R = X[0].get("R", None)
-            if M0 != None:
-                parsed_data.append(VaccinationDose(date, M0))
-                used = M0
-            elif R == 1:
-                parsed_data.append(VaccinationDose(date, used))
-            else:
-                print(R, element)
-                raise Exception(f"Unknown R: {R}")
+            date = parse_date(C[0])
+            total_used = C[-1]
+            parsed_data.append(VaccinationDose(date, total_used))
 
         return parsed_data
 
