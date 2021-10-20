@@ -144,8 +144,8 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
             self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
 
-        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
-        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
+        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 1180, 0)
+        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 3043, 5)
 
     def test_vaccinations_by_region_by_day_with_arg(self):
         data = cepimose.vaccinations_by_region_by_day(cepimose.data.Region.POMURSKA)
@@ -159,8 +159,8 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
             self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
 
-        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 988, 0)
-        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 2847, 5)
+        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 1180, 0)
+        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 3043, 5)
 
     @attr("sledilnik")
     def test_vaccinations_by_municipalities_share(self):
