@@ -44,27 +44,14 @@ class CepimoseTestCase(unittest.TestCase):
         data = cepimose.vaccinations_by_day()
         self.assertGreater(len(data), 150)
 
-        def assertRow(
-            row, expected_date, expected_first, expected_second, expected_third=0
-        ):
-            print(row)
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(
-                row.first_dose, expected_first, delta=expected_first * 0.1
-            )
-            self.assertAlmostEqual(
-                row.second_dose, expected_second, delta=expected_second * 0.1
-            )
-            self.assertAlmostEqual(
-                row.third_dose, expected_third, delta=expected_third * 0.1
-            )
+        assertRow = self.createAssertVaccinationByDayRow(0.1, False)
 
         #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 5), 15711, 0)
-        assertRow(data[22], datetime.datetime(2021, 1, 18), 49100, 324)
-        assertRow(data[41], datetime.datetime(2021, 2, 6), 56066, 46072)
-        assertRow(data[42], datetime.datetime(2021, 2, 7), 56066, 46072)
-        assertRow(data[274], datetime.datetime(2021, 9, 27), 1157192, 1024689, 18295)
+        assertRow(data[9], datetime.datetime(2021, 1, 5), [15711, 0, 0])
+        assertRow(data[22], datetime.datetime(2021, 1, 18), [49100, 324, 0])
+        assertRow(data[41], datetime.datetime(2021, 2, 6), [56066, 46072, 0])
+        assertRow(data[42], datetime.datetime(2021, 2, 7), [56066, 46072, 0])
+        assertRow(data[274], datetime.datetime(2021, 9, 27), [1157192, 1024689, 18295])
 
         # values should be growing
         firstPrevious = 0
@@ -177,25 +164,13 @@ class CepimoseTestCase(unittest.TestCase):
         expected_keys = [cepimose.data.Region.POMURSKA]
         self.assertEquals(expected_keys, list(data.keys()), "Object keys")
 
-        pomurska_region = data[cepimose.data.Region.POMURSKA]
+        region = data[cepimose.data.Region.POMURSKA]
 
-        def assertRow(
-            row: VaccinationByDayRow,
-            expected_date,
-            expected_first,
-            expected_second,
-            expected_third=0,
-        ):
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.first_dose, expected_first, delta=30)
-            self.assertAlmostEqual(row.second_dose, expected_second, delta=30)
-            self.assertAlmostEqual(row.third_dose, expected_third, delta=30)
+        assertRow = self.createAssertVaccinationByDayRow(30, True)
 
-        assertRow(pomurska_region[9], datetime.datetime(2021, 1, 5), 1180, 0)
-        assertRow(pomurska_region[22], datetime.datetime(2021, 1, 18), 3043, 5)
-        assertRow(
-            pomurska_region[274], datetime.datetime(2021, 9, 27), 63124, 55807, 588
-        )
+        assertRow(region[9], datetime.datetime(2021, 1, 5), [1180, 0, 0])
+        assertRow(region[22], datetime.datetime(2021, 1, 18), [3043, 5, 0])
+        assertRow(region[274], datetime.datetime(2021, 9, 27), [63124, 55807, 588])
 
     @attr("sledilnik")
     def test_vaccinations_by_municipalities_share(self):
@@ -433,13 +408,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertTrue(len(data) > 10)
 
-        def assertRow(
-            row: VaccinationByDayRow, expected_date, expected_dose: List[int]
-        ):
-            self.assertEqual(row.date, expected_date)
-            self.assertAlmostEqual(row.first_dose, expected_dose[0], delta=300)
-            self.assertAlmostEqual(row.second_dose, expected_dose[1], delta=300)
-            self.assertAlmostEqual(row.third_dose, expected_dose[2], delta=300)
+        assertRow = self.createAssertVaccinationByDayRow(300, True)
 
         assertRow(data[21], datetime.datetime(2021, 1, 17), [4385, 1, 0])
         assertRow(data[70], datetime.datetime(2021, 3, 7), [9725, 5938, 0])
