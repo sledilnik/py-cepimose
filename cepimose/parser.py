@@ -39,7 +39,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data: "list[VaccinationByDayRow]" = []
 
-    r_list = [None, 8, 10, 12, 14]
+    r_list = [None, 2, 6, 8, 10, 12, 14]
 
     date = None
     people_vaccinated = None
@@ -52,17 +52,42 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
         date = parse_date(C[0])
 
         if R not in r_list:
-            print(R, C, sep="\t")
-            print(date)
+            print(date, R, C, sep="\t")
             raise Exception("Unknown R value!")
 
         if R == None:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = C[3]
+
+        if R == 2:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = C[2]
+
+        if R == 6:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].first_dose
+            people_third_dose = C[1]
+
         if R == 8:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
+            people_third_dose = parsed_data[-1].third_dose
+
+        if R == 10:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = parsed_data[-1].third_dose
+
+        if R == 12:
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = parsed_data[-1].third_dose
+
+        if R == 14:
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
 
         if R == 10:
@@ -580,49 +605,35 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
     }
 
     def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
+        # Here is possible to get data for, first, second, third and total.
+        # We need total at the moment.
         _validate_response_data(data)
         resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
-        delivery_date = Manufacturer_First_Delivery_Date[manufacturer]
-        first_date = parse_date(resp[0]["G0"])
-
-        # Someone at NIJZ (or whoever is entering data) most likely made a mistake.
-        # Moderna was first used on 2021-01-08 while first delivery was on 2021-01-12
-        # Astra Zeneca was first used on 2021-01-28 while first delivery was on 2021-02-06
-        is_used_before_delivered = delivery_date + DAY_DELTA > first_date
-        if is_used_before_delivered:
-            print(
-                f"{manufacturer.value} was used before it was delivered!\nFirst delivery: {delivery_date}.\nFirst use: {first_date}"
-            )
-
-        parsed_data = []
-        day_delta = datetime.timedelta(days=1)
-        previous_date = (
-            first_date if is_used_before_delivered else delivery_date + DAY_DELTA
-        )
-        used = None
+        parsed_data: "list[VaccinationDose]" = []
         for element in resp:
-            date = parse_date(element["G0"])
-            possible_missing_date = previous_date + day_delta
+            C = element.get("C")
+            R = element.get(
+                "R", None
+            )  # maybe for later if we decide to parse for each dose
+            Ø = element.get(
+                "Ø", None
+            )  # maybe for later if we decide to parse for each dose
 
-            while possible_missing_date < date:
-                # populate with dates in between
-                parsed_data.append(VaccinationDose(possible_missing_date, None))
-                possible_missing_date += day_delta
+            date = parse_date(C[0])
+            total_used = C[-1]
 
-            previous_date = date
+            if R == 30:
+                total_used = parsed_data[-1].dose
 
-            X = element["X"]
-            M0 = X[0].get("M0", None)
-            R = X[0].get("R", None)
-            if M0 != None:
-                parsed_data.append(VaccinationDose(date, M0))
-                used = M0
-            elif R == 1:
-                parsed_data.append(VaccinationDose(date, used))
-            else:
-                print(R, element)
-                raise Exception(f"Unknown R: {R}")
+            # I have no idea what Ø is. I can speculate that is related to doses: first, second or third
+            if R == 28 and Ø == None:
+                total_used = parsed_data[-1].dose
+
+            if R == 28 and Ø == 2:
+                total_used = parsed_data[-1].dose
+
+            parsed_data.append(VaccinationDose(date, total_used))
 
         return parsed_data
 
