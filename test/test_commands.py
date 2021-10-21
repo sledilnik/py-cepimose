@@ -1,6 +1,7 @@
 import datetime
 from enum import unique
 import unittest
+from unittest.case import skip
 import cepimose
 from cepimose.enums import AgeGroup, Gender, Manufacturer, Region
 
@@ -1944,6 +1945,7 @@ manufacturers_date_range_queries_2021_05_21_2021_05_03 = [
 ]
 
 
+@skip
 class CepimoseTestCommands(unittest.TestCase):
     def setUp(self):
         super().setUp()

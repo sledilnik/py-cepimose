@@ -187,12 +187,11 @@ def vaccinations_by_age_group(
         key_value = _vaccination_by_age_group_requests.items()
         for key, req_list in key_value:
             req = req_list[0]
-
-            obj[key] = _get_data(req, _parse_vaccinations_by_age_group)
+            obj[key] = _get_data(req, _parse_vaccinations_by_day)
         return obj
 
     req = _vaccination_by_age_group_requests[group][0]
-    return _get_data(req, _parse_vaccinations_by_age_group)
+    return _get_data(req, _parse_vaccinations_by_day)
 
 
 # by region by day
@@ -217,12 +216,12 @@ def vaccinations_by_region_by_day(
         key_value = _vaccinations_by_region_by_day_requests.items()
         for key, req_list in key_value:
             req = req_list[0]
-            doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+            doses = _get_data(req, _parse_vaccinations_by_day)
             obj[key] = doses
         return obj
 
     req = _vaccinations_by_region_by_day_requests[region][0]
-    doses = _get_data(req, _parse_vaccinations_by_region_by_day)
+    doses = _get_data(req, _parse_vaccinations_by_day)
     obj[region] = doses
 
     return obj

@@ -11,6 +11,7 @@ class VaccinationByDayRow:
     date: datetime.datetime
     first_dose: int
     second_dose: int = 0
+    third_dose: int = 0
 
 
 # ? TODO merge VaccinationByAgeRow and VaccinationByRegionRow into one dataclass

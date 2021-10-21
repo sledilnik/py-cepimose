@@ -502,12 +502,20 @@ def _get_default_manufacturer_used_command(manu: Manufacturer):
                         "Name": "Calendar.Date",
                     },
                     {
-                        "Column": _get_Column("s", "Cepivo_Ime"),
-                        "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                        "Measure": _get_Column("c", "Weight for 1"),
+                        "Name": "eRCO_​​podatki.Weight for 1",
+                    },
+                    {
+                        "Measure": _get_Column("c", "Weight for 2"),
+                        "Name": "eRCO_​​podatki.Weight for 2",
+                    },
+                    {
+                        "Measure": _get_Column("c", "Weight for 2"),
+                        "Name": "eRCO_​​podatki.Weight for 2",
                     },
                     {
                         "Aggregation": {
-                            "Expression": {"Column": _get_Column("c", "Weight")},
+                            "Expression": {"Column": _get_Column("c", "weight")},
                             "Function": 0,
                         },
                         "Name": "Sum(eRCO_podatki_ed.Weight)",
@@ -515,18 +523,12 @@ def _get_default_manufacturer_used_command(manu: Manufacturer):
                 ],
                 "Where": [
                     _get_Condition_Comparison_With_DateSpan("c1", 2),
-                    _get_Condition_Not_Expression(),
                     _get_Condition_In_Expression("Cepivo_Ime", "s", manu.value),
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 2]}]},
-                "Secondary": {"Groupings": [{"Projections": [1]}]},
-                "DataReduction": {
-                    "DataVolume": 4,
-                    "Primary": {"Sample": {}},
-                    "Secondary": {"Top": {}},
-                },
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
+                "DataReduction": {"DataVolume": 4, "Primary": {"Sample": {}}},
                 "Version": 1,
             },
             **_ExecutionMetrics,

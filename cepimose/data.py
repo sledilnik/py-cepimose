@@ -47,6 +47,21 @@ _models = {
             ],
         },
     },
+    "nijz-vaccinations-ver4": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
+        },
+        "modelId": 175575,
+        "ApplicationContext": {
+            "DatasetId": "51c64860-e9ec-49d8-8a36-743bced78e1a",
+            "Sources": [
+                {
+                    "ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee",
+                    "VisualId": "6c5cb705405bd5425008",
+                }
+            ],
+        },
+    },
     "nijz-lab-ver1": {
         "headers": {"X-PowerBI-ResourceKey": "0770982d-8a85-4a4d-82b9-5d329983e65a"},
         "modelId": 165881,
@@ -74,7 +89,7 @@ def _get_model_version(ver):
     }
 
 
-_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver3")
+_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver4")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
 _model_versions = {
@@ -155,16 +170,23 @@ def _get_default_by_age_group_command():
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Weight running total in Date",
+                            "Property": "KUM_St_en_odmerek",
                         },
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+                            "Property": "KUM_St_precepljenost",
                         },
                         "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "KUM_St_dodaten",
+                        },
+                        "Name": "eRCO_​​podatki.KUM_St_dodaten",
                     },
                 ],
                 "Where": [
@@ -184,55 +206,11 @@ def _get_default_by_age_group_command():
                                 "Values": [],
                             }
                         }
-                    },
-                    {
-                        "Condition": {
-                            "Not": {
-                                "Expression": {
-                                    "In": {
-                                        "Expressions": [
-                                            {
-                                                "Column": {
-                                                    "Expression": {
-                                                        "SourceRef": {"Source": "c"}
-                                                    },
-                                                    "Property": "CepivoIme",
-                                                }
-                                            }
-                                        ],
-                                        "Values": [[{"Literal": {"Value": "null"}}]],
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "Condition": {
-                            "Comparison": {
-                                "ComparisonKind": 1,
-                                "Left": {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c1"}},
-                                        "Property": "Date",
-                                    }
-                                },
-                                "Right": {
-                                    "DateSpan": {
-                                        "Expression": {
-                                            "Literal": {
-                                                "Value": "datetime'2020-12-26T01:00:00'"
-                                            }
-                                        },
-                                        "TimeUnit": 5,
-                                    }
-                                },
-                            }
-                        }
-                    },
+                    }
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
                 "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
@@ -301,16 +279,23 @@ def _get_default_by_region_by_day_command():
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Weight running total in Date",
+                            "Property": "KUM_St_en_odmerek",
                         },
                         "Name": "eRCO_podatki.Weight running total in Date",
                     },
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+                            "Property": "KUM_St_precepljenost",
                         },
                         "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "KUM_St_dodaten",
+                        },
+                        "Name": "eRCO_​​podatki.KUM_St_dodaten",
                     },
                 ],
                 "Where": [
@@ -330,34 +315,11 @@ def _get_default_by_region_by_day_command():
                                 "Values": [],
                             }
                         }
-                    },
-                    {
-                        "Condition": {
-                            "Comparison": {
-                                "ComparisonKind": 1,
-                                "Left": {
-                                    "Column": {
-                                        "Expression": {"SourceRef": {"Source": "c1"}},
-                                        "Property": "Date",
-                                    }
-                                },
-                                "Right": {
-                                    "DateSpan": {
-                                        "Expression": {
-                                            "Literal": {
-                                                "Value": "datetime'2020-12-26T01:00:00'"
-                                            }
-                                        },
-                                        "TimeUnit": 5,
-                                    }
-                                },
-                            }
-                        }
-                    },
+                    }
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
                 "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
@@ -1145,46 +1107,28 @@ _vaccinations_by_day_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Weight running total in Date",
+                        "Property": "KUM_St_en_odmerek",
                     },
                     "Name": "eRCO_podatki.Weight running total in Date",
                 },
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "Tekoča vsota za mero Precepljenost v polju Date",
+                        "Property": "KUM_St_precepljenost",
                     },
                     "Name": "eRCO_podatki_ed.Tekoča vsota za mero Precepljenost v polju Date",
                 },
-            ],
-            "Where": [
                 {
-                    "Condition": {
-                        "Comparison": {
-                            "ComparisonKind": 1,
-                            "Left": {
-                                "Column": {
-                                    "Expression": {"SourceRef": {"Source": "c1"}},
-                                    "Property": "Date",
-                                }
-                            },
-                            "Right": {
-                                "DateSpan": {
-                                    "Expression": {
-                                        "Literal": {
-                                            "Value": "datetime'2020-12-26T01:00:00'"
-                                        }
-                                    },
-                                    "TimeUnit": 5,
-                                }
-                            },
-                        }
-                    }
-                }
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "c"}},
+                        "Property": "KUM_St_dodaten",
+                    },
+                    "Name": "eRCO_​​podatki.KUM_St_dodaten",
+                },
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
             "Version": 1,
         },
@@ -1539,6 +1483,7 @@ _vaccination_supplied_by_manufacturer_command = {
             "From": [
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
                 {"Name": "n", "Entity": "xls_NIJZ_Odmerki", "Type": 0},
+                {"Name": "s", "Entity": "Sifrant_Cepivo", "Type": 0},
             ],
             "Select": [
                 {
@@ -1547,13 +1492,6 @@ _vaccination_supplied_by_manufacturer_command = {
                         "Property": "Date",
                     },
                     "Name": "Calendar.Date",
-                },
-                {
-                    "Column": {
-                        "Expression": {"SourceRef": {"Source": "n"}},
-                        "Property": "Vrsta cepiva",
-                    },
-                    "Name": "NIJZ_Odmerki.Vrsta cepiva",
                 },
                 {
                     "Aggregation": {
@@ -1567,32 +1505,15 @@ _vaccination_supplied_by_manufacturer_command = {
                     },
                     "Name": "Sum(NIJZ_Odmerki.odmerki*)",
                 },
+                {
+                    "Column": {
+                        "Expression": {"SourceRef": {"Source": "s"}},
+                        "Property": "Cepivo_Ime",
+                    },
+                    "Name": "Sifrant_Cepivo.Cepivo_Ime",
+                },
             ],
             "Where": [
-                {
-                    "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "In": {
-                                    "Expressions": [
-                                        {
-                                            "Column": {
-                                                "Expression": {
-                                                    "SourceRef": {"Source": "n"}
-                                                },
-                                                "Property": "Vrsta cepiva",
-                                            }
-                                        }
-                                    ],
-                                    "Values": [
-                                        [{"Literal": {"Value": "null"}}],
-                                        [{"Literal": {"Value": "'Skupaj'"}}],
-                                    ],
-                                }
-                            }
-                        }
-                    }
-                },
                 {
                     "Condition": {
                         "Not": {
@@ -1642,8 +1563,8 @@ _vaccination_supplied_by_manufacturer_command = {
                         },
                         {
                             "Column": {
-                                "Expression": {"SourceRef": {"Source": "n"}},
-                                "Property": "Vrsta cepiva",
+                                "Expression": {"SourceRef": {"Source": "s"}},
+                                "Property": "Cepivo_Ime",
                             }
                         },
                     ],
@@ -2166,21 +2087,15 @@ _lab_PCR_tests_performed_command = {
             "Where": [
                 {
                     "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "Comparison": {
-                                    "ComparisonKind": 0,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Razlika_dan",
-                                        }
-                                    },
-                                    "Right": {"Literal": {"Value": "0L"}},
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
                                 }
-                            }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
                         }
                     }
                 },
@@ -2234,12 +2149,12 @@ _lab_PCR_total_tests_performed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "d"}},
-                                "Property": "sum_vsi_pacienti_pcr_cnb",
+                                "Property": "vsi_pacienti_pcr_cnb",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(Date_agg.sum_vsi_pacienti_pcr_cnb)",
+                    "Name": "Sum(Date_agg.vsi_pacienti_pcr_cnb)",
                 }
             ],
             "Where": [
@@ -2311,16 +2226,11 @@ _lab_active_cases_estimated_command = {
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_aktivnih",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Aktivni_primeri",
                     },
-                    "Name": "Sum(All.St_aktivnih)",
+                    "Name": "All.Aktivni_primeri",
                 }
             ],
             "Where": [
@@ -2396,12 +2306,12 @@ _lab_confirmed_total_male_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2563,23 +2473,44 @@ _lab_active_cases_100k_command = {
             "Version": 2,
             "From": [
                 {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "r", "Entity": "Regija", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_aktivnih_100",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Aktivni_100k",
                     },
-                    "Name": "Sum(All.St_aktivnih_100)",
+                    "Name": "All.Aktivni_100k",
                 }
             ],
             "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "r"}
+                                                },
+                                                "Property": "Regija",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [
+                                        [{"Literal": {"Value": "null"}}],
+                                        [{"Literal": {"Value": "'Celotna Slovenija'"}}],
+                                        [{"Literal": {"Value": "'TUJINA'"}}],
+                                    ],
+                                }
+                            }
+                        }
+                    }
+                },
                 {
                     "Condition": {
                         "Not": {
@@ -2634,6 +2565,7 @@ _lab_active_cases_100k_command = {
     }
 }
 
+
 _lab_active_cases_100k_req = _create_req("lab", [_lab_active_cases_100k_command])
 
 _lab_cases_total_confirmed_command = {
@@ -2650,12 +2582,12 @@ _lab_cases_total_confirmed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2731,12 +2663,12 @@ _lab_HAT_total_tests_performed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "d"}},
-                                "Property": "sum_vsi_pacienti_hagt",
+                                "Property": "vsi_pacienti_hagt",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(Date_agg.sum_vsi_pacienti_hagt)",
+                    "Name": "Sum(Date_agg.vsi_pacienti_hagt)",
                 }
             ],
             "Where": [
@@ -2812,12 +2744,12 @@ _lab_cases_confirmed_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -2885,12 +2817,12 @@ _lab_confirmed_total_female_command = {
                         "Expression": {
                             "Column": {
                                 "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "St_vseh_primerov",
+                                "Property": "weight",
                             }
                         },
                         "Function": 0,
                     },
-                    "Name": "Sum(All.St_vseh_primerov)",
+                    "Name": "Sum(All.weight)",
                 }
             ],
             "Where": [
@@ -3054,23 +2986,43 @@ _lab_cases_avg_7Days_command = {
             "Version": 2,
             "From": [
                 {"Name": "a", "Entity": "All", "Type": 0},
+                {"Name": "r", "Entity": "Regija", "Type": 0},
                 {"Name": "c", "Entity": "Calendar", "Type": 0},
             ],
             "Select": [
                 {
-                    "Aggregation": {
-                        "Expression": {
-                            "Column": {
-                                "Expression": {"SourceRef": {"Source": "a"}},
-                                "Property": "Povp_7_dni",
-                            }
-                        },
-                        "Function": 0,
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "a"}},
+                        "Property": "Povprečje_7dni",
                     },
-                    "Name": "Sum(All.Povp_7_dni)",
+                    "Name": "All.Povprečje_7dni",
                 }
             ],
             "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "r"}
+                                                },
+                                                "Property": "Regija",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [
+                                        [{"Literal": {"Value": "null"}}],
+                                        [{"Literal": {"Value": "'Celotna Slovenija'"}}],
+                                    ],
+                                }
+                            }
+                        }
+                    }
+                },
                 {
                     "Condition": {
                         "Not": {
@@ -3152,21 +3104,15 @@ _lab_HAT_tests_performed_command = {
             "Where": [
                 {
                     "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "Comparison": {
-                                    "ComparisonKind": 0,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Razlika_dan",
-                                        }
-                                    },
-                                    "Right": {"Literal": {"Value": "0L"}},
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
                                 }
-                            }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
                         }
                     }
                 },
