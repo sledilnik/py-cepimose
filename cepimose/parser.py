@@ -67,7 +67,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
 
         if R == 6:
             people_vaccinated = parsed_data[-1].first_dose
-            people_fully_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = C[1]
 
         if R == 8:
