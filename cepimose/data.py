@@ -2087,21 +2087,15 @@ _lab_PCR_tests_performed_command = {
             "Where": [
                 {
                     "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "Comparison": {
-                                    "ComparisonKind": 0,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Razlika_dan",
-                                        }
-                                    },
-                                    "Right": {"Literal": {"Value": "0L"}},
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
                                 }
-                            }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
                         }
                     }
                 },
@@ -3110,21 +3104,15 @@ _lab_HAT_tests_performed_command = {
             "Where": [
                 {
                     "Condition": {
-                        "Not": {
-                            "Expression": {
-                                "Comparison": {
-                                    "ComparisonKind": 0,
-                                    "Left": {
-                                        "Column": {
-                                            "Expression": {
-                                                "SourceRef": {"Source": "c"}
-                                            },
-                                            "Property": "Razlika_dan",
-                                        }
-                                    },
-                                    "Right": {"Literal": {"Value": "0L"}},
+                        "Comparison": {
+                            "ComparisonKind": 0,
+                            "Left": {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "c"}},
+                                    "Property": "Razlika_dan",
                                 }
-                            }
+                            },
+                            "Right": {"Literal": {"Value": "1L"}},
                         }
                     }
                 },
