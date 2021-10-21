@@ -140,24 +140,21 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertEquals(expected_keys, list(data.keys()), "Object keys")
 
-        for element in data.items():
-            print(element[0])
-            self.assertTrue(len(element[1]) != 0)
-            self.assertDatesIncreaseSince(element[1], datetime.datetime(2020, 12, 27))
+        region: List[VaccinationByDayRow]
+        for key, region in data.items():
+            print(key)
+            self.assertTrue(len(region) != 0)
+            self.assertDatesIncreaseSince(region, datetime.datetime(2020, 12, 27))
 
             # values should be growing
-            firstPrevious = 0
-            secondPrevious = 0
-            thirdPrevious = 0
+            previous = [0, 0, 0]
             row: VaccinationByDayRow
-            for row in data[element[0]]:
-                print(row, firstPrevious, secondPrevious, thirdPrevious)
-                self.assertGreaterEqual(row.first_dose, firstPrevious)
-                self.assertGreaterEqual(row.second_dose, secondPrevious)
-                self.assertGreaterEqual(row.third_dose, thirdPrevious)
-                firstPrevious = row.first_dose
-                secondPrevious = row.second_dose
-                thirdPrevious = row.third_dose
+            for row in region:
+                print(row, previous)
+                row_data = [row.first_dose, row.second_dose, row.third_dose]
+                for index, dose in enumerate(row_data):
+                    self.assertGreaterEqual(dose, previous[index])
+                previous = [row.first_dose, row.second_dose, row.third_dose]
 
     def test_vaccinations_by_region_by_day_with_arg(self):
         data = cepimose.vaccinations_by_region_by_day(cepimose.data.Region.POMURSKA)
