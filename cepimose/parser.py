@@ -39,7 +39,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data: "list[VaccinationByDayRow]" = []
 
-    r_list = [None, 2, 6, 8, 10, 12, 14]
+    r_list = [None, 2, 4, 6, 8, 10, 12, 14]
 
     date = None
     people_vaccinated = None
@@ -52,40 +52,52 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
         date = parse_date(C[0])
 
         if R not in r_list:
-            print(date, R, C, sep="\t")
-            raise Exception("Unknown R value!")
+            raise Exception(f"Unknown R: {R}, date: {date}, C: {C}!")
 
         if R == None:
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = C[3]
 
+        # reuse from previous iteration
         if R == 2:
+            # reuse first dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = C[1]
             people_third_dose = C[2]
 
+        if R == 4:
+            # reuse second dose
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = C[2]
+
         if R == 6:
+            # reuse first and second dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = C[1]
 
         if R == 8:
+            # reuse third dose
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = parsed_data[-1].third_dose
 
         if R == 10:
+            # reuse first and third dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = C[1]
             people_third_dose = parsed_data[-1].third_dose
 
         if R == 12:
+            # reuse second and third dose
             people_vaccinated = C[1]
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
 
         if R == 14:
+            # reuse all doses
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
