@@ -22,6 +22,22 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertGreater(row.date, previousDate, row)
             previousDate = row.date
 
+    def createAssertVaccinationByDayRow(self, delta, fixed_delta=True):
+        def assertVaccinationByDayRow(
+            row: VaccinationByDayRow, expected_date, expected_data
+        ):
+            if expected_date:
+                self.assertEqual(row.date, expected_date)
+
+            row_data = [row.first_dose, row.second_dose, row.third_dose]
+            self.assertEqual(len(row_data), len(expected_data), "Missing argument!")
+
+            for index, compare in enumerate(row_data):
+                _delta = delta if fixed_delta == True else delta * expected_data[index]
+                self.assertAlmostEqual(compare, expected_data[index], delta=_delta)
+
+        return assertVaccinationByDayRow
+
     @attr("sledilnik")
     def test_vaccinations_by_day(self):
         # Test feature one.
