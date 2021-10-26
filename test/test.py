@@ -167,11 +167,11 @@ class CepimoseTestCase(unittest.TestCase):
 
         region = data[cepimose.data.Region.POMURSKA]
 
-        assertRow = self.createAssertVaccinationByDayRow(30, True)
+        assertRow = self.createAssertVaccinationByDayRow(0.1, False)
 
         assertRow(region[9], datetime.datetime(2021, 1, 5), [1180, 0, 0])
         assertRow(region[22], datetime.datetime(2021, 1, 18), [3043, 5, 0])
-        assertRow(region[274], datetime.datetime(2021, 9, 27), [63124, 55807, 588])
+        assertRow(region[274], datetime.datetime(2021, 9, 27), [63078, 55760, 588])
 
     @attr("sledilnik")
     def test_vaccinations_by_municipalities_share(self):
