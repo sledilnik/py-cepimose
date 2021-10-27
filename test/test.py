@@ -272,7 +272,7 @@ class CepimoseTestCase(unittest.TestCase):
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
         def assertRow(row, expected_date, expected):
-            print(row)
+            print(row, expected)
             expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=150)
@@ -291,7 +291,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
         assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None])
         assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
-        assertRow(data[290], datetime.datetime(2021, 10, 13), [5192, 438, 4, 1])
+        assertRow(data[290], datetime.datetime(2021, 10, 13), [5192, 438, 4, None])
 
         for row in data:
             print(row)
