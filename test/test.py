@@ -409,11 +409,11 @@ class CepimoseTestCase(unittest.TestCase):
 
         self.assertTrue(len(data) > 10)
 
-        assertRow = self.createAssertVaccinationByDayRow(300, True)
+        assertRow = self.createAssertVaccinationByDayRow(500, True)
 
         assertRow(data[21], datetime.datetime(2021, 1, 17), [4385, 1, 0])
         assertRow(data[70], datetime.datetime(2021, 3, 7), [9725, 5938, 0])
-        assertRow(data[274], datetime.datetime(2021, 9, 27), [14677, 13373, 1279])
+        assertRow(data[274], datetime.datetime(2021, 9, 27), [14983, 13373, 1279])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
