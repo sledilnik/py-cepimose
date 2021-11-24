@@ -616,6 +616,11 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
             date = parse_date(C[0])
             total_used = C[-1]
 
+            # lines below might be needed if we will have to check another R
+            # suppported_r = [30, 28, 18]  # there are many Rs that we don't support.
+            # if R not in suppported_r:
+            #     print(element)
+
             if R == 30:
                 total_used = parsed_data[-1].dose
 
@@ -624,6 +629,12 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
                 total_used = parsed_data[-1].dose
 
             if R == 28 and Ø == 2:
+                total_used = parsed_data[-1].dose
+
+            if (
+                R == 18 and Ø == 12
+            ):  # ? Ø might be days between use doses AZ 2021-11-19, 2021-11-23
+                print(parsed_data[-1])
                 total_used = parsed_data[-1].dose
 
             parsed_data.append(VaccinationDose(date, total_used))
