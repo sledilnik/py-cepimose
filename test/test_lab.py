@@ -94,7 +94,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_HAT_tests_performed(self):
         performed_HAT = cepimose.lab_HAT_tests_performed()
         self.assertGreaterEqual(performed_HAT, 0)
-        self.assertLessEqual(performed_HAT, 100000)
+        self.assertLessEqual(performed_HAT, 500000)
 
     def test_get_lab_dashboard(self):
         dashboard = cepimose.get_lab_dashboard()
