@@ -19,7 +19,8 @@ class Region(Enum):
 
 @unique
 class AgeGroup(Enum):
-    GROUP_0_17 = "0-17"
+    GROUP_0_11 = "0-11"
+    GROUP_12_17 = "12-17"
     GROUP_18_24 = "18-24"
     GROUP_25_29 = "25-29"
     GROUP_30_34 = "30-34"
