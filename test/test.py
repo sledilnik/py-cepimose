@@ -47,7 +47,7 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow = self.createAssertVaccinationByDayRow(0.1, False)
 
         #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 5), [15711, 0, 0])
+        assertRow(data[9], datetime.datetime(2021, 1, 5), [15711, 1, 0])
         assertRow(data[22], datetime.datetime(2021, 1, 18), [49100, 324, 0])
         assertRow(data[41], datetime.datetime(2021, 2, 6), [56066, 46072, 0])
         assertRow(data[42], datetime.datetime(2021, 2, 7), [56066, 46072, 0])
@@ -169,8 +169,8 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow = self.createAssertVaccinationByDayRow(0.1, False)
 
-        assertRow(region[9], datetime.datetime(2021, 1, 5), [1180, 0, 0])
-        assertRow(region[22], datetime.datetime(2021, 1, 18), [3043, 5, 0])
+        assertRow(region[9], datetime.datetime(2021, 1, 5), [1180, 1, 0])
+        assertRow(region[22], datetime.datetime(2021, 1, 18), [3043, 6, 0])
         assertRow(region[274], datetime.datetime(2021, 9, 27), [63078, 55760, 588])
 
     @attr("sledilnik")
