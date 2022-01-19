@@ -4,6 +4,8 @@ import cepimose
 import datetime
 from nose.plugins.attrib import attr
 
+TESTS_PCR_MAX = 25000
+
 
 class CepimoseTestCase(unittest.TestCase):
     def setUp(self):
@@ -32,7 +34,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_PCR_tests_performed(self):
         performed_PCR = cepimose.lab_PCR_tests_performed()
         self.assertGreaterEqual(performed_PCR, 0)
-        self.assertLessEqual(performed_PCR, 15000)
+        self.assertLessEqual(performed_PCR, TESTS_PCR_MAX)
 
     def test_lab_PCR_total_tests_performed(self):
         performed_PCR_total = cepimose.lab_PCR_total_tests_performed()
@@ -73,7 +75,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_cases_confirmed(self):
         cases_confirmed = cepimose.lab_cases_confirmed()
         self.assertGreaterEqual(cases_confirmed, 0)
-        self.assertLessEqual(cases_confirmed, 10000)
+        self.assertLessEqual(cases_confirmed, TESTS_PCR_MAX)
 
     def test_lab_confirmed_total_female(self):
         female_total = cepimose.lab_confirmed_total_female()
