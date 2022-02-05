@@ -90,7 +90,7 @@ class CepimoseTestCase(unittest.TestCase):
     def test_lab_cases_avg_7Days(self):
         cases_avg_7days = cepimose.lab_cases_avg_7Days()
         self.assertGreaterEqual(cases_avg_7days, 0)
-        self.assertLessEqual(cases_avg_7days, 15000)
+        self.assertLessEqual(cases_avg_7days, 50000)
 
     @attr("sledilnik")
     def test_lab_HAT_tests_performed(self):
