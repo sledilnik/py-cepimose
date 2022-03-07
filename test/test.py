@@ -113,27 +113,33 @@ class CepimoseTestCase(unittest.TestCase):
             self.assertEqual(row.moderna, expected[1])
             self.assertEqual(row.az, expected[2])
             self.assertEqual(row.janssen, expected[3])
+            self.assertEqual(row.novavax, expected[4])
 
         assertRow(
-            data[0], datetime.datetime(2020, 12, 26), [11700, None, None, None]
+            data[0], datetime.datetime(2020, 12, 26), [11700, None, None, None, None]
         )  # first ever supply
 
         assertRow(
-            data[1], datetime.datetime(2020, 12, 30), [8190, None, None, None]
+            data[1], datetime.datetime(2020, 12, 30), [8190, None, None, None, None]
         )  # R = 2
         assertRow(
-            data[3], datetime.datetime(2021, 1, 11), [19890, None, None, None]
+            data[3], datetime.datetime(2021, 1, 11), [19890, None, None, None, None]
         )  # R = 6
         assertRow(
-            data[16], datetime.datetime(2021, 2, 25), [None, 8400, 16800, None]
+            data[16], datetime.datetime(2021, 2, 25), [None, 8400, 16800, None, None]
         )  # combined: two response data items with same date; second has R = 1
-        assertRow(data[32], datetime.datetime(2021, 4, 14), [None, None, None, 7200])
         assertRow(
-            data[65], datetime.datetime(2021, 7, 12), [72540, None, -250000, None]
+            data[32], datetime.datetime(2021, 4, 14), [None, None, None, 7200, None]
+        )
+        assertRow(
+            data[65], datetime.datetime(2021, 7, 12), [72540, None, -250000, None, None]
         )  # Negative
         assertRow(
-            data[73], datetime.datetime(2021, 7, 30), [None, 12000, None, 12000]
+            data[73], datetime.datetime(2021, 7, 30), [None, 12000, None, 12000, None]
         )  # R = 5, combined: two response data items with same, date, same value, different manufacturer
+        assertRow(
+            data[123], datetime.datetime(2022, 3, 1), [None, None, None, None, 36000]
+        )  # Novavax
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
@@ -273,25 +279,47 @@ class CepimoseTestCase(unittest.TestCase):
 
         def assertRow(row, expected_date, expected):
             print(row, expected)
-            expected_pfizer, expected_moderna, expected_az, expected_janssen = expected
+            (
+                expected_pfizer,
+                expected_moderna,
+                expected_az,
+                expected_janssen,
+                expected_novavax,
+            ) = expected
             self.assertEqual(row.date, expected_date)
             self.assertAlmostEqual(row.pfizer, expected_pfizer, delta=150)
             self.assertAlmostEqual(row.moderna, expected_moderna, delta=50)
             self.assertAlmostEqual(row.az, expected_az, delta=50)
             self.assertAlmostEqual(row.janssen, expected_janssen, delta=50)
+            self.assertAlmostEqual(row.novavax, expected_novavax, delta=50)
 
-        assertRow(data[20], datetime.datetime(2021, 1, 16), [323, None, None, None])
-        assertRow(data[23], datetime.datetime(2021, 1, 19), [2119, 66, None, None])
-        assertRow(data[33], datetime.datetime(2021, 1, 29), [4601, 1, None, None])
-        assertRow(data[38], datetime.datetime(2021, 2, 3), [4854, None, None, None])
-        assertRow(data[42], datetime.datetime(2021, 2, 7), [None, None, None, None])
-        assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None])
-        assertRow(data[79], datetime.datetime(2021, 3, 16), [609, 452, None, None])
-        assertRow(data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None])
-        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None])
-        assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None])
-        assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717])
-        assertRow(data[290], datetime.datetime(2021, 10, 13), [5192, 438, 4, None])
+        assertRow(
+            data[20], datetime.datetime(2021, 1, 16), [323, None, None, None, None]
+        )
+        assertRow(
+            data[23], datetime.datetime(2021, 1, 19), [2119, 66, None, None, None]
+        )
+        assertRow(data[33], datetime.datetime(2021, 1, 29), [4601, 1, None, None, None])
+        assertRow(
+            data[38], datetime.datetime(2021, 2, 3), [4854, None, None, None, None]
+        )
+        assertRow(
+            data[42], datetime.datetime(2021, 2, 7), [None, None, None, None, None]
+        )
+        assertRow(data[50], datetime.datetime(2021, 2, 15), [28, 40, 18, None, None])
+        assertRow(
+            data[79], datetime.datetime(2021, 3, 16), [609, 452, None, None, None]
+        )
+        assertRow(
+            data[98], datetime.datetime(2021, 4, 4), [None, 1594, None, None, None]
+        )
+        assertRow(data[99], datetime.datetime(2021, 4, 5), [1, None, None, None, None])
+        assertRow(data[120], datetime.datetime(2021, 4, 26), [1, None, 381, None, None])
+        assertRow(data[134], datetime.datetime(2021, 5, 10), [46, 141, 2080, 717, None])
+        assertRow(
+            data[290], datetime.datetime(2021, 10, 13), [5192, 438, 4, None, None]
+        )
+        assertRow(data[431], datetime.datetime(2022, 3, 3), [743, 15, None, None, 1])
 
         for row in data:
             print(row)
@@ -307,6 +335,10 @@ class CepimoseTestCase(unittest.TestCase):
                 row.date >= datetime.datetime(2021, 4, 14, 0, 0) or row.janssen == None,
                 f"Too early for Janssen usage: {row}",
             )
+
+            # self.assertTrue(
+
+            # )
 
             # check for absurdly high numbers (eg leaked timestamps)
             if row.pfizer is not None:

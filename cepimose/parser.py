@@ -209,13 +209,13 @@ def _parse_vaccines_supplied_by_manufacturer(
     ]
     parsed_data = []
 
-    if len(manufacturers) > 4:
+    if len(manufacturers) > 5:
         print(manufacturers)
         raise Exception("New manufacturer!")
 
     def get_manufacturer(num):
-        manu_keys = ["pfizer", "moderna", "az", "janssen"]
-        if num > 3 or num == None:
+        manu_keys = ["pfizer", "moderna", "az", "janssen", "novavax"]
+        if num > 4 or num == None:
             print(num)
             raise Exception("Missing manufacturer!")
         return manu_keys[num]
@@ -235,7 +235,7 @@ def _parse_vaccines_supplied_by_manufacturer(
             raise Exception("Unknown R value!")
 
         manu_row = VaccinationByManufacturerRow(
-            date=None, pfizer=None, moderna=None, az=None, janssen=None
+            date=None, pfizer=None, moderna=None, az=None, janssen=None, novavax=None
         )
 
         if R == None:
@@ -595,6 +595,7 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
         Manufacturer.MODERNA: datetime.datetime(2021, 1, 12),
         Manufacturer.AZ: datetime.datetime(2021, 2, 6),
         Manufacturer.JANSSEN: datetime.datetime(2021, 4, 14),
+        Manufacturer.NOVAVAX: datetime.datetime(2022, 3, 1),
     }
 
     def _parse_vaccinations_by_manufacturer_used(data) -> "list[VaccinationDose]":
@@ -615,6 +616,8 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
 
             date = parse_date(C[0])
             total_used = C[-1]
+
+            print(C, R)
 
             # lines below might be needed if we will have to check another R
             # suppported_r = [30, 28, 18]  # there are many Rs that we don't support.
@@ -653,6 +656,7 @@ def _parse_vaccinations_date_range_manufacturers_used(data):
         "Janssen": "janssen",
         "Moderna": "moderna",
         "Pfizer-BioNTech": "pfizer",
+        "Novavax": "novavax",
     }
 
     parsed_data = []

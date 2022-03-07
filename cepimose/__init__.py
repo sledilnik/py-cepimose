@@ -329,11 +329,15 @@ def vaccinations_by_manufacturer_used() -> "list[VaccinationByManufacturerRow]":
         janssen = list(
             filter(lambda x: x.date == start_date, obj[Manufacturer.JANSSEN])
         )
+        novavax = list(
+            filter(lambda x: x.date == start_date, obj[Manufacturer.NOVAVAX])
+        )
         try:
             pfizer_used = pfizer[0].dose if len(pfizer) != 0 else None
             moderna_used = moderna[0].dose if len(moderna) != 0 else None
             az_used = az[0].dose if len(az) != 0 else None
             janssen_used = janssen[0].dose if len(janssen) != 0 else None
+            novavax_used = novavax[0].dose if len(novavax) != 0 else None
             result.append(
                 VaccinationByManufacturerRow(
                     start_date,
@@ -341,11 +345,12 @@ def vaccinations_by_manufacturer_used() -> "list[VaccinationByManufacturerRow]":
                     moderna_used,
                     az_used,
                     janssen_used,
+                    novavax_used,
                 )
             )
         except:
             print(start_date, "Something went wrong")
-            print(pfizer, moderna, az, janssen)
+            print(pfizer, moderna, az, janssen, novavax)
         start_date += DAY_DELTA
     return result
 

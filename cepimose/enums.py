@@ -44,6 +44,7 @@ class Manufacturer(Enum):
     MODERNA = "Moderna"
     PFIZER = "Pfizer-BioNTech"
     JANSSEN = "Janssen"
+    NOVAVAX = "Novavax"
 
 
 @unique

@@ -48,6 +48,7 @@ class VaccinationByManufacturerRow:
     moderna: Optional[int]
     az: Optional[int]
     janssen: Optional[int]
+    novavax: Optional[int]
 
 
 @dataclass
@@ -126,6 +127,7 @@ class VaccinationsDateRangeByGroup:
     az: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     moderna: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
     janssen: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
+    novavax: Optional[VaccinationsDoses] = field(default_factory=VaccinationsDoses)
 
 
 @dataclass
