@@ -336,9 +336,10 @@ class CepimoseTestCase(unittest.TestCase):
                 f"Too early for Janssen usage: {row}",
             )
 
-            # self.assertTrue(
-
-            # )
+            self.assertTrue(
+                row.date >= datetime.datetime(2022, 3, 1, 0, 0) or row.novavax == None,
+                f"Too early for Novavax usage: {row}",
+            )
 
             # check for absurdly high numbers (eg leaked timestamps)
             if row.pfizer is not None:

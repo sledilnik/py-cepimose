@@ -617,8 +617,6 @@ def _create_vaccinations_by_manufacturer_parser(manufacturer: Manufacturer):
             date = parse_date(C[0])
             total_used = C[-1]
 
-            print(C, R)
-
             # lines below might be needed if we will have to check another R
             # suppported_r = [30, 28, 18]  # there are many Rs that we don't support.
             # if R not in suppported_r:
