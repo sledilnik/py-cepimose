@@ -1,4 +1,4 @@
-from cepimose.enums import AgeGroup, Gender, Region
+from cepimose.enums import AgeGroup, Gender, Region, SchoolGroups
 from dataclasses import dataclass, field
 import datetime
 from typing import List, Optional, Union
@@ -116,6 +116,15 @@ class VaccinationsDoses:
 
 
 @dataclass
+class VaccinationsInDateRangeAgeGroupGender:
+    date_start: datetime.datetime
+    date_end: datetime.datetime
+    age_group: AgeGroup
+    male: VaccinationsDoses
+    female: VaccinationsDoses
+
+
+@dataclass
 class VaccinationsDateRangeByGroup:
     date_from: datetime.datetime
     date_to: datetime.datetime
@@ -160,3 +169,34 @@ class LabDashboard:
     female_total: int
     vaccinated_first_dose: int
     vaccinated_fully: int
+
+
+@dataclass
+class SchoolConfirmedActive:
+    group: SchoolGroups
+    cases_school_year: int
+    cases_school_year_ratio: float
+    cases_last_week: int
+    cases_last_week_ratio: float
+    cases_active: int
+
+
+@dataclass
+class SchoolRatioPopulation:
+    group: SchoolGroups
+    cases: int
+    population: int
+    ratio: float
+
+
+@dataclass
+class SchoolCasesTriada:
+    week: str
+    A: Union[int, float]
+    B: Union[int, float]
+    C: Union[int, float]
+
+
+@dataclass
+class SchoolCasesWeek(SchoolCasesTriada):
+    D: Union[int, float]
