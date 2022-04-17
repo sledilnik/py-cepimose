@@ -2060,7 +2060,7 @@ _lab_end_ts_command = {
     }
 }
 
-_lab_end_ts_req = _create_req("lab", [_lab_end_ts_command])
+_lab_end_ts_req = _create_req("lab", [_lab_end_ts_command], cache_key=True)
 
 _lab_PCR_tests_performed_command = {
     "SemanticQueryDataShapeCommand": {
