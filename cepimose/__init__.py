@@ -23,6 +23,7 @@ from .data import (
     _vaccinations_by_manufacturer_used_request,
     _lab_start_ts_req,
     _lab_end_ts_req,
+    _lab_end_ts_req_with_cache,
     _lab_PCR_tests_performed_req,
     _lab_PCR_total_tests_performed_req,
     _lab_active_cases_estimated_req,
@@ -502,6 +503,19 @@ def lab_end_timestamp() -> datetime.datetime:
     )
 
 
+def lab_end_timestamp_with_cache() -> datetime.datetime:
+    """Gets NIJZ last data update time
+
+    Returns:
+        datetime: datetime representing NIJZ last data update time
+    """
+    return _get_data(
+        _lab_end_ts_req_with_cache,
+        _parse_vaccinations_timestamp,
+        _lab_dashboard_headers,
+    )
+
+
 def lab_PCR_tests_performed() -> int:
     """Gets performed PCR tests on today
 
@@ -717,4 +731,34 @@ def get_lab_dashboard() -> LabDashboard:
         vaccinated_fully=vaccinated_fully,
     )
 
+    return result
+
+
+def abort_update_labtests():
+    end_date = lab_end_timestamp()
+    end_date_with_cache = lab_end_timestamp_with_cache()
+
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    now = datetime.datetime.now()
+
+    should_abort = end_date.date() < yesterday
+    should_abort_with_cache = end_date_with_cache.date() < yesterday
+
+    result = {
+        "abort": True,
+        "now": now,
+        "date_no_cache": end_date,
+        "date_with_cache": end_date_with_cache,
+        "date": yesterday - datetime.timedelta(days=1),
+    }
+
+    if should_abort and should_abort_with_cache:
+        print("Aborting update labtests")
+        print(
+            f"Now is {now}. Date no cache: {end_date.date()}. Date with cache: {end_date_with_cache.date()}. Expecting: {yesterday}"
+        )
+        return result
+
+    result["abort"] = False
+    result["date"] = yesterday
     return result
