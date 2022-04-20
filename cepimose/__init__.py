@@ -808,3 +808,14 @@ def abort_update_labtests():
     result["abort"] = False
     result["date"] = yesterday
     return result
+
+
+def get_lab_dashboard_with_cache():
+    pcr = lab_PCR_tests_performed_with_cache()
+    hat = lab_HAT_tests_performed_with_cache()
+    cases = lab_cases_confirmed_with_cache()
+    end_date = lab_end_timestamp_with_cache()
+
+    result = LabDashboard(date=end_date, pcr=pcr, hat=hat, confirmed=cases)
+
+    return result
