@@ -25,6 +25,7 @@ from .data import (
     _lab_end_ts_req,
     _lab_end_ts_req_with_cache,
     _lab_PCR_tests_performed_req,
+    _lab_PCR_tests_performed_req_with_cache,
     _lab_PCR_total_tests_performed_req,
     _lab_active_cases_estimated_req,
     _lab_confirmed_total_male_req,
@@ -33,10 +34,12 @@ from .data import (
     _lab_cases_total_confirmed_req,
     _lab_HAT_total_tests_performed_req,
     _lab_cases_confirmed_req,
+    _lab_cases_confirmed_req_with_cache,
     _lab_confirmed_total_female_req,
     _lab_total_vaccinated_fully_req,
     _lab_cases_avg_7Days_req,
     _lab_HAT_tests_performed_req,
+    _lab_HAT_tests_performed_req_with_cache,
 )
 from .parser import (
     _parse_vaccinations_by_age,
@@ -529,6 +532,21 @@ def lab_PCR_tests_performed() -> int:
     )
 
 
+def lab_PCR_tests_performed_with_cache() -> int:
+    """Gets performed PCR tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed PCR tests on today
+    """
+    return _get_data(
+        _lab_PCR_tests_performed_req_with_cache,
+        _parse_single_data,
+        _lab_dashboard_headers,
+    )
+
+
 def lab_PCR_total_tests_performed() -> int:
     """Gets performed PCR tests in date range
 
@@ -635,6 +653,19 @@ def lab_cases_confirmed() -> int:
     )
 
 
+def lab_cases_confirmed_with_cache() -> int:
+    """Gets confirmed cases on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing confirmed cases on today
+    """
+    return _get_data(
+        _lab_cases_confirmed_req_with_cache, _parse_single_data, _lab_dashboard_headers
+    )
+
+
 def lab_confirmed_total_female() -> int:
     """Gets female total confirmed cases in date range
 
@@ -685,6 +716,21 @@ def lab_HAT_tests_performed():
     """
     return _get_data(
         _lab_HAT_tests_performed_req, _parse_single_data, _lab_dashboard_headers
+    )
+
+
+def lab_HAT_tests_performed_with_cache():
+    """Gets performed HAT tests on today
+
+    today -> date from lab_end_timestamp()
+
+    Returns:
+        int: a int number representing performed HAT tests on today
+    """
+    return _get_data(
+        _lab_HAT_tests_performed_req_with_cache,
+        _parse_single_data,
+        _lab_dashboard_headers,
     )
 
 
