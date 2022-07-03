@@ -446,7 +446,7 @@ class CepimoseTestCase(unittest.TestCase):
 
         assertRow(data[21], datetime.datetime(2021, 1, 17), [5088, 1, 0])
         assertRow(data[70], datetime.datetime(2021, 3, 7), [11835, 6742, 0])
-        assertRow(data[274], datetime.datetime(2021, 9, 27), [17589, 15698, 1356])
+        assertRow(data[274], datetime.datetime(2021, 9, 27), [17589, 16227, 1356])
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 26))
 
