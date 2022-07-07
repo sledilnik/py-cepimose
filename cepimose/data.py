@@ -62,6 +62,21 @@ _models = {
             ],
         },
     },
+    "nijz-vaccinations-ver5": {
+        "headers": {
+            "X-PowerBI-ResourceKey": "ad74a553-ebd2-476f-ab42-d79b590dd8c2",
+        },
+        "modelId": 175575,
+        "ApplicationContext": {
+            "DatasetId": "51c64860-e9ec-49d8-8a36-743bced78e1a",
+            "Sources": [
+                {
+                    "ReportId": "dddc4907-41d2-4b6c-b34b-3aac90b7fdee",
+                    "VisualId": "7a68e4045a53139d0a52",
+                }
+            ],
+        },
+    },
     "nijz-lab-ver1": {
         "headers": {"X-PowerBI-ResourceKey": "0770982d-8a85-4a4d-82b9-5d329983e65a"},
         "modelId": 165881,
@@ -89,7 +104,7 @@ def _get_model_version(ver):
     }
 
 
-_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver4")
+_vaccinations_dashboard_model_ver = _get_model_version("nijz-vaccinations-ver5")
 _lab_dashboard_model_ver = _get_model_version("nijz-lab-ver1")
 
 _model_versions = {
@@ -1121,14 +1136,44 @@ _vaccinations_by_day_command = {
                 {
                     "Measure": {
                         "Expression": {"SourceRef": {"Source": "c"}},
-                        "Property": "KUM_St_dodaten",
+                        "Property": "KUM_St_3",
                     },
                     "Name": "eRCO_​​podatki.KUM_St_dodaten",
                 },
+                {
+                    "Measure": {
+                        "Expression": {"SourceRef": {"Source": "c"}},
+                        "Property": "KUM_St_4",
+                    },
+                    "Name": "eRCO_​​podatki.KUM_St_4",
+                },
+            ],
+            "Where": [
+                {
+                    "Condition": {
+                        "Not": {
+                            "Expression": {
+                                "In": {
+                                    "Expressions": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {"Source": "c"}
+                                                },
+                                                "Property": "Umrli",
+                                            }
+                                        }
+                                    ],
+                                    "Values": [[{"Literal": {"Value": "'2021H2'"}}]],
+                                }
+                            }
+                        }
+                    }
+                }
             ],
         },
         "Binding": {
-            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
+            "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
             "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
             "Version": 1,
         },

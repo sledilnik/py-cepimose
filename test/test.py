@@ -29,7 +29,12 @@ class CepimoseTestCase(unittest.TestCase):
             if expected_date:
                 self.assertEqual(row.date, expected_date)
 
-            row_data = [row.first_dose, row.second_dose, row.third_dose]
+            row_data = [
+                row.first_dose,
+                row.second_dose,
+                row.third_dose,
+                row.fourth_dose,
+            ]
             self.assertEqual(len(row_data), len(expected_data), "Missing argument!")
 
             for index, compare in enumerate(row_data):
@@ -47,25 +52,61 @@ class CepimoseTestCase(unittest.TestCase):
         assertRow = self.createAssertVaccinationByDayRow(0.1, False)
 
         #! NIJZ is changing data tests could fail in the future
-        assertRow(data[9], datetime.datetime(2021, 1, 5), [15711, 1, 0])
-        assertRow(data[22], datetime.datetime(2021, 1, 18), [49100, 324, 0])
-        assertRow(data[41], datetime.datetime(2021, 2, 6), [56066, 46072, 0])
-        assertRow(data[42], datetime.datetime(2021, 2, 7), [56066, 46072, 0])
-        assertRow(data[274], datetime.datetime(2021, 9, 27), [1157192, 1024689, 18295])
+        assertRow(data[9], datetime.datetime(2021, 1, 5), [15711, 1, 0, 0])
+        assertRow(data[22], datetime.datetime(2021, 1, 18), [49100, 324, 0, 0])
+        assertRow(data[41], datetime.datetime(2021, 2, 6), [56066, 46072, 0, 0])
+        assertRow(data[42], datetime.datetime(2021, 2, 7), [56066, 46072, 0, 0])
+        assertRow(
+            data[274], datetime.datetime(2021, 9, 27), [1157192, 1024689, 18295, 0]
+        )
+
+        # R == 28
+        assertRow(data[63], datetime.datetime(2021, 2, 28), [124356, 52975, 0, 0])
+        assertRow(data[64], datetime.datetime(2021, 3, 1), [124356, 52975, 0, 0])
+
+        # R == 30
+        assertRow(
+            data[551], datetime.datetime(2022, 7, 1), [1220358, 1220358, 655369, 620]
+        )
+        assertRow(
+            data[552], datetime.datetime(2022, 7, 2), [1220358, 1220358, 655369, 620]
+        )
+
+        # fourth dose first time
+        assertRow(
+            data[288],
+            datetime.datetime(2021, 10, 11),
+            [1173774, 1085506, 27661, 1],
+        )
+
+        # fourth dose repeat not 0
+        assertRow(
+            data[398],
+            datetime.datetime(2022, 1, 29),
+            [1261182, 1217261, 632441, 100],
+        )
+        assertRow(
+            data[399],
+            datetime.datetime(2022, 1, 30),
+            [1257919, 1207556, 588474, 100],
+        )
 
         # values should be growing
         firstPrevious = 0
         secondPrevious = 0
         thirdPrevious = 0
+        fourthPrevious = 0
         row: VaccinationByDayRow
         for row in data:
-            print(row, firstPrevious, secondPrevious)
+            print(row, firstPrevious, secondPrevious, fourthPrevious)
             self.assertGreaterEqual(row.first_dose, firstPrevious)
             self.assertGreaterEqual(row.second_dose, secondPrevious)
             self.assertGreaterEqual(row.third_dose, thirdPrevious)
+            self.assertGreaterEqual(row.fourth_dose, fourthPrevious)
             firstPrevious = row.first_dose
             secondPrevious = row.second_dose
             thirdPrevious = row.third_dose
+            fourthPrevious = row.fourth_dose
 
         self.assertDatesIncreaseSince(data, datetime.datetime(2020, 12, 27))
 
