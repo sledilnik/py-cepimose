@@ -20,6 +20,7 @@ def parse_date(raw):
 
 
 def _validate_response_data(data):
+
     if "DS" not in data["results"][0]["result"]["data"]["dsr"]:
         error = data["results"][0]["result"]["data"]["dsr"]["DataShapes"][0][
             "odata.error"
@@ -39,12 +40,13 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data: "list[VaccinationByDayRow]" = []
 
-    r_list = [None, 2, 4, 6, 8, 10, 12, 14]
+    r_list = [None, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 
     date = None
     people_vaccinated = None
     people_fully_vaccinated = None
     people_third_dose = None
+    people_fourth_dose = None
     for element in resp:
 
         C = element["C"]
@@ -58,6 +60,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = C[3]
+            people_fourth_dose = C[4]
 
         # reuse from previous iteration
         if R == 2:
@@ -65,42 +68,105 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = C[1]
             people_third_dose = C[2]
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 4:
             # reuse second dose
             people_vaccinated = C[1]
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = C[2]
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 6:
             # reuse first and second dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = C[1]
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 8:
             # reuse third dose
             people_vaccinated = C[1]
             people_fully_vaccinated = C[2]
             people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 10:
             # reuse first and third dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = C[1]
             people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 12:
             # reuse second and third dose
             people_vaccinated = C[1]
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         if R == 14:
             # reuse all doses
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 16:
+            # reuse only fourth dose
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+            people_third_dose = C[3]
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 18:
+            # reuse first and fourth dose
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = C[2]
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 20:
+            # reuse second and fourth dose
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = C[2]
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 22:
+            # reuse all but third dose
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = C[1]
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 24:
+            # reuses third and fourth dose
+            people_vaccinated = C[1]
+            people_fully_vaccinated = C[2]
+            people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 26:
+            # reuse all but fully vaccinated
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = C[1]
+            people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 28:
+            # reuse all but first
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 30:
+            # reuse all doses
+            people_vaccinated = parsed_data[-1].first_dose
+            people_fully_vaccinated = parsed_data[-1].second_dose
+            people_third_dose = parsed_data[-1].third_dose
+            people_fourth_dose = parsed_data[-1].fourth_dose
 
         parsed_data.append(
             VaccinationByDayRow(
@@ -108,6 +174,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
                 first_dose=people_vaccinated,
                 second_dose=people_fully_vaccinated,
                 third_dose=people_third_dose,
+                fourth_dose=people_fourth_dose,
             )
         )
 
