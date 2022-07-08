@@ -40,7 +40,7 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
     resp = data["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
     parsed_data: "list[VaccinationByDayRow]" = []
 
-    r_list = [None, 2, 4, 6, 8, 10, 12, 14, 16, 18, 22, 24, 26, 28, 30]
+    r_list = [None, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
 
     date = None
     people_vaccinated = None
@@ -123,6 +123,13 @@ def _parse_vaccinations_by_day(data) -> "list[VaccinationByDayRow]":
             # reuse first and fourth dose
             people_vaccinated = parsed_data[-1].first_dose
             people_fully_vaccinated = C[1]
+            people_third_dose = C[2]
+            people_fourth_dose = parsed_data[-1].fourth_dose
+
+        if R == 20:
+            # reuse second and fourth dose
+            people_vaccinated = C[1]
+            people_fully_vaccinated = parsed_data[-1].second_dose
             people_third_dose = C[2]
             people_fourth_dose = parsed_data[-1].fourth_dose
 

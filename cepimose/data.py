@@ -199,9 +199,16 @@ def _get_default_by_age_group_command():
                     {
                         "Measure": {
                             "Expression": {"SourceRef": {"Source": "c"}},
-                            "Property": "KUM_St_dodaten",
+                            "Property": "KUM_St_3",
                         },
                         "Name": "eRCO_​​podatki.KUM_St_dodaten",
+                    },
+                    {
+                        "Measure": {
+                            "Expression": {"SourceRef": {"Source": "c"}},
+                            "Property": "KUM_St_4",
+                        },
+                        "Name": "eRCO_​​podatki.KUM_St_4",
                     },
                 ],
                 "Where": [
@@ -214,18 +221,41 @@ def _get_default_by_age_group_command():
                                             "Expression": {
                                                 "SourceRef": {"Source": "x"}
                                             },
-                                            "Property": "Starostni ​razred",
+                                            "Property": "16_razredov",
                                         }
                                     }
                                 ],
-                                "Values": [],
+                                "Values": [[{"Literal": {"Value": "'18-24'"}}]],
                             }
                         }
-                    }
+                    },
+                    {
+                        "Condition": {
+                            "Not": {
+                                "Expression": {
+                                    "In": {
+                                        "Expressions": [
+                                            {
+                                                "Column": {
+                                                    "Expression": {
+                                                        "SourceRef": {"Source": "c"}
+                                                    },
+                                                    "Property": "Umrli",
+                                                }
+                                            }
+                                        ],
+                                        "Values": [
+                                            [{"Literal": {"Value": "'2021H2'"}}]
+                                        ],
+                                    }
+                                }
+                            }
+                        }
+                    },
                 ],
             },
             "Binding": {
-                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3]}]},
+                "Primary": {"Groupings": [{"Projections": [0, 1, 2, 3, 4]}]},
                 "DataReduction": {"DataVolume": 4, "Primary": {"BinnedLineSample": {}}},
                 "Version": 1,
             },
